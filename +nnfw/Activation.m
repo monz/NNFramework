@@ -1,10 +1,14 @@
 classdef Activation
-    %ACTIVATION Defines activation functions used for neurons in neural
-    %netwroks
-    %   Detailed explanation goes here
+    %ACTIVATION Defines activation functions for direct use in neurons of
+    %neural netwroks
+    %   Activation objects combine executable function handles with
+    %   additional information needed for derivative calculation. The
+    %   functions will be implemented in <a href="matlab:doc nnfw.Util">Util</a> class.
+    %
+    %   See also Util
     
     properties (SetAccess = immutable)
-        f
+        f % activation function handle
     end
     
     methods

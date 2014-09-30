@@ -1,6 +1,12 @@
 function output = minmaxMappingRevert( input, settings )
-%MINMAXMAPPINGREVERT Summary of this function goes here
-%   Detailed explanation goes here
+%MINMAXMAPPINGREVERT Reverts the process of <a href="matlab:doc
+%nnfw.minmaxMapping">minmaxMapping</a>
+%   Each row in a matrix get mapped to its original min/max value specified
+%   in the settings parameter.
+%
+%   output = minmaxMappingRevert( input, settings )
+%
+%   See also MINMAXMAPPING
 
     if settings.no_change
       output = y;

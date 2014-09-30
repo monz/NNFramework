@@ -1,6 +1,15 @@
 function [ output, settings ] = minmaxMapping( input, varargin )
-%MINMAXMAPPING Summary of this function goes here
-%   Detailed explanation goes here
+%MINMAXMAPPING Maps matrix values to given min/max value.
+%   Each row in a matrix get mapped to given min/max value, default [-1 1].
+%
+%   [output, settings] = minmaxMapping(input)
+%   [output, settings] = minmaxMapping(input, min, max)
+%
+%   To revert this process use <a href="matlab:doc nnfw.Util.minmaxMappingRevert">minmaxMappingRevert</a> function.
+%   Provide the settings returned from minmaxMapping to the revert function
+%   to properly revert the process.
+%
+%   See also MINMAXMAPPINGREVERT
 
     % outMin/outMax default settings
     outMin = -1;
@@ -22,7 +31,7 @@ function [ output, settings ] = minmaxMapping( input, varargin )
     inMax(isnan(inMax)) = inf;
 
     % Assert: inMin and inMax will be [-inf inf] for unknown ranges
-    settings.name = 'mymapminmax';
+    settings.name = 'minmaxmapping';
     settings.inRows = inRows;
     settings.inMax = inMax;
     settings.inMin = inMin;
@@ -53,4 +62,3 @@ function [ output, settings ] = minmaxMapping( input, varargin )
     output = bsxfun(@times,output,settings.gain);
     output = bsxfun(@plus,output,settings.outMin);
 end
-

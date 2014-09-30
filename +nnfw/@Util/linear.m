@@ -1,6 +1,5 @@
 function x = linear( n )
-%LINEAR Summary of this function goes here
-%   Detailed explanation goes here
+%LINEAR Linear activation function
 
     x = n;
     
