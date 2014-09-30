@@ -37,15 +37,15 @@ classdef (Abstract) Network < handle
             % -------------------------------------
             % input layer
             for k = 1:numInputs
-                obj.inputs{1,k} = nnfw.Layer('input', nnfw.Activation.TANH);
+                obj.inputs{1,k} = nnfw.Layer('input', nnfw.Util.Activation.TANH);
             end
             % hidden layer
             for k = 1:numLayers-1
-                obj.layers{1,k} = nnfw.Layer('hidden', nnfw.Activation.TANH);
+                obj.layers{1,k} = nnfw.Layer('hidden', nnfw.Util.Activation.TANH);
             end
             % output layer
             for k = 1:numOutputs
-                obj.outputs{1,k} = nnfw.Layer('output', nnfw.Activation.PURELIN);
+                obj.outputs{1,k} = nnfw.Layer('output', nnfw.Util.Activation.PURELIN);
             end
         end
     end

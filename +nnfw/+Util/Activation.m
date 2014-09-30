@@ -3,7 +3,7 @@ classdef Activation
     %neural netwroks
     %   Activation objects combine executable function handles with
     %   additional information needed for derivative calculation. The
-    %   functions will be implemented in <a href="matlab:doc nnfw.Util">Util</a> class.
+    %   functions will be implemented in <a href="matlab:doc nnfw.Util">Util</a> package.
     %
     %   See also Util
     

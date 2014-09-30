@@ -23,7 +23,7 @@ toolbox = net1(p);
 
 net = nnfw.FeedForward(1, 2, 1);
 % net.layers{1}.f = @logsig;
-net.layers{1}.f = nnfw.Activation.LOGSIG;
+net.layers{1}.f = nnfw.Util.Activation.LOGSIG;
 % net.layers{2}.size = 10; % set layer 2 numOfNeurons to 10
 net.IW{1} = net1.IW{1};
 net.LW{2,1} = net1.LW{2,1};
