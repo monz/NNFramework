@@ -1,5 +1,9 @@
-clear all, clc;
+clear all;
+clc;
 
+% --------------------------------------
+% load dataset
+% --------------------------------------
 % load house_dataset;
 load simplefit_dataset;
 % p = -2:.1:2;
@@ -11,19 +15,26 @@ load simplefit_dataset;
 p = simplefitInputs;
 t = simplefitTargets;
 
+
+% --------------------------------------
+% init/train nn-toolbox
+% --------------------------------------
 % net1 = feedforwardnet([23 35]);
 net1 = feedforwardnet();
 % net1.layers{1}.size = 20;
-net1.layers{1}.transferFcn = 'logsig';
+% net1.layers{1}.transferFcn = 'logsig';
 net1.inputs{1}.processFcns = {}; % delete input preprocessing functions
 net1.outputs{net1.numLayers}.processFcns = {}; % delete output postprocessing functions
-net1.trainParam.max_fail = 15;
+net1.trainParam.max_fail = 10;
 net1 = train(net1,p,t);
 toolbox = net1(p);
 
+% --------------------------------------
+% init nn-framework
+% --------------------------------------
 net = nnfw.FeedForward(1, 2, 1);
 % net.layers{1}.f = @logsig;
-net.layers{1}.f = nnfw.Util.Activation.LOGSIG;
+% net.layers{1}.f = nnfw.Util.Activation.LOGSIG;
 % net.layers{2}.size = 10; % set layer 2 numOfNeurons to 10
 net.IW{1} = net1.IW{1};
 net.LW{2,1} = net1.LW{2,1};
@@ -41,10 +52,24 @@ for k = p;
     ind = ind + 1;
 end
 
+% --------------------------------------
+% goodness of fit
+% --------------------------------------
+nnfw.goodnessOfFit(toolbox, t, 'mse')
+nnfw.Util.CostFunction.MSE.f(toolbox, t)
+
+nnfw.goodnessOfFit(ba, t, 'mse')
+nnfw.Util.CostFunction.MSE.f(ba, t)
+
+nnfw.goodnessOfFit(ba, toolbox, 'mse')
+nnfw.Util.CostFunction.MSE.f(ba, toolbox)
+
+% --------------------------------------
 % plot
+% --------------------------------------
 hold on
 plot(t, 'r'); % target
-plot(toolbox); % toolbox
+plot(toolbox, 'k'); % toolbox
 plot(ba, 'g'); % ba
 legend('target','toobox','ba');
 hold off
