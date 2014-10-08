@@ -6,7 +6,7 @@ classdef FeedForward < nnfw.Network
     end
     
     methods
-        function y = simulate(net, input)
+        function [y, a] = simulate(net, input)
             % -------------------------------------
             % feed forward
             % -------------------------------------
@@ -31,11 +31,61 @@ classdef FeedForward < nnfw.Network
             end
             
             y = a{1,net.numLayers};
+        end
+        
+        function [e, g, bGrad] = train(net, input, target)
+            % forward propagate with current weights
+            % neuron outputs needed for backpropagation will be stored in a
+            [y, a] = simulate(net, input);
             
-%             transf1 = net.layers{1}.f;
-%             a1 = transf1( net.IW{1}*input + net.b{1,1} );
-%             transf2 = net.outputs{1}.f;
-%             out = transf2( net.LW{2,1}*a1 + net.b{2,1} );
+            % calculate cost function
+            e = nnfw.Util.mse(y, target);
+            
+            % calculate sensitivity of last layer
+            s_M = -2 * 1 * (target - y); % ... * 1 * ... because linear derivated = 1
+            
+            % calculate remaining sensitivities
+            % backward M-1, ..., 2, 1
+            s_m = cell(1, net.numLayers-1);
+            for k = net.numLayers-1:-1:1
+                bpFunction = net.layers{k}.f.backprop;
+                
+                % create derivated values matrix F_m
+                F_m = cell(1, net.layers{k}.size);
+                for j = 1:net.layers{k}.size
+                    % diag creates a matrix with the values on the diagonal
+                    % all other elements remain zero
+                    F_m{j} = diag(bpFunction(a{k, j}));
+                end
+                % sensitivities
+                if ( k == net.numLayers-1 )
+                    s_m{k} = F_m{k} * net.LW{k+1}' * s_M;
+                else
+                    s_m{k} = F_m{k} * net.LW{k+1}' * s_m{k+1};
+                end
+            end
+            
+            % calculate gradients
+            g = cell(1, net.numLayers);
+            for k = 1:net.numLayers 
+                if ( k == 1 )
+                    g{k} = s_m{k} * input';
+                elseif (k == net.numLayers)
+                    g{k} = s_M * a{k-1}';
+                else
+                    g{k} = s_m{k} * a{k-1}';
+                end
+            end
+            
+            % bias gradients
+            bGrad = cell(1,net.numLayers);
+            for k = 1:net.numLayers 
+                if ( k == net.numLayers )
+                    bGrad{k} = s_M;
+                else
+                    bGrad{k} = s_m{k};
+                end
+            end
         end
         
         function net = FeedForward(numInputs, numLayers, numOutputs)

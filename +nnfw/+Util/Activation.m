@@ -9,18 +9,20 @@ classdef Activation
     
     properties (SetAccess = immutable)
         f % activation function handle
+        backprop % derivated activation function handle
     end
     
     methods
-        function obj = Activation(activationFunction)
+        function obj = Activation(activationFunction, derivateActivationFunction)
                 obj.f = activationFunction;
+                obj.backprop = derivateActivationFunction;
         end
     end
     
     enumeration
-       TANH (@tanh) 
-       LOGSIG (@nnfw.Util.logsig)
-       PURELIN (@nnfw.Util.linear)
+       TANH (@tanh, @nnfw.Util.tanhBackprop)
+       LOGSIG (@nnfw.Util.logsig, @nnfw.Util.logsigBackprop)
+       PURELIN (@nnfw.Util.linear, @nnfw.Util.linearBackprop)
     end
     
 end

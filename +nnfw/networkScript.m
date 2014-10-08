@@ -26,6 +26,7 @@ net1 = feedforwardnet();
 net1.inputs{1}.processFcns = {}; % delete input preprocessing functions
 net1.outputs{net1.numLayers}.processFcns = {}; % delete output postprocessing functions
 net1.trainParam.max_fail = 10;
+%net1.trainFcn = 'traingd';
 net1 = train(net1,p,t);
 toolbox = net1(p);
 

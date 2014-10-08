@@ -3,22 +3,22 @@ classdef (Abstract) Network < handle
     %   Detailed explanation goes here
     
     properties
-        numInputs = 0
-        numLayers = 0
-        numOutputs = 0
+        numInputs = 0 % total number of network input vectors
+        numLayers = 0 % number of network hidden layers
+        numOutputs = 0 % total number of network output vectors
         
-        inputs = {}
-        layers = {}
-        outputs = {}
+        inputs = {} % input layer information
+        layers = {} % hidden layer information
+        outputs = {} % output layer information
         
         biasConnect = []
         inputConnect = []
         layerConnect = []
         outputConnect = []
         
-        IW = {}
-        LW = {}
-        b = []
+        IW = {} % input weights for each input vector
+        LW = {} % layer weights for each hidden layer
+        b = [] % biases
         
     end
     
@@ -53,6 +53,7 @@ classdef (Abstract) Network < handle
     methods (Abstract)
         configure(obj, varargin);
         simulate(obj, input);
+        train(obj, input, target);
     end
     
 end

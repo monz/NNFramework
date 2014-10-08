@@ -51,6 +51,7 @@ function fitValue = mse( Actual, Expected )
         xActual = Actual{min(ct,end)};
         xExpected = Expected{min(ct,end)};
         e = xActual-xExpected;
-        fitValue(ct) = trace(e'*e)/(numel(e)-1);
+%         fitValue(ct) = trace(e'*e)/(numel(e)-1);
+        fitValue(ct) = trace(e'*e)/(numel(e));
     end
 end
