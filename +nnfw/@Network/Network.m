@@ -57,6 +57,7 @@ classdef (Abstract) Network < handle
         simulate(obj, input);
         train(obj, input, target);
         getNumWeights(obj);
+        getGradientByWeight(obj, gradVector, weight);
     end
     
 end
