@@ -20,8 +20,8 @@ classdef FeedForward < nnfw.Network
                 elseif layer == net.numLayers % output layer
                     LW = net.LW{layer,layer-1};
                     p = a{layer-1};
-%                     transf = net.outputs{net.numLayers - 1}.f;
-                    transf = net.outputs{1}.f.f;
+                    transf = net.outputs{net.numLayers}.f.f;
+%                     transf = net.outputs{1}.f.f;
                 else % hidden layer
                     LW = net.LW{layer,1};
                     p = a{layer-1};
@@ -33,7 +33,10 @@ classdef FeedForward < nnfw.Network
             y = a{1,net.numLayers};
         end
         
-        function [e, g, bGrad] = train(net, input, target)
+        function [e, g] = train(net, input, target)
+            % configure network layer sizes
+            configure(net, input, target);
+            
             % forward propagate with current weights
             % neuron outputs needed for backpropagation will be stored in a
             [y, a] = simulate(net, input);
@@ -66,25 +69,27 @@ classdef FeedForward < nnfw.Network
             end
             
             % calculate gradients
-            g = cell(1, net.numLayers);
+            g = zeros(1, net.getNumWeights());
+            offset = 0;
             for k = 1:net.numLayers 
                 if ( k == 1 )
-                    g{k} = s_m{k} * input';
+                    grads = s_m{k} * input';
+                    bgrads = s_m{k};
                 elseif (k == net.numLayers)
-                    g{k} = s_M * a{k-1}';
+                    grads = s_M * a{k-1}';
+                    bgrads = s_M;
                 else
-                    g{k} = s_m{k} * a{k-1}';
+                    grads = s_m{k} * a{k-1}';
+                    bgrads = s_m{k};
                 end
-            end
-            
-            % bias gradients
-            bGrad = cell(1,net.numLayers);
-            for k = 1:net.numLayers 
-                if ( k == net.numLayers )
-                    bGrad{k} = s_M;
-                else
-                    bGrad{k} = s_m{k};
-                end
+                % prepare gradients to be saved in a vector
+                grads = grads(:)';
+                bgrads = bgrads(:)';
+                % save gradients to the comprehensive gradient vector g
+                g(1,offset+1:offset+length(grads)) = grads;                
+                offset = offset + length(grads);
+                g(1,offset+1:offset+length(bgrads)) = bgrads;                
+                offset = offset + length(bgrads);                
             end
         end
         
@@ -123,6 +128,10 @@ classdef FeedForward < nnfw.Network
             % define network dimensions
             % -------------------------------------
             input = varargin{1};
+            if ~iscell(input)
+                input = {input};
+            end
+            
             % check given input size against network input size
             if size(input,1) ~= net.numInputs
                 error('input parameter dimension missmatch');
@@ -132,19 +141,37 @@ classdef FeedForward < nnfw.Network
                 net.inputs{k}.size = size(input{k,:},1);
             end
             
-            % set default hidden layer size
-            for k = 1:net.numLayers - 1
-                net.layers{k}.size = 10;
-            end
+            % only set size while network initialization
+            % to prevent overriding user settings
+%             % set default hidden layer size
+%             for k = 1:net.numLayers - 1
+%                 net.layers{k}.size = 10;
+%             end
             
             output = varargin{2};
+            if ~iscell(output)
+                output = {output};
+            end
+            
             % check given target size against network output size
             if size(output,1) ~= net.numOutputs
                 error('output parameter dimension missmatch');
             end
             % define output sizes
-            for k = 1:net.numOutputs
-                net.outputs{k}.size = size(output{k,:},1);
+            for k = 0:net.numOutputs-1
+                net.outputs{net.numLayers+k}.size = size(output{k+1,:},1);
+            end
+        end
+        
+        function numWeights = getNumWeights(net) 
+            for k = 1:net.numLayers
+                if k == 1 
+                    numWeights = net.inputs{k}.size * net.layers{k}.size + net.layers{k}.size;
+                elseif k < net.numLayers-1
+                    numWeights = numWeights + net.layers{k}.size * net.layers{k+1} + net.layers{k+1}.size;
+                else
+                    numWeights = numWeights + net.layers{k-1}.size * net.outputs{k}.size + net.outputs{k}.size;
+                end
             end
         end
     end
