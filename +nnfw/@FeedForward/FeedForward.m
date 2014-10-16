@@ -54,7 +54,8 @@ classdef FeedForward < nnfw.Network
                 E(q) = nnfw.Util.mse(y(q), target(q));
 
                 % calculate sensitivity of last layer
-                s_M(q) = -2 * 1 * (target(q) - y(q)); % ... * 1 * ... because linear derivated = 1
+                bpFunction = net.outputs{net.numLayers}.f.backprop;
+                s_M(q) = -2 * bpFunction(a{q, net.numLayers}) * (target(q) - y(q));
 
                 % calculate remaining sensitivities
                 % backward M-1, ..., 2, 1
@@ -250,7 +251,11 @@ classdef FeedForward < nnfw.Network
                 offset = offset + (neuronSource-1) * layersize + neuronDestination;
             else
                 % bias weight
-                numNeurons = net.layers{layer-1}.size;
+                if layer == 1
+                    numNeurons = net.layers{layer}.size;
+                else
+                    numNeurons = net.layers{layer-1}.size;
+                end
                 biasNumber = weight(2);
                 offset = offset + numNeurons + biasNumber;
             end
