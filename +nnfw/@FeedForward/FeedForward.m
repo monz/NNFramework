@@ -10,30 +10,33 @@ classdef FeedForward < nnfw.Network
             % -------------------------------------
             % feed forward
             % -------------------------------------
-            a = cell(1,net.numLayers);
-            for layer = 1:net.numLayers
-                if layer == 1 % input layer
-                    LW = net.IW{layer};
-                    p = input;
-                    transf = net.layers{layer}.f.f;
-                    a{layer} = transf( LW*p + net.b{layer} );
-                elseif layer == net.numLayers % output layer
-                    LW = net.LW{layer,layer-1};
-                    p = a{layer-1};
-                    transf = net.outputs{net.numLayers}.f.f;
-%                     transf = net.outputs{1}.f.f;
-                else % hidden layer
-                    LW = net.LW{layer,1};
-                    p = a{layer-1};
-                    transf = net.layers{layer}.f.f;
+            Q = length(input);
+            a = cell(Q,net.numLayers);
+            y = zeros(1, Q);
+            for q = 1:Q
+                for layer = 1:net.numLayers
+                    if layer == 1 % input layer
+                        LW = net.IW{layer};
+                        p = input(q);
+                        transf = net.layers{layer}.f.f;
+                        a{q, layer} = transf( LW*p + net.b{layer} );
+                    elseif layer == net.numLayers % output layer
+                        LW = net.LW{layer,layer-1};
+                        p = a{q, layer-1};
+                        transf = net.outputs{net.numLayers}.f.f;
+                    else % hidden layer
+                        LW = net.LW{layer,1};
+                        p = a{q, layer-1};
+                        transf = net.layers{layer}.f.f;
+                    end
+                    a{q, layer} = transf( LW*p + net.b{layer} );
                 end
-                a{layer} = transf( LW*p + net.b{layer} );
+
+                y(q) = a{q,net.numLayers};
             end
-            
-            y = a{1,net.numLayers};
         end
         
-        function [e, g] = train(net, input, target)
+        function [E, g] = train(net, input, target)
             % configure network layer sizes
             configure(net, input, target);
             
@@ -42,54 +45,66 @@ classdef FeedForward < nnfw.Network
             [y, a] = simulate(net, input);
             
             % calculate cost function
-            e = nnfw.Util.mse(y, target);
-            
-            % calculate sensitivity of last layer
-            s_M = -2 * 1 * (target - y); % ... * 1 * ... because linear derivated = 1
-            
-            % calculate remaining sensitivities
-            % backward M-1, ..., 2, 1
-            s_m = cell(1, net.numLayers-1);
-            for k = net.numLayers-1:-1:1
-                bpFunction = net.layers{k}.f.backprop;
-                
-                % create derivated values matrix F_m
-                F_m = cell(1, net.layers{k}.size);
-                for j = 1:net.layers{k}.size
-                    % diag creates a matrix with the values on the diagonal
-                    % all other elements remain zero
-                    F_m{j} = diag(bpFunction(a{k, j}));
-                end
-                % sensitivities
-                if ( k == net.numLayers-1 )
-                    s_m{k} = F_m{k} * net.LW{k+1}' * s_M;
-                else
-                    s_m{k} = F_m{k} * net.LW{k+1}' * s_m{k+1};
-                end
-            end
-            
-            % calculate gradients
+            Q = length(input); % number of training samples
+            E = zeros(1, Q);
+            s_M = zeros(1, Q);
+%             g = zeros(Q, net.getNumWeights());
             g = zeros(1, net.getNumWeights());
-            offset = 0;
-            for k = 1:net.numLayers 
-                if ( k == 1 )
-                    grads = s_m{k} * input';
-                    bgrads = s_m{k};
-                elseif (k == net.numLayers)
-                    grads = s_M * a{k-1}';
-                    bgrads = s_M;
-                else
-                    grads = s_m{k} * a{k-1}';
-                    bgrads = s_m{k};
+            for q = 1:Q
+                E(q) = nnfw.Util.mse(y(q), target(q));
+
+                % calculate sensitivity of last layer
+                s_M(q) = -2 * 1 * (target(q) - y(q)); % ... * 1 * ... because linear derivated = 1
+
+                % calculate remaining sensitivities
+                % backward M-1, ..., 2, 1
+                s_m = cell(Q, net.numLayers-1);
+                for layer = net.numLayers-1:-1:1
+                    bpFunction = net.layers{layer}.f.backprop;
+
+                    % create derivated values matrix F_m
+                    F_m = cell(Q, net.layers{layer}.size);
+                    for j = 1:net.layers{layer}.size
+                        % diag creates a matrix with the values on the diagonal
+                        % all other elements remain zero
+                        F_m{q, j} = diag(bpFunction(a{q, j}));
+                    end
+                    % sensitivities
+                    if ( layer == net.numLayers-1 )
+                        s_m{q, layer} = F_m{q, layer} * net.LW{layer+1}' * s_M(q);
+                    else
+                        s_m{q, layer} = F_m{q, layer} * net.LW{layer+1}' * s_m{q, layer+1};
+                    end
                 end
-                % prepare gradients to be saved in a vector
-                grads = grads(:)';
-                bgrads = bgrads(:)';
-                % save gradients to the comprehensive gradient vector g
-                g(1,offset+1:offset+length(grads)) = grads;                
-                offset = offset + length(grads);
-                g(1,offset+1:offset+length(bgrads)) = bgrads;                
-                offset = offset + length(bgrads);                
+
+                % calculate gradients
+                offset = 0;
+                for layer = 1:net.numLayers 
+                    if ( layer == 1 )
+                        grads = s_m{q, layer} * input(q)';
+                        bgrads = s_m{q, layer};
+                    elseif (layer == net.numLayers)
+                        grads = s_M(q) * a{q, layer-1}';
+                        bgrads = s_M(q);
+                    else
+                        grads = s_m{q, layer} * a{q, layer-1}';
+                        bgrads = s_m{q, layer};
+                    end
+                    % prepare gradients to be saved in a vector
+                    grads = grads(:)';
+                    bgrads = bgrads(:)';
+                    % save gradients to the comprehensive gradient vector g
+                    % gradients of weights
+                    startDim = offset+1;
+                    endDim = offset+length(grads);
+                    g(1,startDim:endDim) = g(1,startDim:endDim) + grads;                
+                    offset = endDim;
+                    % gradients of biases
+                    startDim = offset+1;
+                    endDim = offset + length(bgrads);
+                    g(1,startDim:endDim) = g(1,startDim:endDim) + bgrads;                
+                    offset = endDim;                
+                end
             end
         end
         

@@ -17,7 +17,8 @@ clc;
 % --------------------------------------
 % init nn-framework
 % --------------------------------------
-p = 1;
+p = (-2:0.1:2);
+% p = 1;
 target = 1 + sin((pi/4)*p);
 
 IW = [-0.27; -0.41];
@@ -36,6 +37,9 @@ net.b{1,1} = b1;
 net.b{2,1} = b2;
 
 [cost, grad] = net.train(p, target);
+% sum(grad,1)
+grad
+
 
 % for k = 1:length(grad)
 %    grad{k} 
@@ -44,10 +48,9 @@ net.b{2,1} = b2;
 %    bGrad{k} 
 % end
 
-grad
-
-p = 1;
-system = 1+sin((pi/4)*p);
+% --------------------------------------
+% prepare starting weights in numeric calculation
+% --------------------------------------
 x = -0.27; %x // w111
 y = -0.41; %y // w211
 z = -0.48; %z // b11
@@ -55,12 +58,26 @@ q = -0.13; %q // b21
 r = 0.09; %r // w112
 s = -0.17; %s // w122
 t = 0.48; %t // b12
+% --------------------------------------
+% prepare gradient matrix
+% --------------------------------------
 
-grad_b12 = 2*t - 2*sin((pi*p)/4) + (2*s)/(exp(- q - p*y) + 1) + (2*r)/(exp(- z - p*x) + 1) - 2
-grad_b11 = (2*r*exp(- z - p*x)*(t - sin((pi*p)/4) + s/(exp(- q - p*y) + 1) + r/(exp(- z - p*x) + 1) - 1))/(exp(- z - p*x) + 1)^2
-grad_b21 = (2*s*exp(- q - p*y)*(t - sin((pi*p)/4) + s/(exp(- q - p*y) + 1) + r/(exp(- z - p*x) + 1) - 1))/(exp(- q - p*y) + 1)^2
+grad_derivated = zeros(length(p), 7);
 
-grad_w111 = (2*p*r*exp(- z - p*x)*(t - sin((pi*p)/4) + s/(exp(- q - p*y) + 1) + r/(exp(- z - p*x) + 1) - 1))/(exp(- z - p*x) + 1)^2
-grad_w211 = (2*p*s*exp(- q - p*y)*(t - sin((pi*p)/4) + s/(exp(- q - p*y) + 1) + r/(exp(- z - p*x) + 1) - 1))/(exp(- q - p*y) + 1)^2
-grad_w112 = (2*(t - sin((pi*p)/4) + s/(exp(- q - p*y) + 1) + r/(exp(- z - p*x) + 1) - 1))/(exp(- z - p*x) + 1)
-grad_w122 = (2*(t - sin((pi*p)/4) + s/(exp(- q - p*y) + 1) + r/(exp(- z - p*x) + 1) - 1))/(exp(- q - p*y) + 1)
+pIn = p;
+for k = 1:length(pIn)
+    p = pIn(k);
+    grad_derivated(k, 1) = (2*p*r*exp(- z - p*x)*(t - sin((pi*p)/4) + s/(exp(- q - p*y) + 1) + r/(exp(- z - p*x) + 1) - 1))/(exp(- z - p*x) + 1)^2;
+    grad_derivated(k, 2) = (2*p*s*exp(- q - p*y)*(t - sin((pi*p)/4) + s/(exp(- q - p*y) + 1) + r/(exp(- z - p*x) + 1) - 1))/(exp(- q - p*y) + 1)^2;
+    grad_derivated(k, 3) = (2*r*exp(- z - p*x)*(t - sin((pi*p)/4) + s/(exp(- q - p*y) + 1) + r/(exp(- z - p*x) + 1) - 1))/(exp(- z - p*x) + 1)^2;
+    grad_derivated(k, 4) = (2*s*exp(- q - p*y)*(t - sin((pi*p)/4) + s/(exp(- q - p*y) + 1) + r/(exp(- z - p*x) + 1) - 1))/(exp(- q - p*y) + 1)^2;
+
+    grad_derivated(k, 5) = (2*(t - sin((pi*p)/4) + s/(exp(- q - p*y) + 1) + r/(exp(- z - p*x) + 1) - 1))/(exp(- z - p*x) + 1);
+    grad_derivated(k, 6) = (2*(t - sin((pi*p)/4) + s/(exp(- q - p*y) + 1) + r/(exp(- z - p*x) + 1) - 1))/(exp(- q - p*y) + 1);
+    grad_derivated(k, 7) = 2*t - 2*sin((pi*p)/4) + (2*s)/(exp(- q - p*y) + 1) + (2*r)/(exp(- z - p*x) + 1) - 2;
+end
+sum(grad_derivated, 1)
+
+% 
+% isequal(grad, grad_derivated)
+% abs(grad - grad_derivated) < 32 * eps(max(grad, grad_derivated))
