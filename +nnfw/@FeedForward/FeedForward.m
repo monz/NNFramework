@@ -17,9 +17,8 @@ classdef FeedForward < nnfw.Network
                 for layer = 1:net.numLayers
                     if layer == 1 % input layer
                         LW = net.IW{layer};
-                        p = input(q);
+                        p = input(:,q);
                         transf = net.layers{layer}.f.f;
-                        a{q, layer} = transf( LW*p + net.b{layer} );
                     elseif layer == net.numLayers % output layer
                         LW = net.LW{layer,layer-1};
                         p = a{q, layer-1};
@@ -48,14 +47,13 @@ classdef FeedForward < nnfw.Network
             Q = length(input); % number of training samples
             E = zeros(1, Q);
             s_M = zeros(1, Q);
-%             g = zeros(Q, net.getNumWeights());
             g = zeros(1, net.getNumWeights());
             for q = 1:Q
-                E(q) = nnfw.Util.mse(y(q), target(q));
+                E(q) = nnfw.Util.mse(y(q), target(:, q));
 
                 % calculate sensitivity of last layer
                 bpFunction = net.outputs{net.numLayers}.f.backprop;
-                s_M(q) = -2 * bpFunction(a{q, net.numLayers}) * (target(q) - y(q));
+                s_M(q) = -2 * bpFunction(a{q, net.numLayers}) * (target(:, q) - y(q));
 
                 % calculate remaining sensitivities
                 % backward M-1, ..., 2, 1
@@ -82,7 +80,7 @@ classdef FeedForward < nnfw.Network
                 offset = 0;
                 for layer = 1:net.numLayers 
                     if ( layer == 1 )
-                        grads = s_m{q, layer} * input(q)';
+                        grads = s_m{q, layer} * input(:, q)';
                         bgrads = s_m{q, layer};
                     elseif (layer == net.numLayers)
                         grads = s_M(q) * a{q, layer-1}';

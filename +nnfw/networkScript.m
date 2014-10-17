@@ -5,15 +5,19 @@ clc;
 % load dataset
 % --------------------------------------
 % load house_dataset;
-load simplefit_dataset;
+% load simplefit_dataset;
+load bodyfat_dataset;
 % p = -2:.1:2;
 % t = cos(pi*p/2);
 % 
 % p = houseInputs;
 % t = houseTargets;
 % 
-p = simplefitInputs;
-t = simplefitTargets;
+% p = simplefitInputs;
+% t = simplefitTargets;
+
+p = bodyfatInputs;
+t = bodyfatTargets;
 
 
 % --------------------------------------
@@ -21,7 +25,7 @@ t = simplefitTargets;
 % --------------------------------------
 % net1 = feedforwardnet([23 35]);
 net1 = feedforwardnet();
-% net1.layers{1}.size = 20;
+% net1.layers{1}.size = 14;
 % net1.layers{1}.transferFcn = 'logsig';
 net1.inputs{1}.processFcns = {}; % delete input preprocessing functions
 net1.outputs{net1.numLayers}.processFcns = {}; % delete output postprocessing functions
@@ -46,12 +50,12 @@ net.b{2,1} = net1.b{2,1};
 ba = zeros(1,length(p));
 ind = 1;
 % for k = 1:length(p)
-for k = p;
-%     out = net.train(p(:,k));
-%     ba(ind) = out;
-    ba(ind) = net.simulate(k);
-    ind = ind + 1;
-end
+% for k = p;
+% %     out = net.train(p(:,k));
+% %     ba(ind) = out;
+%     ba(ind) = net.simulate(k);
+%     ind = ind + 1;
+% end
 
 % --------------------------------------
 % goodness of fit
