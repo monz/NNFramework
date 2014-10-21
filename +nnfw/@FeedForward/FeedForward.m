@@ -49,6 +49,7 @@ classdef FeedForward < nnfw.Network
             s_M = zeros(1, Q);
             g = zeros(1, net.getNumWeights());
             for q = 1:Q
+                % cost function
                 E(q) = nnfw.Util.mse(y(q), target(:, q));
 
                 % calculate sensitivity of last layer

@@ -6,9 +6,9 @@ clc;
 % --------------------------------------
 % load house_dataset;
 % load simplefit_dataset;
-load bodyfat_dataset;
-% p = -2:.1:2;
-% t = cos(pi*p/2);
+% load bodyfat_dataset;
+p = -2:.1:2;
+t = cos(pi*p/2);
 % 
 % p = houseInputs;
 % t = houseTargets;
@@ -16,8 +16,8 @@ load bodyfat_dataset;
 % p = simplefitInputs;
 % t = simplefitTargets;
 
-p = bodyfatInputs;
-t = bodyfatTargets;
+% p = bodyfatInputs;
+% t = bodyfatTargets;
 
 
 % --------------------------------------
