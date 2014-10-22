@@ -179,15 +179,17 @@ classdef FeedForward < nnfw.Network
         end
         
         function numWeights = getNumWeights(net) 
-            for k = 1:net.numLayers
-                if k == 1 
-                    numWeights = net.inputs{k}.size * net.layers{k}.size + net.layers{k}.size;
-                elseif k < net.numLayers-1
-                    numWeights = numWeights + net.layers{k}.size * net.layers{k+1} + net.layers{k+1}.size;
+            for layer = 1:net.numLayers
+                if layer == 1 
+                    numWeights = net.inputs{layer}.size * net.layers{layer}.size + net.layers{layer}.size;
+                elseif layer == net.numLayers
+                    numWeights = numWeights + net.layers{layer-1}.size * net.outputs{layer}.size + net.outputs{layer}.size;
                 else
-                    numWeights = numWeights + net.layers{k-1}.size * net.outputs{k}.size + net.outputs{k}.size;
+                    numWeights = numWeights + net.layers{layer-1}.size * net.layers{layer}.size + net.layers{layer}.size;
                 end
             end
+            % TODO error if numWeights <= 0, indicates nn configuration
+            % error
         end
         
         function gradient = getGradientByWeight(net, gradVector, weight)
@@ -257,6 +259,47 @@ classdef FeedForward < nnfw.Network
             
             % get gradient
             gradient = gradVector(offset);
+        end
+        
+        function weightVector = getWeightVector(net)
+            weightVector = zeros(net.getNumWeights(),1);
+            offset = 0;
+            for layer = 1:net.numLayers
+                if layer == 1
+                    % layer weights
+                    startDim = offset +1;
+                    endDim = net.inputs{layer}.size * net.layers{layer}.size;
+                    weightVector(startDim:endDim,1) = weightVector(startDim:endDim,1) + net.IW{layer};
+                    offset = endDim;
+                    % bias weights
+                    startDim = offset +1;
+                    endDim = offset + net.layers{layer}.size; 
+                    weightVector(startDim:endDim,1) = weightVector(startDim:endDim,1) + net.b{layer};
+                    offset = endDim;
+                elseif layer == net.numLayers
+                    % layer weights
+                    startDim = offset +1;
+                    endDim = offset + net.layers{layer-1}.size;
+                    weightVector(startDim:endDim,1) = weightVector(startDim:endDim,1) + net.LW{layer}';
+                    offset = endDim;
+                    % bias weights
+                    startDim = offset +1;
+                    endDim = offset + net.outputs{layer}.size;
+                    weightVector(startDim:endDim,1) = weightVector(startDim:endDim,1) + net.b{layer};
+                    offset = endDim;                    
+                else
+                    % layer weights
+                    startDim = offset +1;                    
+                    endDim = offset + net.layers{layer-1}.size * net.layers{layer}.size;
+                    weightVector(startDim:endDim,1) = weightVector(startDim:endDim,1) + net.LW{layer};
+                    offset = endDim;
+                    % bias weights
+                    startDim = offset +1;
+                    endDim = offset + net.layers{layer}.size; 
+                    weightVector(startDim:endDim,1) = weightVector(startDim:endDim,1) + net.b{layer};
+                    offset = endDim;
+                end
+            end
         end
     end
     

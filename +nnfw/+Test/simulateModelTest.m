@@ -1,4 +1,4 @@
-classdef simulateModel < matlab.unittest.TestCase
+classdef simulateModelTest < matlab.unittest.TestCase
     %SIMULATEMODEL Summary of this class goes here
     %   Detailed explanation goes here
     
