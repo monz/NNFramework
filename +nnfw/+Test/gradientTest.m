@@ -7,7 +7,7 @@ classdef gradientTest < matlab.unittest.TestCase
             import matlab.unittest.constraints.IsEqualTo;
             import matlab.unittest.constraints.AbsoluteTolerance;
             % --------------------------------------
-            % init nn-framework
+            % init network, 1-2-1 nn-framework
             % --------------------------------------
             p = 1;
             target = 1 + sin((pi/4)*p);
@@ -25,13 +25,14 @@ classdef gradientTest < matlab.unittest.TestCase
             % --------------------------------------
             % prepare starting weights in numeric calculation
             % --------------------------------------
-            w111 = -0.27; %x // w111
-            w211 = -0.41; %y // w211
-            b11 = -0.48; %z // b11
-            b21 = -0.13; %q // b21
-            w112 = 0.09; %r // w112
-            w122 = -0.17; %s // w122
-            b12 = 0.48; %t // b12
+            weights = net.getWeightVector();
+            w111 = weights(1); %x // w111
+            w211 = weights(2); %y // w211
+            b11 = weights(3); %z // b11
+            b21 = weights(4); %q // b21
+            w112 = weights(5); %r // w112
+            w122 = weights(6); %s // w122
+            b12 = weights(7); %t // b12
             % --------------------------------------
             % prepare gradient matrix
             % --------------------------------------
@@ -53,14 +54,14 @@ classdef gradientTest < matlab.unittest.TestCase
             end
             grad_derivated = sum(grad_derivated, 1);
             
-            tc.assertThat(grad, IsEqualTo(grad_derivated, 'Within', AbsoluteTolerance(eps(grad_derivated))));
+            tc.assertThat(grad, IsEqualTo(grad_derivated, 'Within', AbsoluteTolerance(1e-22)));
         end
         
         function trainQValues(tc)
             import matlab.unittest.constraints.IsEqualTo;
             import matlab.unittest.constraints.AbsoluteTolerance;
             % --------------------------------------
-            % init nn-framework
+            % init network, 1-2-1 nn-framework
             % --------------------------------------
             p = (-2:0.1:2);
             target = 1 + sin((pi/4)*p);
@@ -78,13 +79,14 @@ classdef gradientTest < matlab.unittest.TestCase
             % --------------------------------------
             % prepare starting weights in numeric calculation
             % --------------------------------------
-            w111 = -0.27; %x // w111
-            w211 = -0.41; %y // w211
-            b11 = -0.48; %z // b11
-            b21 = -0.13; %q // b21
-            w112 = 0.09; %r // w112
-            w122 = -0.17; %s // w122
-            b12 = 0.48; %t // b12
+            weights = net.getWeightVector();
+            w111 = weights(1); %x // w111
+            w211 = weights(2); %y // w211
+            b11 = weights(3); %z // b11
+            b21 = weights(4); %q // b21
+            w112 = weights(5); %r // w112
+            w122 = weights(6); %s // w122
+            b12 = weights(7); %t // b12
             % --------------------------------------
             % prepare gradient matrix
             % --------------------------------------
@@ -106,7 +108,7 @@ classdef gradientTest < matlab.unittest.TestCase
             end
             grad_derivated = sum(grad_derivated, 1);
             
-            tc.assertThat(grad, IsEqualTo(grad_derivated, 'Within', AbsoluteTolerance(1e1*eps(grad_derivated))));
+            tc.assertThat(grad, IsEqualTo(grad_derivated, 'Within', AbsoluteTolerance(1e-14)));
         end
 
         function trainVectorValues(tc)
@@ -114,66 +116,65 @@ classdef gradientTest < matlab.unittest.TestCase
             import matlab.unittest.constraints.AbsoluteTolerance;
 
             load bodyfat_dataset
-            
-            % --------------------------------------
-            % init weights
-            % --------------------------------------
-            w1011 = -0.27;
-            w1021 = 0.09;
-            w1031 = -0.13;
-            w1041 = -0.27;
-            w1051 = 0.09;
-            w1061 = -0.13;
-            w1071 = -0.41;
-            w1081 = -0.27;
-            w1091 = 0.09;
-            w1101 = -0.13;
-            w1111 = -0.27;
-            w1121 = 0.09;
-            w1131 = -0.13;
-
-            w2011 = -0.27;
-            w2021 = 0.09;
-            w2031 = -0.13;
-            w2041 = -0.27;
-            w2051 = 0.09;
-            w2061 = -0.13;
-            w2071 = -0.27;
-            w2081 = 0.09;
-            w2091 = -0.13;
-            w2101 = -0.27;
-            w2111 = 0.09;
-            w2121 = -0.13;
-            w2131 = -0.27;
-
-            b11 = 0.09;
-            b21 = -0.13;
-
-            w112 = -0.27;
-            w122 = 0.09;
-            b12 = -0.13;            
 
             % --------------------------------------
-            % init nn-framework
+            % init network, 13-2-1 nn-framework
             % --------------------------------------
             p = bodyfatInputs;
             target = bodyfatTargets;
 
-            IW = [w1011 w1021 w1031 w1041 w1051 w1061 w1071 w1081 w1091 w1101 w1111 w1121 w1131;
-                w2011 w2021 w2031 w2041 w2051 w2061 w2071 w2081 w2091 w2101 w2111 w2121 w2131];
-            LW = [w112 w122];
-            b1 = [b11; b21];
-            b2 = [b12];
-
             net = nnfw.FeedForward(1, 2, 1);
             net.layers{1}.f = nnfw.Util.Activation.LOGSIG;
             net.layers{1}.size = 2;
-            net.IW{1} = IW;
-            net.LW{2,1} = LW;
-            net.b{1,1} = b1;
-            net.b{2,1} = b2;
+            net.configure(p, target);
+            weights = rand(net.getNumWeights(),1);
+            net.setWeights(weights);
+%             net.LW{2,1} = [5.01 5.01];
+%             net.b{2,1} = 7.01;
 
             [~, grad] = net.train(p, target);
+            
+            % --------------------------------------
+            % configure weights
+            % --------------------------------------   
+            weights = net.getWeightVector();
+            w1011 = weights(1);
+            w1021 = weights(2);
+            w1031 = weights(3);
+            w1041 = weights(4);
+            w1051 = weights(5);
+            w1061 = weights(6);
+            w1071 = weights(7);
+            w1081 = weights(8);
+            w1091 = weights(9);
+            w1101 = weights(10);
+            w1111 = weights(11);
+            w1121 = weights(12);
+            w1131 = weights(13);
+
+            w2011 = weights(14);
+            w2021 = weights(15);
+            w2031 = weights(16);
+            w2041 = weights(17);
+            w2051 = weights(18);
+            w2061 = weights(19);
+            w2071 = weights(20);
+            w2081 = weights(21);
+            w2091 = weights(22);
+            w2101 = weights(23);
+            w2111 = weights(24);
+            w2121 = weights(25);
+            w2131 = weights(26);
+
+            b11 = weights(27);
+            b21 = weights(28);
+
+            w112 = weights(29);
+            w122 = weights(30);
+%             w112 = 5.01;
+%             w122 = 5.01;
+            b12 = weights(31); 
+%             b12 = 7.01; 
             
             grad_derivated = zeros(length(p), net.getNumWeights());
 

@@ -100,7 +100,7 @@ classdef networkUtilTest < matlab.unittest.TestCase
             net.b{1,1} = expected(4:6);
             net.LW{2,1} = expected(7:12);
             net.b{2,1} = expected(13:14);
-            net.LW{3,1} = expected(15:16)';
+            net.LW{3,2} = expected(15:16)';
             net.b{3,1} = expected(17);
 
             tc.assertEqual(net.getWeightVector(), expected);
@@ -148,9 +148,9 @@ classdef networkUtilTest < matlab.unittest.TestCase
             % assert LW{2} dimensions first
             S_1 = net.layers{1}.size;
             S_2 = net.outputs{2}.size;
-            tc.assertEqual(size(net.LW{2}), [S_2 S_1]);
+            tc.assertEqual(size(net.LW{2,1}), [S_2 S_1]);
             % assert LW{2} weights
-            tc.assertEqual(net.LW{2}, weights(29:30,1)');
+            tc.assertEqual(net.LW{2,1}, weights(29:30,1)');
             tc.assertEqual(net.b{2}, weights(31));
         end
         
@@ -178,18 +178,18 @@ classdef networkUtilTest < matlab.unittest.TestCase
             % assert LW{2} dimensions first
             S_1 = net.layers{1}.size;
             S_2 = net.layers{2}.size;
-            tc.assertEqual(size(net.LW{2}), [S_2 S_1]);
+            tc.assertEqual(size(net.LW{2,1}), [S_2 S_1]);
             % assert LW{2} weights
-            tc.assertEqual(net.LW{2}(1,:), weights(7:9,1)');
-            tc.assertEqual(net.LW{2}(2,:), weights(10:12,1)');
+            tc.assertEqual(net.LW{2,1}(1,:), weights(7:9,1)');
+            tc.assertEqual(net.LW{2,1}(2,:), weights(10:12,1)');
             tc.assertEqual(net.b{2}, weights(13:14));
             
             % assert LW{3} dimensions first
             S_2 = net.layers{2}.size;
             S_3 = net.outputs{3}.size;
-            tc.assertEqual(size(net.LW{3}), [S_3 S_2]);
+            tc.assertEqual(size(net.LW{3,2}), [S_3 S_2]);
             % assert LW{3} weights
-            tc.assertEqual(net.LW{3}, weights(15:16,1)');
+            tc.assertEqual(net.LW{3,2}, weights(15:16,1)');
             tc.assertEqual(net.b{3}, weights(17));
         end
     end

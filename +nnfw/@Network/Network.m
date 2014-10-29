@@ -65,13 +65,11 @@ classdef (Abstract) Network < handle
 
                 % calculate cost function
                 Q = length(input); % number of training samples
-%                 E = zeros(1, Q);
                 E = 0;
                 s_M = zeros(1, Q);
                 gradients = zeros(1, net.getNumWeights());
                 for q = 1:Q
                     % cost function
-%                     E(q) = fcn(y(q), target(:, q));
                     E = E + fcn(y(q), target(:, q));
 
                     % calculate sensitivity of last layer

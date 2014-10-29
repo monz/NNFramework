@@ -288,7 +288,7 @@ classdef FeedForward < nnfw.Network
                     % layer weights
                     startDim = offset +1;
                     endDim = offset + net.layers{layer-1}.size;
-                    weightVector(startDim:endDim,1) = weightVector(startDim:endDim,1) + net.LW{layer}(:);
+                    weightVector(startDim:endDim,1) = weightVector(startDim:endDim,1) + net.LW{layer,layer-1}(:);
                     offset = endDim;
                     % bias weights
                     startDim = offset +1;
@@ -299,7 +299,7 @@ classdef FeedForward < nnfw.Network
                     % layer weights
                     startDim = offset +1;                    
                     endDim = offset + net.layers{layer-1}.size * net.layers{layer}.size;
-                    weightVector(startDim:endDim,1) = weightVector(startDim:endDim,1) + net.LW{layer}(:);
+                    weightVector(startDim:endDim,1) = weightVector(startDim:endDim,1) + net.LW{layer,layer-1}(:);
                     offset = endDim;
                     % bias weights
                     startDim = offset +1;
@@ -335,7 +335,7 @@ classdef FeedForward < nnfw.Network
                     % layer weights
                     startDim = offset +1;
                     endDim = offset + net.layers{layer-1}.size;
-                    net.LW{layer} = weights(startDim:endDim,1)';
+                    net.LW{layer,layer-1} = weights(startDim:endDim,1)';
                     offset = endDim;
                     % bias weights
                     startDim = offset +1;
@@ -346,11 +346,11 @@ classdef FeedForward < nnfw.Network
                     % layer weights
                     S_n = net.layers{layer-1}.size; % S_n = size of layer before current layer
                     S_m = net.layers{layer}.size; % S_m = size of current layer
-                    net.LW{layer} = zeros(S_m, S_n);                    
+                    net.LW{layer,layer-1} = zeros(S_m, S_n);                    
                     for k = 1:S_m
                         startDim = offset + 1;
                         endDim = offset + S_n;
-                        % set weights in k-th row of input weights matrix
+                        % set weights in k-th row of weights matrix
                         % of layer-th layer
                         net.LW{layer}(k,:) = weights(startDim:endDim,1);
                         offset = endDim;
