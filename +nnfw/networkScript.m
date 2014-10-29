@@ -8,8 +8,8 @@ clc;
 % load house_dataset;
 % load simplefit_dataset;
 load bodyfat_dataset;
-% p = (-2:.1:2);
-% t = cos(pi*p/2);
+p = (-2:.1:2);
+t = cos(pi*p/2);
 % 
 % p = houseInputs;
 % t = houseTargets;
@@ -17,8 +17,8 @@ load bodyfat_dataset;
 % p = simplefitInputs;
 % t = simplefitTargets;
 
-p = bodyfatInputs;
-t = bodyfatTargets;
+% p = bodyfatInputs;
+% t = bodyfatTargets;
 
 
 % --------------------------------------
@@ -41,7 +41,7 @@ toolbox = net1(p);
 net = nnfw.FeedForward(1, 2, 1);
 % net.layers{1}.f = @logsig;
 % net.layers{1}.f = nnfw.Util.Activation.LOGSIG;
-net.layers{2}.size = 10; % set layer 2 numOfNeurons to 10
+% net.layers{2}.size = 10; % set layer 2 numOfNeurons to 10
 net.IW{1} = net1.IW{1};
 net.LW{2,1} = net1.LW{2,1};
 % net.LW{3,2} = net1.LW{3,2};

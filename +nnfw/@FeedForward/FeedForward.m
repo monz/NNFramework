@@ -42,77 +42,21 @@ classdef FeedForward < nnfw.Network
             costFcn = net.makeCostFcn(@nnfw.Util.mse, input, target);
             
             options = optimoptions('fminunc','GradObj','on', 'PlotFcns', {@optimplotfval, @optimplotstepsize}, 'MaxFunEvals', 30);
-            [x,y,exitFlag,output] = fminunc(costFcn,net.getWeightVector(),options);
-            
+            [x,y,exitFlag,output,g] = fminunc(costFcn,net.getWeightVector(),options);
+            g = g';
             % set network weights found by optimization function
             net.setWeights(x);
             
             % forward propagate with current weights
             % neuron outputs needed for backpropagation will be stored in a
-            [y, a] = simulate(net, input);
+            [y, ~] = simulate(net, input);
             
             % calculate cost function
             Q = length(input); % number of training samples
-            E = zeros(1, Q);
-            s_M = zeros(1, Q);
-            g = zeros(1, net.getNumWeights());
+            E = 0;
             for q = 1:Q
                 % cost function
-                E(q) = nnfw.Util.mse(y(q), target(:, q));
-
-                % calculate sensitivity of last layer
-                bpFunction = net.outputs{net.numLayers}.f.backprop;
-                s_M(q) = -2 * bpFunction(a{q, net.numLayers}) * (target(:, q) - y(q));
-
-                % calculate remaining sensitivities
-                % backward M-1, ..., 2, 1
-                s_m = cell(Q, net.numLayers-1);
-                for layer = net.numLayers-1:-1:1
-                    bpFunction = net.layers{layer}.f.backprop;
-
-                    % create derivated values matrix F_m
-                    F_m = cell(Q, net.layers{layer}.size);
-                    for j = 1:net.layers{layer}.size
-                        % diag creates a matrix with the values on the diagonal
-                        % all other elements remain zero
-                        F_m{q, j} = diag(bpFunction(a{q, layer}(j,1)));
-                    end
-                    % sensitivities
-                    if ( layer == net.numLayers-1 )
-                        s_m{q, layer} = F_m{q, layer} * net.LW{layer+1, layer}' * s_M(q);
-                    else
-                        s_m{q, layer} = F_m{q, layer} * net.LW{layer+1, layer}' * s_m{q, layer+1};
-                    end
-                end
-
-                % calculate gradients
-                offset = 0;
-                for layer = 1:net.numLayers 
-                    if ( layer == 1 )
-                        grads = s_m{q, layer} * input(:, q)';
-                        bgrads = s_m{q, layer};
-                    elseif (layer == net.numLayers)
-                        grads = s_M(q) * a{q, layer-1}';
-                        bgrads = s_M(q);
-                    else
-                        grads = s_m{q, layer} * a{q, layer-1}';
-                        bgrads = s_m{q, layer};
-                    end
-                    % prepare gradients to be saved in a vector
-                    grads = grads(:)';
-                    bgrads = bgrads(:)';
-                    % save gradients to the comprehensive gradient vector g
-                    % gradients of weights
-                    startDim = offset+1;
-                    endDim = offset+length(grads);
-                    g(1,startDim:endDim) = g(1,startDim:endDim) + grads;                
-                    offset = endDim;
-                    % gradients of biases
-                    startDim = offset+1;
-                    endDim = offset + length(bgrads);
-                    g(1,startDim:endDim) = g(1,startDim:endDim) + bgrads;                
-                    offset = endDim;                
-                end
+                E = E + nnfw.Util.mse(y(q), target(:, q));
             end
         end
         

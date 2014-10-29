@@ -83,17 +83,14 @@ classdef (Abstract) Network < handle
                         bpFunction = net.layers{layer}.f.backprop;
 
                         % create derivated values matrix F_m
-                        F_m = cell(Q, net.layers{layer}.size);
-                        for j = 1:net.layers{layer}.size
-                            % diag creates a matrix with the values on the diagonal
-                            % all other elements remain zero
-                            F_m{q, j} = diag(bpFunction(a{q, layer}(j,1)));
-                        end
+                        % diag creates a matrix with the values on the diagonal
+                        % all other elements remain zero
+                        F_m = diag(bpFunction(a{q, layer}));
                         % sensitivities
                         if ( layer == net.numLayers-1 )
-                            s_m{q, layer} = F_m{q, layer} * net.LW{layer+1, layer}' * s_M(q);
+                            s_m{q, layer} = F_m * net.LW{layer+1, layer}' * s_M(q);
                         else
-                            s_m{q, layer} = F_m{q, layer} * net.LW{layer+1, layer}' * s_m{q, layer+1};
+                            s_m{q, layer} = F_m * net.LW{layer+1, layer}' * s_m{q, layer+1};
                         end
                     end
 
