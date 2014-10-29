@@ -120,7 +120,7 @@ classdef networkUtilTest < matlab.unittest.TestCase
             
             tc.assertEqual(net.IW{1}, weights(1:2,1));
             tc.assertEqual(net.b{1}, weights(3:4,1));
-            tc.assertEqual(net.LW{2}, weights(5:6,1)');
+            tc.assertEqual(net.LW{2,1}, weights(5:6,1)');
             tc.assertEqual(net.b{2}, weights(7:7,1));
         end
         

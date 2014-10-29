@@ -87,13 +87,13 @@ classdef (Abstract) Network < handle
                         for j = 1:net.layers{layer}.size
                             % diag creates a matrix with the values on the diagonal
                             % all other elements remain zero
-                            F_m{q, j} = diag(bpFunction(a{q, j}));
+                            F_m{q, j} = diag(bpFunction(a{q, layer}(j,1)));
                         end
                         % sensitivities
                         if ( layer == net.numLayers-1 )
-                            s_m{q, layer} = F_m{q, layer} * net.LW{layer+1}' * s_M(q);
+                            s_m{q, layer} = F_m{q, layer} * net.LW{layer+1, layer}' * s_M(q);
                         else
-                            s_m{q, layer} = F_m{q, layer} * net.LW{layer+1}' * s_m{q, layer+1};
+                            s_m{q, layer} = F_m{q, layer} * net.LW{layer+1, layer}' * s_m{q, layer+1};
                         end
                     end
 
