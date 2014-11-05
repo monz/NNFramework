@@ -74,7 +74,7 @@ classdef (Abstract) Network < handle
 
                     % calculate sensitivity of last layer
                     bpFunction = net.outputs{net.numLayers}.f.backprop;
-                    s_M(q) = -2 * bpFunction(a{q, net.numLayers}) * (target(:, q) - y(q));
+                    s_M(q) = -2 * diag(bpFunction(a{q, net.numLayers})) * (target(:, q) - y(q));
 
                     % calculate remaining sensitivities
                     % backward M-1, ..., 2, 1

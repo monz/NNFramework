@@ -106,6 +106,31 @@ classdef networkUtilTest < matlab.unittest.TestCase
             tc.assertEqual(net.getWeightVector(), expected);
         end
         
+        function getWeightVectorTest_04(tc)
+            % --------------------------------------
+            % init network, 1-3-2-2-1 nn framework
+            % --------------------------------------
+            net = nnfw.FeedForward(1,4,1);
+            net.inputs{1}.size = 1;
+            net.layers{1}.size = 3;
+            net.layers{2}.size = 2;
+            net.layers{3}.size = 2;
+            net.outputs{4}.size = 1;
+            
+            expected = rand(23,1);
+            
+            net.IW{1} = expected(1:3);
+            net.b{1,1} = expected(4:6);
+            net.LW{2,1} = expected(7:12);
+            net.b{2,1} = expected(13:14);
+            net.LW{3,2} = expected(15:18);
+            net.b{3,1} = expected(19:20);
+            net.LW{4,3} = expected(21:22)';
+            net.b{4,1} = expected(23);
+
+            tc.assertEqual(net.getWeightVector(), expected);
+        end
+        
         function setWeights_01(tc)
             % --------------------------------------
             % init network, 1-2-1 nn framework

@@ -24,7 +24,7 @@ classdef FeedForward < nnfw.Network
                         p = a{q, layer-1};
                         transf = net.outputs{net.numLayers}.f.f;
                     else % hidden layer
-                        LW = net.LW{layer,1};
+                        LW = net.LW{layer,layer-1};
                         p = a{q, layer-1};
                         transf = net.layers{layer}.f.f;
                     end
