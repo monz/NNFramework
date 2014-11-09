@@ -2,11 +2,25 @@ function [E, g] = train(net, input, target)
     % configure network layer sizes
     configure(net, input, target);
 
-    costFcn = net.makeCostFcn(@nnfw.Util.mse, input, target);
+    % ------------------
+    % fminunc
+    % ------------------
+%     costFcn = net.makeCostFcn(@nnfw.Util.mse, input, target);
+% 
+%     options = optimoptions('fminunc','GradObj','on', 'PlotFcns', {@optimplotfval, @optimplotstepsize}, 'MaxFunEvals', 30);
+%     [x,y,exitFlag,output,g] = fminunc(costFcn,net.getWeightVector(),options);
+%     g = g';
 
-    options = optimoptions('fminunc','GradObj','on', 'PlotFcns', {@optimplotfval, @optimplotstepsize}, 'MaxFunEvals', 30);
-    [x,y,exitFlag,output,g] = fminunc(costFcn,net.getWeightVector(),options);
-    g = g';
+    % ------------------
+    % lsqnonlin
+    % ------------------
+    g = 0; % TODO replace with gradient
+    costFcn = net.makeCostFcn2(@nnfw.Util.mse, input, target);
+    
+%     options = optimoptions('lsqnonlin', 'PlotFcns', {@optimplotfval, @optimplotstepsize, @optimplotx, @optimplotfirstorderopt});
+    options = optimoptions('lsqnonlin', 'PlotFcns', {@optimplotfval, @optimplotstepsize, @optimplotx, @optimplotfirstorderopt}, 'MaxIter', 30);
+    [x] = lsqnonlin(costFcn,net.getWeightVector(), [], [], options);
+    
     % set network weights found by optimization function
     net.setWeights(x);
 

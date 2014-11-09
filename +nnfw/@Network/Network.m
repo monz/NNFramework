@@ -3,6 +3,9 @@ classdef (Abstract) Network < handle
     %   Detailed explanation goes here
     
     properties
+        minmaxInputSettings;
+        minmaxTargetSettings;
+        
         numInputs = 0 % total number of network input vectors
         numLayers = 0 % number of network hidden layers
         numOutputs = 0 % total number of network output vectors

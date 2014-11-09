@@ -18,7 +18,7 @@ function costFcn = makeCostFcn2(net, fcn, input, target)
 %         gradients = zeros(1, net.getNumWeights());
         for q = 1:Q
             % cost function
-            F = fcn(y(q), target(:, q));
+            F(q) = fcn(y(q), target(:, q));
 
 %             % calculate sensitivity of last layer
 %             bpFunction = net.outputs{net.numLayers}.f.backprop;
