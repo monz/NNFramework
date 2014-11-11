@@ -23,6 +23,7 @@ classdef Activation
        TANH (@tanh, @nnfw.Util.tanhBackprop)
        LOGSIG (@nnfw.Util.logsig, @nnfw.Util.logsigBackprop)
        PURELIN (@nnfw.Util.linear, @nnfw.Util.linearBackprop)
+       QUAD (@nnfw.Util.quadratic, @nnfw.Util.quadraticBackprop)
     end
     
 end

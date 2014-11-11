@@ -18,7 +18,7 @@ function [E, g] = train(net, input, target)
     costFcn = net.makeCostFcn2(@nnfw.Util.mse, input, target);
     
 %     options = optimoptions('lsqnonlin', 'PlotFcns', {@optimplotfval, @optimplotstepsize, @optimplotx, @optimplotfirstorderopt});
-    options = optimoptions('lsqnonlin', 'PlotFcns', {@optimplotfval, @optimplotstepsize, @optimplotx, @optimplotfirstorderopt}, 'MaxIter', 30);
+    options = optimoptions('lsqnonlin', 'Jacobian','on', 'PlotFcns', {@optimplotfval, @optimplotstepsize, @optimplotx, @optimplotfirstorderopt}, 'MaxIter', 30);
     [x] = lsqnonlin(costFcn,net.getWeightVector(), [], [], options);
     
     % set network weights found by optimization function
