@@ -9,7 +9,6 @@ function costFcn = makeCostFcn2(net, fcn, input, target)
         % forward propagate with current weights
         % neuron outputs needed for backpropagation will be stored in a
         [y, a] = simulate(net, input);
-%         [y, ~] = simulate(net, input);
 
         % calculate cost function
         Q = length(input); % number of training samples
@@ -31,7 +30,6 @@ function costFcn = makeCostFcn2(net, fcn, input, target)
 
                 % calculate remaining marquardt sensitivities
                 % backward M-1, ..., 2, 1
-    %             s_m = cell(Q, net.numLayers-1); % TODO refactor dimensions, for multiple output neurons
                 for layer = net.numLayers-1:-1:1
                     bpFunction = net.layers{layer}.f.backprop;
 
@@ -51,28 +49,29 @@ function costFcn = makeCostFcn2(net, fcn, input, target)
                 offset = 0;
                 for layer = 1:net.numLayers 
                     if ( layer == 1 )
-                        grads = s_m{q, layer} * input(:, q)';
-                        bgrads = s_m{q, layer};
+                        jEntriesWeights = s_m{q, layer} * input(:, q)';
+                        jEntriesBias = s_m{q, layer};
                     elseif ( layer == net.numLayers )
-                        grads = s_M(q) * a{q, layer-1}';
-                        bgrads = s_M(q);
+                        jEntriesWeights = s_M(q) * a{q, layer-1}';
+                        jEntriesBias = s_M(q);
                     else
-                        grads = s_m{q, layer} * a{q, layer-1}';
-                        bgrads = s_m{q, layer};
+                        jEntriesWeights = s_m{q, layer} * a{q, layer-1}';
+                        jEntriesBias = s_m{q, layer};
                     end
-                    % prepare gradients to be saved in a vector
-                    grads = grads(:)';
-                    bgrads = bgrads(:)';
-                    % save gradients to the comprehensive gradient vector g
-                    % gradients of weights
+                    % prepare jacobian entries to be saved in a row of
+                    % jacobian matrix
+                    jEntriesWeights = jEntriesWeights(:)'; % error derived at weights
+                    jEntriesBias = jEntriesBias(:)'; % error derived at bias
+                    % save jacobian entries to the q-th jacobian matrix row
+                    % jEntries of weights
                     startDim = offset+1;
-                    endDim = offset+length(grads);
-                    J(q,startDim:endDim) = J(q,startDim:endDim) + grads;                
+                    endDim = offset+length(jEntriesWeights);
+                    J(q,startDim:endDim) = J(q,startDim:endDim) + jEntriesWeights;                
                     offset = endDim;
-                    % gradients of biases
+                    % jEntries of biases
                     startDim = offset+1;
-                    endDim = offset + length(bgrads);
-                    J(q,startDim:endDim) = J(q,startDim:endDim) + bgrads;                
+                    endDim = offset + length(jEntriesBias);
+                    J(q,startDim:endDim) = J(q,startDim:endDim) + jEntriesBias;                
                     offset = endDim;                
                 end 
             end

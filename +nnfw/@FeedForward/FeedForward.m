@@ -29,7 +29,7 @@ classdef FeedForward < nnfw.Network
         
         [y, a] = simulate(net, input)
         
-        [E, g] = train(net, input, target)
+        [E, g, output, lambda, jacobian] = train(net, input, target)
         
         configure(net, varargin)
         

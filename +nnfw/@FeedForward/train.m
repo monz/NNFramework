@@ -1,4 +1,4 @@
-function [E, g] = train(net, input, target)
+function [E, g, output, lambda, jacobian] = train(net, input, target)
     % configure network layer sizes
     configure(net, input, target);
 
@@ -18,8 +18,11 @@ function [E, g] = train(net, input, target)
     costFcn = net.makeCostFcn2(@nnfw.Util.mse, input, target);
     
 %     options = optimoptions('lsqnonlin', 'PlotFcns', {@optimplotfval, @optimplotstepsize, @optimplotx, @optimplotfirstorderopt});
-    options = optimoptions('lsqnonlin', 'Jacobian','on', 'PlotFcns', {@optimplotfval, @optimplotstepsize, @optimplotx, @optimplotfirstorderopt}, 'MaxIter', 30);
-    [x] = lsqnonlin(costFcn,net.getWeightVector(), [], [], options);
+%     options = optimoptions('lsqnonlin', 'Jacobian','on', 'PlotFcns', {@optimplotfval, @optimplotstepsize, @optimplotx, @optimplotfirstorderopt}, 'MaxIter', 30);
+%     options = optimoptions('lsqnonlin', 'JacobMult','on','PlotFcns', {@optimplotfval, @optimplotstepsize, @optimplotx, @optimplotfirstorderopt});
+%     options = optimoptions('lsqnonlin', 'Algorithm', 'levenberg-marquardt', 'Jacobian','on','PlotFcns', {@optimplotfval, @optimplotstepsize, @optimplotx, @optimplotfirstorderopt});
+    options = optimoptions('lsqnonlin', 'Algorithm', 'trust-region-reflective', 'Jacobian','on','PlotFcns', {@optimplotfval, @optimplotstepsize, @optimplotx, @optimplotfirstorderopt});
+    [x, ~, ~, ~, output, lambda, jacobian] = lsqnonlin(costFcn,net.getWeightVector(), [], [], options);
     
     % set network weights found by optimization function
     net.setWeights(x);

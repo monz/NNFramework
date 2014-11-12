@@ -9,8 +9,8 @@ clc;
 % load simplefit_dataset;
 load bodyfat_dataset;
 % p = (-2:.1:2);
-% p = (-5:.1:5);
-% t = cos(pi*p/2);
+p = (-5:.1:5);
+t = cos(pi*p/2);
 % 
 % p = houseInputs;
 % t = houseTargets;
@@ -20,12 +20,6 @@ load bodyfat_dataset;
 
 % p = bodyfatInputs;
 % t = bodyfatTargets;
-
-% p = [1 2];
-% t = [1 2];
-
-p = [1 2];
-t = [0.5 1];
 
 % --------------------------------------
 % init/train nn-toolbox
@@ -44,39 +38,47 @@ t = [0.5 1];
 % --------------------------------------
 % init nn-framework
 % --------------------------------------
-% net = nnfw.FeedForward(1, 2, 1);
-% net.configure(p,t);
-% % net.layers{1}.f = nnfw.Util.Activation.LOGSIG;
-% % net.layers{1}.size = 30; % set layer 1 numOfNeurons to 10
-% % net.layers{2}.size = 10; % set layer 1 numOfNeurons to 10
-% weights = rand(net.getNumWeights(),1);
-% net.setWeights(weights);
-
-% --------------------------------------
-% init nn-framework simple jacobian test
-% --------------------------------------
 net = nnfw.FeedForward(1, 2, 1);
 net.configure(p,t);
-% net.layers{1}.f = nnfw.Util.Activation.QUAD;
-net.layers{1}.size = 2; % set layer 1 numOfNeurons to 10
-weights = [1 2 1 0 0.5 1 0]';
+% net.layers{1}.f = nnfw.Util.Activation.LOGSIG;
+net.layers{1}.size = 30;
+% net.layers{2}.size = 10; % set layer 1 numOfNeurons to 10
+weights = rand(net.getNumWeights(),1);
 net.setWeights(weights);
-in = p;
-tn = t;
 
 % --------------------------------------
 % prepare input/target
 % --------------------------------------
-% [in,net.minmaxInputSettings] = nnfw.Util.minmaxMapping(p);
-% [tn,net.minmaxTargetSettings] = nnfw.Util.minmaxMapping(t);
+[in,net.minmaxInputSettings] = nnfw.Util.minmaxMapping(p);
+[tn,net.minmaxTargetSettings] = nnfw.Util.minmaxMapping(t);
 
 % --------------------------------------
 % train network
 % --------------------------------------
 % ba = zeros(1,length(in));
-net.train(in,tn);
-% ba = nnfw.Util.minmaxMappingRevert(net.simulate(in), net.minmaxTargetSettings);
-ba = net.simulate(in);
+% E = 1;
+% EMin = 1e16;
+% count = 100;
+% weightsRand = rand(net.getNumWeights(),count);
+% weightsMin = zeros(net.getNumWeights(),1);
+% mu = 0.3;
+% while E > 0 && count > 0
+    [E, ~, output, lambda, jacobian] = net.train(in,tn);
+%     E
+%     if E < EMin
+%        EMin = E;
+%        weightsMin = net.getWeightVector();
+%     end
+%     weights = weightsMin;
+%     weights = weights - mu*rand(net.getNumWeights(),1);
+% %     weights = weightsRand(:,count);
+%     net.setWeights(weights);
+%     count = count-1
+% end
+% net.setWeights(weightsMin);
+% EMin
+ba = nnfw.Util.minmaxMappingRevert(net.simulate(in), net.minmaxTargetSettings);
+% ba = net.simulate(in);
 
 % --------------------------------------
 % goodness of fit
@@ -84,8 +86,8 @@ ba = net.simulate(in);
 % nnfw.goodnessOfFit(toolbox, t, 'mse')
 % nnfw.Util.CostFunction.MSE.f(toolbox, t)
 
-nnfw.goodnessOfFit(ba, t, 'mse')
-nnfw.Util.CostFunction.MSE.f(ba, t)
+% nnfw.goodnessOfFit(ba, t, 'mse')
+% nnfw.Util.CostFunction.MSE.f(ba, t)
 
 % nnfw.goodnessOfFit(ba, toolbox, 'mse')
 % nnfw.Util.CostFunction.MSE.f(ba, toolbox)
