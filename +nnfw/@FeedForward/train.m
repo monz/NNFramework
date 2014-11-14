@@ -1,6 +1,10 @@
 function [E, g, output, lambda, jacobian] = train(net, input, target)
     % configure network layer sizes
-    configure(net, input, target);
+%     configure(net, input, target);
+    % scale input/target values to prevent satturation of activation 
+    % function in layer one
+    in = nnfw.Util.minmaxMappingApply(input, net.minmaxInputSettings);
+    tn = nnfw.Util.minmaxMappingApply(target, net.minmaxTargetSettings);
     
     % ------------------
     % separate input data into train, validate, test data
@@ -20,7 +24,8 @@ function [E, g, output, lambda, jacobian] = train(net, input, target)
     % lsqnonlin
     % ------------------
     g = 0; % TODO replace with gradient
-    costFcn = net.makeCostFcn2(@nnfw.Util.mse, input, target);
+%     costFcn = net.makeCostFcn2(@nnfw.Util.mse, input, target);
+    costFcn = net.makeCostFcn2(@nnfw.Util.componentError, in, tn);
     
 %     options = optimoptions('lsqnonlin', 'PlotFcns', {@optimplotfval, @optimplotstepsize, @optimplotx, @optimplotfirstorderopt});
 %     options = optimoptions('lsqnonlin', 'Jacobian','on', 'PlotFcns', {@optimplotfval, @optimplotstepsize, @optimplotx, @optimplotfirstorderopt}, 'MaxIter', 30);
@@ -34,13 +39,13 @@ function [E, g, output, lambda, jacobian] = train(net, input, target)
 
     % forward propagate with current weights
     % neuron outputs needed for backpropagation will be stored in a
-    [y, ~] = simulate(net, input);
+    [y, ~] = simulate(net, in, false);
 
     % calculate cost function
-    Q = length(input); % number of training samples
+    Q = length(in); % number of training samples
     E = 0;
     for q = 1:Q
         % cost function
-        E = E + nnfw.Util.mse(y(q), target(:, q));
+        E = E + nnfw.Util.mse(y(q), tn(:, q));
     end
 end

@@ -27,7 +27,7 @@ classdef FeedForward < nnfw.Network
             end
         end
         
-        [y, a] = simulate(net, input)
+        [y, a] = simulate(net, varargin)
         
         [E, g, output, lambda, jacobian] = train(net, input, target)
         

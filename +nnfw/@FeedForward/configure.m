@@ -12,6 +12,9 @@ function configure(net, varargin)
         % define network dimensions
         % -------------------------------------
         input = varargin{1};
+        % extract min/max value information from input data
+        [~,net.minmaxInputSettings] = nnfw.Util.minmaxMapping(input);
+        % for further use convert input to cell array
         if ~iscell(input)
             input = {input};
         end
@@ -33,6 +36,9 @@ function configure(net, varargin)
 %             end
 
         output = varargin{2};
+        % extract min/max value information from target data
+        [~,net.minmaxTargetSettings] = nnfw.Util.minmaxMapping(output);
+        % for further use convert output to cell array
         if ~iscell(output)
             output = {output};
         end

@@ -1,4 +1,21 @@
-function [y, a] = simulate(net, input)
+function [y, a] = simulate(net, varargin)
+
+    if nargin == 2
+        applyValueMapping = true;
+    elseif nargin == 3
+        applyValueMapping = varargin{2};
+    else
+        error('invalid argument count');
+    end
+    
+    % scale input/target values to prevent satturation of activation 
+    % function in layer one
+    if applyValueMapping
+        input = nnfw.Util.minmaxMappingApply(varargin{1}, net.minmaxInputSettings);
+    else
+        input = varargin{1};
+    end
+    
     % -------------------------------------
     % feed forward
     % -------------------------------------
@@ -22,7 +39,10 @@ function [y, a] = simulate(net, input)
             end
             a{q, layer} = transf( LW*p + net.b{layer} );
         end
-
-        y(q) = a{q,net.numLayers};
+        if applyValueMapping
+            y(q) = nnfw.Util.minmaxMappingRevert(a{q,net.numLayers}, net.minmaxTargetSettings);
+        else
+            y(q) = a{q,net.numLayers};
+        end
     end
 end

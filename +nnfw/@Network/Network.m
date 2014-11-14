@@ -32,7 +32,7 @@ classdef (Abstract) Network < handle
     
     methods (Abstract)
         configure(obj, varargin);
-        simulate(obj, input);
+        simulate(obj, varargin);
         train(obj, input, target);
         getNumWeights(obj);
         getGradientByWeight(obj, gradVector, weight);

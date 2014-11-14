@@ -53,12 +53,6 @@ function [ output, settings ] = minmaxMapping( input, varargin )
     settings.gain = gain;
     settings.inOffset = inOffset;
 
-    if settings.no_change
-      output = input;
-      return;
-    end
-
-    output = bsxfun(@minus,input,settings.inOffset);
-    output = bsxfun(@times,output,settings.gain);
-    output = bsxfun(@plus,output,settings.outMin);
+    
+    output = nnfw.Util.minmaxMappingApply(input, settings);
 end

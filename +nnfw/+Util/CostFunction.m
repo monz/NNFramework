@@ -16,6 +16,7 @@ classdef CostFunction
        MSE(@nnfw.Util.mse);
        NRMSE(@nnfw.Util.nrmse);
        NMSE(@nnfw.Util.nmse);
+       COMPONENTERROR(@nnfw.Util.componentError);
     end
 end
 
