@@ -9,7 +9,7 @@ classdef simulateModelTest < matlab.unittest.TestCase
             % --------------------------------------
             % init network, nn framework
             % --------------------------------------
-            net = nnfw.FeedForward(1, 2, 1);
+            net = nnfw.FeedForward(2);
             net.IW{1} = [4.79265243547722;2.87374463693854;5.45308948020087;3.61749952554459;4.07605335110360;-4.38424970883532;-4.42917231892635;-3.11689441072215;3.69111054954978;-3.80346312430950];
             net.LW{2,1} = [0.445555269425985 -0.379802619908990 -0.160384913949304 -0.347007891028324 -0.147386402457643 -0.143665432461282 -0.200762924163457 -0.448144004535699 0.229483724642114 -0.295794869162931];
             net.b{1,1} = [-15.1518691289605;-4.16215426299049;-5.97660483017683;-2.71632130192552;-1.46844023089440;-1.50949649719622;-2.97761917385354;-3.34264102648195;5.62903784799786;-15.5936580447774];
@@ -21,7 +21,7 @@ classdef simulateModelTest < matlab.unittest.TestCase
             
             Q = length(target);
             for q = 1:Q
-              tc.assertThat(net.simulate(p(q)), IsEqualTo(target(q), 'Within', AbsoluteTolerance(1e4*eps(target(q)))));
+              tc.assertThat(net.simulate(p(q), false), IsEqualTo(target(q), 'Within', AbsoluteTolerance(1e4*eps(target(q)))));
             end
         end
     end

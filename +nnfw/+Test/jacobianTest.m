@@ -10,10 +10,9 @@ classdef jacobianTest < matlab.unittest.TestCase
             % --------------------------------------
             % init nn-framework simple jacobian test
             % --------------------------------------
-            net = nnfw.FeedForward(1, 2, 1);
+            net = nnfw.FeedForward(1);
             net.configure(p,t);
             net.layers{1}.f = nnfw.Util.Activation.QUAD;
-            net.layers{1}.size = 1;
             weights = [1 0 2 1]';
             net.setWeights(weights);
             
@@ -35,9 +34,8 @@ classdef jacobianTest < matlab.unittest.TestCase
             % --------------------------------------
             % init nn-framework simple jacobian test
             % --------------------------------------
-            net = nnfw.FeedForward(1, 2, 1);
+            net = nnfw.FeedForward(2);
             net.configure(p,t);
-            net.layers{1}.size = 2;
             weights = [1 2 1 0 0.5 1 0]';
             net.setWeights(weights);
             

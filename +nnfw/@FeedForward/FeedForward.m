@@ -6,23 +6,25 @@ classdef FeedForward < nnfw.Network
     end
     
     methods
-        function net = FeedForward(numInputs, numLayers, numOutputs)
-            net.initNetwork(numInputs, numLayers, numOutputs);
+        function net = FeedForward(hiddenLayerSizes)
+            net.initNetwork(hiddenLayerSizes);
             
             % -------------------------------------
             % define feedforward layer connections
             % -------------------------------------
-            net.biasConnect = ones(1, numLayers);
+            net.biasConnect = ones(1, net.numLayers);
             
-            net.inputConnect = zeros(1, numLayers);
+            net.inputConnect = zeros(1, net.numLayers);
             net.inputConnect(1) = 1; % input connects to layer 1 (inputConnect(layer))
+            net.numInputs = sum(net.inputConnect);
             
-            net.outputConnect = zeros(1, numLayers);
-            net.outputConnect(numLayers) = 1; % last layer is set to output layer
+            net.outputConnect = zeros(1, net.numLayers);
+            net.outputConnect(net.numLayers) = 1; % last layer is set to output layer
+            net.numOutputs = sum(net.outputConnect);
             
-            net.layerConnect = zeros(numLayers);
+            net.layerConnect = zeros(net.numLayers);
             % connect each layer to its fellow layer (feedforward)
-            for k = 2:numLayers
+            for k = 2:net.numLayers
                 net.layerConnect(k, k-1) = 1; % row = destination layer; column = source layer
             end
         end

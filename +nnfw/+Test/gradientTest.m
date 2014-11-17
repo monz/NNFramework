@@ -12,9 +12,8 @@ classdef gradientTest < matlab.unittest.TestCase
             p = 1;
             target = 1 + sin((pi/4)*p);
 
-            net = nnfw.FeedForward(1, 2, 1);
+            net = nnfw.FeedForward(2);
             net.layers{1}.f = nnfw.Util.Activation.LOGSIG;
-            net.layers{1}.size = 2;
             net.IW{1} = [-0.27; -0.41];
             net.LW{2,1} = [0.09 -0.17];
             net.b{1,1} = [-0.48; -0.13];
@@ -66,9 +65,8 @@ classdef gradientTest < matlab.unittest.TestCase
             p = (-2:0.1:2);
             target = 1 + sin((pi/4)*p);
 
-            net = nnfw.FeedForward(1, 2, 1);
+            net = nnfw.FeedForward(2);
             net.layers{1}.f = nnfw.Util.Activation.LOGSIG;
-            net.layers{1}.size = 2;
             net.IW{1} = [-0.27; -0.41];
             net.LW{2,1} = [0.09 -0.17];
             net.b{1,1} = [-0.48; -0.13];
@@ -123,14 +121,11 @@ classdef gradientTest < matlab.unittest.TestCase
             p = bodyfatInputs;
             target = bodyfatTargets;
 
-            net = nnfw.FeedForward(1, 2, 1);
+            net = nnfw.FeedForward(2);
             net.layers{1}.f = nnfw.Util.Activation.LOGSIG;
-            net.layers{1}.size = 2;
             net.configure(p, target);
             weights = rand(net.getNumWeights(),1);
             net.setWeights(weights);
-%             net.LW{2,1} = [5.01 5.01];
-%             net.b{2,1} = 7.01;
 
             [~, grad] = net.train(p, target);
             
@@ -171,10 +166,7 @@ classdef gradientTest < matlab.unittest.TestCase
 
             w112 = weights(29);
             w122 = weights(30);
-%             w112 = 5.01;
-%             w122 = 5.01;
             b12 = weights(31); 
-%             b12 = 7.01; 
             
             grad_derivated = zeros(length(p), net.getNumWeights());
 

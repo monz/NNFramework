@@ -1,6 +1,6 @@
 function [E, g, output, lambda, jacobian] = train(net, input, target)
     % configure network layer sizes
-%     configure(net, input, target);
+    configure(net, input, target);
     % scale input/target values to prevent satturation of activation 
     % function in layer one
     in = nnfw.Util.minmaxMappingApply(input, net.minmaxInputSettings);

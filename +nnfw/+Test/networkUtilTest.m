@@ -7,9 +7,8 @@ classdef networkUtilTest < matlab.unittest.TestCase
             % --------------------------------------
             % init network, 1-2-1 nn framework
             % --------------------------------------
-            net = nnfw.FeedForward(1,2,1);
+            net = nnfw.FeedForward(2);
             net.inputs{1}.size = 1;
-            net.layers{1}.size = 2;
             net.outputs{2}.size = 1;
             
             expected = 7;
@@ -21,9 +20,8 @@ classdef networkUtilTest < matlab.unittest.TestCase
             % --------------------------------------
             % init network, 13-2-1 nn framework
             % --------------------------------------
-            net = nnfw.FeedForward(1,2,1);
+            net = nnfw.FeedForward(2);
             net.inputs{1}.size = 13;
-            net.layers{1}.size = 2;
             net.outputs{2}.size = 1;
             
             expected = 31;
@@ -35,10 +33,8 @@ classdef networkUtilTest < matlab.unittest.TestCase
             % --------------------------------------
             % init network, 1-3-2-1 nn framework
             % --------------------------------------
-            net = nnfw.FeedForward(1,3,1);
+            net = nnfw.FeedForward([3, 2]);
             net.inputs{1}.size = 1;
-            net.layers{1}.size = 3;
-            net.layers{2}.size = 2;
             net.outputs{3}.size = 1;
             
             expected = 17;
@@ -50,9 +46,8 @@ classdef networkUtilTest < matlab.unittest.TestCase
             % --------------------------------------
             % init network, 1-2-1 nn framework
             % --------------------------------------
-            net = nnfw.FeedForward(1,2,1);
+            net = nnfw.FeedForward(2);
             net.inputs{1}.size = 1;
-            net.layers{1}.size = 2;
             net.outputs{2}.size = 1;
             
             expected = rand(7,1);
@@ -69,9 +64,8 @@ classdef networkUtilTest < matlab.unittest.TestCase
             % --------------------------------------
             % init network, 13-2-1 nn framework
             % --------------------------------------
-            net = nnfw.FeedForward(1,2,1);
+            net = nnfw.FeedForward(2);
             net.inputs{1}.size = 13;
-            net.layers{1}.size = 2;
             net.outputs{2}.size = 1;
             
             expected = rand(31,1);
@@ -88,10 +82,8 @@ classdef networkUtilTest < matlab.unittest.TestCase
             % --------------------------------------
             % init network, 1-3-2-1 nn framework
             % --------------------------------------
-            net = nnfw.FeedForward(1,3,1);
+            net = nnfw.FeedForward([3, 2]);
             net.inputs{1}.size = 1;
-            net.layers{1}.size = 3;
-            net.layers{2}.size = 2;
             net.outputs{3}.size = 1;
             
             expected = rand(17,1);
@@ -110,11 +102,8 @@ classdef networkUtilTest < matlab.unittest.TestCase
             % --------------------------------------
             % init network, 1-3-2-2-1 nn framework
             % --------------------------------------
-            net = nnfw.FeedForward(1,4,1);
+            net = nnfw.FeedForward([3, 2, 2]);
             net.inputs{1}.size = 1;
-            net.layers{1}.size = 3;
-            net.layers{2}.size = 2;
-            net.layers{3}.size = 2;
             net.outputs{4}.size = 1;
             
             expected = rand(23,1);
@@ -135,9 +124,8 @@ classdef networkUtilTest < matlab.unittest.TestCase
             % --------------------------------------
             % init network, 1-2-1 nn framework
             % --------------------------------------
-            net = nnfw.FeedForward(1,2,1);
+            net = nnfw.FeedForward(2);
             net.inputs{1}.size = 1;
-            net.layers{1}.size = 2;
             net.outputs{2}.size = 1;
             
             weights = rand(7,1);
@@ -153,9 +141,8 @@ classdef networkUtilTest < matlab.unittest.TestCase
             % --------------------------------------
             % init network, 13-2-1 nn framework
             % --------------------------------------
-            net = nnfw.FeedForward(1,2,1);
+            net = nnfw.FeedForward(2);
             net.inputs{1}.size = 13;
-            net.layers{1}.size = 2;
             net.outputs{2}.size = 1;
             
             weights = rand(31,1);
@@ -183,10 +170,8 @@ classdef networkUtilTest < matlab.unittest.TestCase
             % --------------------------------------
             % init network, 1-3-2-1 nn framework
             % --------------------------------------
-            net = nnfw.FeedForward(1,3,1);
+            net = nnfw.FeedForward([3, 2]);
             net.inputs{1}.size = 1;
-            net.layers{1}.size = 3;
-            net.layers{2}.size = 2;
             net.outputs{3}.size = 1;
             
             weights = rand(17,1);

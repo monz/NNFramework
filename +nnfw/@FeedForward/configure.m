@@ -28,13 +28,6 @@ function configure(net, varargin)
             net.inputs{k}.size = size(input{k,:},1);
         end
 
-        % only set size while network initialization
-        % to prevent overriding user settings
-%             % set default hidden layer size
-%             for k = 1:net.numLayers - 1
-%                 net.layers{k}.size = 10;
-%             end
-
         output = varargin{2};
         % extract min/max value information from target data
         [~,net.minmaxTargetSettings] = nnfw.Util.minmaxMapping(output);
