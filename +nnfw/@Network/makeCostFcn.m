@@ -8,7 +8,7 @@ function costFcn = makeCostFcn(net, fcn, input, target)
 
         % forward propagate with current weights
         % neuron outputs needed for backpropagation will be stored in a
-        [y, a] = simulate(net, input);
+        [y, a] = simulate(net, input, false);
 
         % calculate cost function
         Q = length(input); % number of training samples

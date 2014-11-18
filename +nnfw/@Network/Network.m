@@ -27,7 +27,8 @@ classdef (Abstract) Network < handle
     
     methods
         initNetwork(obj, numInputs, numLayers, numOutputs);
-        costFcn = makeCostFcn(net, fcn, input, target);
+        costFcn = makeCostFcn(net, fcn, input, target); % for fminunc
+        costFcn = makeCostFcn2(net, fcn, input, target); % for lsqnonlin
     end
     
     methods (Abstract)

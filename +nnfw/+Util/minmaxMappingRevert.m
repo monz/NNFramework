@@ -9,7 +9,7 @@ function output = minmaxMappingRevert( input, settings )
 %   See also MINMAXMAPPING
 
     if settings.no_change
-      output = y;
+      output = input;
       return;
     end
 

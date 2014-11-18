@@ -13,13 +13,15 @@ classdef gradientTest < matlab.unittest.TestCase
             target = 1 + sin((pi/4)*p);
 
             net = nnfw.FeedForward(2);
+            net.configure(p,target);
             net.layers{1}.f = nnfw.Util.Activation.LOGSIG;
             net.IW{1} = [-0.27; -0.41];
             net.LW{2,1} = [0.09 -0.17];
             net.b{1,1} = [-0.48; -0.13];
             net.b{2,1} = [0.48];
 
-            [~, grad] = net.train(p, target);
+            costFcn = net.makeCostFcn(@nnfw.Util.mse, p, target);
+            [~, grad] = costFcn(net.getWeightVector());
             
             % --------------------------------------
             % prepare starting weights in numeric calculation
@@ -53,7 +55,7 @@ classdef gradientTest < matlab.unittest.TestCase
             end
             grad_derivated = sum(grad_derivated, 1);
             
-            tc.assertThat(grad, IsEqualTo(grad_derivated, 'Within', AbsoluteTolerance(1e-22)));
+            tc.assertThat(grad, IsEqualTo(grad_derivated, 'Within', AbsoluteTolerance(1e-15)));
         end
         
         function trainQValues(tc)
@@ -62,17 +64,19 @@ classdef gradientTest < matlab.unittest.TestCase
             % --------------------------------------
             % init network, 1-2-1 nn-framework
             % --------------------------------------
-            p = (-2:0.1:2);
+            p = -2:0.1:2;
             target = 1 + sin((pi/4)*p);
 
             net = nnfw.FeedForward(2);
+            net.configure(p,target);
             net.layers{1}.f = nnfw.Util.Activation.LOGSIG;
             net.IW{1} = [-0.27; -0.41];
             net.LW{2,1} = [0.09 -0.17];
             net.b{1,1} = [-0.48; -0.13];
             net.b{2,1} = [0.48];
 
-            [~, grad] = net.train(p, target);
+            costFcn = net.makeCostFcn(@nnfw.Util.mse, p, target);
+            [~, grad] = costFcn(net.getWeightVector());
             
             % --------------------------------------
             % prepare starting weights in numeric calculation
@@ -122,12 +126,14 @@ classdef gradientTest < matlab.unittest.TestCase
             target = bodyfatTargets;
 
             net = nnfw.FeedForward(2);
+            net.configure(p,target);
             net.layers{1}.f = nnfw.Util.Activation.LOGSIG;
             net.configure(p, target);
             weights = rand(net.getNumWeights(),1);
             net.setWeights(weights);
 
-            [~, grad] = net.train(p, target);
+            costFcn = net.makeCostFcn(@nnfw.Util.mse, p, target);
+            [~, grad] = costFcn(net.getWeightVector());  
             
             % --------------------------------------
             % configure weights
