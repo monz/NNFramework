@@ -27,6 +27,7 @@ classdef (Abstract) Network < handle
     
     methods
         initNetwork(obj, numInputs, numLayers, numOutputs);
+        initWeights(obj) % set random layer weights for train purpose
         costFcn = makeCostFcn(net, fcn, input, target); % for fminunc
         costFcn = makeCostFcn2(net, fcn, input, target); % for lsqnonlin
     end

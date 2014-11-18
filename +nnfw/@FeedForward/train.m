@@ -6,6 +6,9 @@ function [E, g, output, lambda, jacobian] = train(net, input, target)
     in = nnfw.Util.minmaxMappingApply(input, net.minmaxInputSettings);
     tn = nnfw.Util.minmaxMappingApply(target, net.minmaxTargetSettings);
     
+    % initialize layer/bias-weights
+    net.initWeights();
+    
     % ------------------
     % separate input data into train, validate, test data
     % ------------------

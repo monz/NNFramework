@@ -9,8 +9,8 @@ clc;
 % load simplefit_dataset;
 load bodyfat_dataset;
 % p = (-2:.1:2);
-% p = (-5:.1:5);
-% t = cos(pi*p/2);
+p = (-5:.1:5);
+t = cos(pi*p/2);
 % 
 % p = houseInputs;
 % t = houseTargets;
@@ -18,8 +18,8 @@ load bodyfat_dataset;
 % p = simplefitInputs;
 % t = simplefitTargets;
 % 
-p = bodyfatInputs;
-t = bodyfatTargets;
+% p = bodyfatInputs;
+% t = bodyfatTargets;
 
 % --------------------------------------
 % init/train nn-toolbox
@@ -38,15 +38,15 @@ t = bodyfatTargets;
 % --------------------------------------
 % init nn-framework
 % --------------------------------------
-net = nnfw.FeedForward(1, 2, 1);
+net = nnfw.FeedForward(45);
 net.configure(p,t);
 % net.layers{1}.f = nnfw.Util.Activation.LOGSIG;
-net.layers{1}.size = 30;
+% net.layers{1}.size = 30;
 % net.layers{2}.size = 10;
 % net.layers{3}.size = 30;
 % net.layers{2}.size = 10; % set layer 1 numOfNeurons to 10
-weights = rand(net.getNumWeights(),1);
-net.setWeights(weights);
+% weights = rand(net.getNumWeights(),1);
+% net.setWeights(weights);
 
 % --------------------------------------
 % prepare input/target
