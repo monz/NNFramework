@@ -12,8 +12,16 @@ function [E, g, output, lambda, jacobian] = train(net, input, target)
     % ------------------
     % separate input data into train, validate, test data
     % ------------------
-%     values = separateTrainingValues(input, target, 0.20, 0.05);
-
+    values = nnfw.Util.separateTrainingValues(in, tn, 0.20, 0.05);
+    in = values{1,1};
+    tn = values{1,2};
+%     trainValues = values{1,1};
+%     trainTargets = values{1,2};
+    testValues = values{2,1};
+    testTargets = values{2,2};
+    validateValues = values{3,1};
+    validateTargets = values{3,2};
+    
     % ------------------
     % fminunc
     % ------------------
@@ -27,14 +35,12 @@ function [E, g, output, lambda, jacobian] = train(net, input, target)
     % lsqnonlin
     % ------------------
     g = 0; % TODO replace with gradient
-%     costFcn = net.makeCostFcn2(@nnfw.Util.mse, input, target);
+%     costFcn = net.makeCostFcn2(@nnfw.Util.componentError, in, tn);
     costFcn = net.makeCostFcn2(@nnfw.Util.componentError, in, tn);
     
-%     options = optimoptions('lsqnonlin', 'PlotFcns', {@optimplotfval, @optimplotstepsize, @optimplotx, @optimplotfirstorderopt});
-%     options = optimoptions('lsqnonlin', 'Jacobian','on', 'PlotFcns', {@optimplotfval, @optimplotstepsize, @optimplotx, @optimplotfirstorderopt}, 'MaxIter', 30);
-%     options = optimoptions('lsqnonlin', 'JacobMult','on','PlotFcns', {@optimplotfval, @optimplotstepsize, @optimplotx, @optimplotfirstorderopt});
-    options = optimoptions('lsqnonlin', 'Algorithm', 'levenberg-marquardt', 'Jacobian','on','PlotFcns', {@optimplotfval, @optimplotstepsize, @optimplotx, @optimplotfirstorderopt});
-%     options = optimoptions('lsqnonlin', 'Algorithm', 'trust-region-reflective', 'Jacobian','on','PlotFcns', {@optimplotfval, @optimplotstepsize, @optimplotx, @optimplotfirstorderopt});
+%     options = optimoptions('lsqnonlin', 'Algorithm', 'levenberg-marquardt', 'Jacobian','on','PlotFcns', {@optimplotfval, @optimplotstepsize, @optimplotx, @optimplotfirstorderopt});
+    abort = nnfw.Util.makeAbortFcn(net, validateValues, validateTargets);
+    options = optimoptions('lsqnonlin', 'OutputFcn', abort, 'Algorithm', 'levenberg-marquardt', 'Jacobian','on','PlotFcns', {@optimplotfval, @optimplotstepsize, @optimplotx, @optimplotfirstorderopt});
     [x, ~, ~, ~, output, lambda, jacobian] = lsqnonlin(costFcn,net.getWeightVector(), [], [], options);
     
     % set network weights found by optimization function
