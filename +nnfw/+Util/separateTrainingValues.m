@@ -15,13 +15,13 @@ function [ output ] = separateTrainingValues( input, target, vlFactor, tsFactor 
     numTsElements = ceil(numInputElements * tsFactor);
     numTrElements = numInputElements - numVlElements - numTsElements;
 
-    trInput = NaN(1,numTrElements); % contains e.g. 75-percent of data
-    vlInput = NaN(1,numVlElements); % 20-percent
-    tsInput = NaN(1,numTsElements); % 5-percent
+    trInput = NaN(size(input,1),numTrElements); % contains e.g. 75-percent of data
+    vlInput = NaN(size(input,1),numVlElements); % 20-percent
+    tsInput = NaN(size(input,1),numTsElements); % 5-percent
         
-    trTarget = NaN(1,numTrElements);
-    vlTarget = NaN(1,numVlElements);
-    tsTarget = NaN(1,numTsElements);
+    trTarget = NaN(size(target,1),numTrElements);
+    vlTarget = NaN(size(target,1),numVlElements);
+    tsTarget = NaN(size(target,1),numTsElements);
    
     % fill validation and test data sets with randomly choosen data.
     numRandElements = numVlElements + numTsElements;
@@ -31,14 +31,14 @@ function [ output ] = separateTrainingValues( input, target, vlFactor, tsFactor 
         ind = ceil(mod(rand(1,1)*numInputElements, numInputElements));
         
         if ~ismember(ind, vlInput) && vlIndex <= numVlElements
-            vlInput(vlIndex) = input(:, ind);
-            vlTarget(vlIndex) = target(:, ind);
+            vlInput(:, vlIndex) = input(:, ind);
+            vlTarget(:, vlIndex) = target(:, ind);
             
             vlIndex = vlIndex + 1;
 %             j = j + 1;
         elseif ~ismember(ind, tsInput) && tsIndex <= numTsElements
-            tsInput(tsIndex) = input(:, ind);
-            tsTarget(tsIndex) = target(:, ind);
+            tsInput(:, tsIndex) = input(:, ind);
+            tsTarget(:, tsIndex) = target(:, ind);
             
             tsIndex = tsIndex + 1;
 %             j = j + 1;
@@ -54,8 +54,8 @@ function [ output ] = separateTrainingValues( input, target, vlFactor, tsFactor 
     trIndex = 1;
     for ind = 1:numInputElements
        if ~ismember(ind, usedIndizes) && trIndex <= numTrElements
-          trInput(trIndex) = input(ind);
-          trTarget(trIndex) = target(ind);
+          trInput(:, trIndex) = input(:, ind);
+          trTarget(:, trIndex) = target(:, ind);
           
           trIndex = trIndex + 1;
        end
