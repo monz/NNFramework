@@ -21,12 +21,16 @@ function setWeights(net, weights)
             offset = endDim;
         elseif layer == net.numLayers
             % layer weights
-            startDim = offset +1;
             S_m = net.layers{layer-1}.size; % size of layer m-1
-            S_M = net.outputs{layer}.size; % size of layer M
-            endDim = offset + S_m * S_M;
-            net.LW{layer,layer-1} = weights(startDim:endDim,1)';
-            offset = endDim;
+            S_M = net.outputs{layer}.size; % size of layer M        
+            for k = 1:S_M
+                startDim = offset + 1;
+                endDim = offset + S_m;
+                % set weights in k-th row of weights matrix
+                % of layer-th layer
+                net.LW{layer, layer-1}(k,:) = weights(startDim:endDim,1);
+                offset = endDim;
+            end
             % bias weights
             startDim = offset +1;
             endDim = offset + S_M;

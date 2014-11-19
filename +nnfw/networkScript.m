@@ -9,8 +9,8 @@ clc;
 % load simplefit_dataset;
 load bodyfat_dataset;
 % p = (-2:.1:2);
-p = (-5:.1:5);
-t = cos(pi*p/2);
+% p = (-5:.1:5);
+% t = cos(pi*p/2);
 % 
 % p = houseInputs;
 % t = houseTargets;
@@ -20,6 +20,9 @@ t = cos(pi*p/2);
 % 
 % p = bodyfatInputs;
 % t = bodyfatTargets;
+
+p = [-2:.1:2; -2:.1:2];
+t = [sin(pi*p(1,:)/2); cos(pi*p(2,:)/2)];
 
 % --------------------------------------
 % init/train nn-toolbox
@@ -38,7 +41,10 @@ t = cos(pi*p/2);
 % --------------------------------------
 % init nn-framework
 % --------------------------------------
-net = nnfw.FeedForward(45);
+% net = nnfw.FeedForward([20 10 5]);
+% net = nnfw.FeedForward([20 10]);
+net = nnfw.FeedForward(120); % relativ guter fit
+% net = nnfw.FeedForward(19); % relativ guter fit
 net.configure(p,t);
 % net.layers{1}.f = nnfw.Util.Activation.LOGSIG;
 % net.layers{1}.size = 30;
@@ -79,8 +85,11 @@ ba = net.simulate(p);
 % --------------------------------------
 figure(2);
 hold on
-plot(t, 'r'); % target
+plot(t(1,:), 'r'); % target
+plot(t(2,:), 'b'); % target
 % plot(toolbox, 'k'); % toolbox
-plot(ba, 'g'); % ba
-legend('target','toobox','ba');
+plot(ba(1,:), 'y'); % ba
+plot(ba(2,:), 'g'); % ba
+% legend('target','toobox','ba');
+legend('target sin','target cos', 'ba sin', 'ba cos');
 hold off

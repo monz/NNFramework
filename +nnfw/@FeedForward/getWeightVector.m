@@ -16,7 +16,7 @@ function weightVector = getWeightVector(net)
         elseif layer == net.numLayers
             % layer weights
             startDim = offset +1;
-            endDim = offset + net.layers{layer-1}.size;
+            endDim = offset + net.layers{layer-1}.size * net.outputs{layer}.size;
             weightVector(startDim:endDim,1) = weightVector(startDim:endDim,1) + net.LW{layer,layer-1}(:);
             offset = endDim;
             % bias weights

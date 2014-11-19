@@ -21,7 +21,7 @@ function [y, a] = simulate(net, varargin)
     % -------------------------------------
     Q = length(input);
     a = cell(Q,net.numLayers);
-    y = zeros(1, Q);
+    y = zeros(size(input));
     for q = 1:Q
         for layer = 1:net.numLayers
             if layer == 1 % input layer
@@ -40,9 +40,9 @@ function [y, a] = simulate(net, varargin)
             a{q, layer} = transf( LW*p + net.b{layer} );
         end
         if applyValueMapping
-            y(q) = nnfw.Util.minmaxMappingRevert(a{q,net.numLayers}, net.minmaxTargetSettings);
+            y(:,q) = nnfw.Util.minmaxMappingRevert(a{q,net.numLayers}, net.minmaxTargetSettings);
         else
-            y(q) = a{q,net.numLayers};
+            y(:,q) = a{q,net.numLayers};
         end
     end
 end

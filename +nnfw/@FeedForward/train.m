@@ -49,6 +49,6 @@ function [E, g, output, lambda, jacobian] = train(net, input, target)
     E = 0;
     for q = 1:Q
         % cost function
-        E = E + nnfw.Util.mse(y(q), tn(:, q));
+        E = E + nnfw.Util.mse(y(:, q), tn(:, q));
     end
 end

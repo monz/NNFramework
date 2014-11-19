@@ -120,6 +120,24 @@ classdef networkUtilTest < matlab.unittest.TestCase
             tc.assertEqual(net.getWeightVector(), expected);
         end
         
+        function getWeightVectorTest_05(tc)
+            % --------------------------------------
+            % init network, 2-2-2 nn framework
+            % --------------------------------------
+            net = nnfw.FeedForward(2);
+            net.inputs{1}.size = 2;
+            net.outputs{2}.size = 2;
+            
+            expected = rand(12,1);
+            % fill neural network weights
+            net.IW{1} = reshape(expected(1:4), [2 2]);
+            net.b{1,1} = expected(5:6);
+            net.LW{2,1} = reshape(expected(7:10), [2 2]);
+            net.b{2,1} = expected(11:12);
+
+            tc.assertEqual(net.getWeightVector(), expected);
+        end
+        
         function setWeights_01(tc)
             % --------------------------------------
             % init network, 1-2-1 nn framework
@@ -201,6 +219,36 @@ classdef networkUtilTest < matlab.unittest.TestCase
             % assert LW{3} weights
             tc.assertEqual(net.LW{3,2}, weights(15:16,1)');
             tc.assertEqual(net.b{3}, weights(17));
+        end
+        
+        function setWeights_04(tc)
+            % --------------------------------------
+            % init network, 2-2-2 nn framework
+            % --------------------------------------
+            net = nnfw.FeedForward(2);
+            net.inputs{1}.size = 2;
+            net.outputs{2}.size = 2;
+            
+            weights = rand(12,1);
+            net.setWeights(weights);
+            
+            % assert LW{1} dimensions first
+            R = net.inputs{1}.size;
+            S_1 = net.layers{1}.size;
+            tc.assertEqual(size(net.IW{1}), [S_1 R]);
+            % assert LW{1} weights
+            expectedWeights = reshape(weights(1:4,1), [2 2])';
+            tc.assertEqual(net.IW{1}, expectedWeights);
+            tc.assertEqual(net.b{1}, weights(5:6,1));
+            
+            % assert LW{2} dimensions first
+            S_1 = net.layers{1}.size;
+            S_2 = net.outputs{2}.size;
+            tc.assertEqual(size(net.LW{2,1}), [S_2 S_1]);
+            % assert LW{2} weights
+            expectedWeights = reshape(weights(7:10,1), [2 2])';
+            tc.assertEqual(net.LW{2,1}, expectedWeights);
+            tc.assertEqual(net.b{2}, weights(11:12,1));
         end
     end
     
