@@ -12,8 +12,8 @@ function costFcn = makeCostFcn2(net, fcn, input, target)
 
         % calculate cost function
         Q = length(input); % number of training samples
-        F = zeros(size(input));
-        s_M = zeros(size(input));
+        F = zeros(size(target));
+        s_M = zeros(size(target));
         s_MSize = net.outputs{net.numLayers}.size;
         idxActive = s_MSize > 1; % activate extended indexing for jacibian matrices with NN output sizes > 1
         s_m = cell(Q, net.numLayers-1);

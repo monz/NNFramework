@@ -21,7 +21,8 @@ function [y, a] = simulate(net, varargin)
     % -------------------------------------
     Q = length(input);
     a = cell(Q,net.numLayers);
-    y = zeros(size(input));
+    outputSize = net.outputs{net.numLayers}.size;
+    y = zeros(outputSize,Q);
     for q = 1:Q
         for layer = 1:net.numLayers
             if layer == 1 % input layer
