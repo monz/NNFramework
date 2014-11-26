@@ -74,6 +74,25 @@ classdef separateTrainValuesTest < matlab.unittest.TestCase
             tc.assertEqual(length(values{3,1}), expectedNumTestElems);
             tc.assertEqual(length(values{3,2}), expectedNumTestElems);
         end
+        
+        function separateTrainValuesTest_05(tc)
+            input = rand(1, 33);
+            target = rand(1, 33);
+            
+            values = nnfw.Util.separateTrainingValues(input, target, 0.25, 0);
+            
+            expectedNumTrainElems = 25;
+            expectedNumValidateElems = 8;
+            expectedNumTestElems = 0;
+            
+            % check if input and target size are of expected size and equal
+            tc.assertEqual(length(values{1,1}), expectedNumTrainElems);
+            tc.assertEqual(length(values{1,2}), expectedNumTrainElems);
+            tc.assertEqual(length(values{2,1}), expectedNumValidateElems);
+            tc.assertEqual(length(values{2,2}), expectedNumValidateElems);
+            tc.assertEqual(length(values{3,1}), expectedNumTestElems);
+            tc.assertEqual(length(values{3,2}), expectedNumTestElems);
+        end
     end
     
 end
