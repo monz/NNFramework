@@ -70,9 +70,12 @@ classdef networkUtilTest < matlab.unittest.TestCase
             
             expected = rand(31,1);
             
-            net.IW{1} = expected(1:26);
+            net.IW{1} = zeros(2, 13);
+            net.IW{1}(1,:) = expected(1:13);
+            net.IW{1}(2,:) = expected(14:26);
             net.b{1,1} = expected(27:28);
-            net.LW{2,1} = expected(29:30)';
+            net.LW{2,1} = zeros(1, 2);
+            net.LW{2,1}(1,:) = expected(29:30);
             net.b{2,1} = expected(31);
             
             tc.assertEqual(net.getWeightVector(), expected);
@@ -88,11 +91,17 @@ classdef networkUtilTest < matlab.unittest.TestCase
             
             expected = rand(17,1);
             
-            net.IW{1} = expected(1:3);
+            net.IW{1} = zeros(3, 1);
+            net.IW{1}(:,1) = expected(1:3)';
             net.b{1,1} = expected(4:6);
-            net.LW{2,1} = expected(7:12);
+            
+            net.LW{2,1} = zeros(2, 3);
+            net.LW{2,1}(1,:) = expected(7:9);
+            net.LW{2,1}(2,:) = expected(10:12);
             net.b{2,1} = expected(13:14);
-            net.LW{3,2} = expected(15:16)';
+            
+            net.LW{3,2} = zeros(1, 2);
+            net.LW{3,2}(1,:) = expected(15:16);
             net.b{3,1} = expected(17);
 
             tc.assertEqual(net.getWeightVector(), expected);
@@ -108,13 +117,22 @@ classdef networkUtilTest < matlab.unittest.TestCase
             
             expected = rand(23,1);
             
-            net.IW{1} = expected(1:3);
+            net.IW{1} = zeros(3, 1);
+            net.IW{1}(:, 1) = expected(1:3)';
             net.b{1,1} = expected(4:6);
-            net.LW{2,1} = expected(7:12);
+            
+            net.LW{2,1} = zeros(2, 3);
+            net.LW{2,1}(1,:) = expected(7:9);
+            net.LW{2,1}(2,:) = expected(10:12);
             net.b{2,1} = expected(13:14);
-            net.LW{3,2} = expected(15:18);
+            
+            net.LW{3,2} = zeros(2);
+            net.LW{3,2}(1,:) = expected(15:16);
+            net.LW{3,2}(2,:) = expected(17:18);
             net.b{3,1} = expected(19:20);
-            net.LW{4,3} = expected(21:22)';
+            
+            net.LW{4,3} = zeros(1, 2);
+            net.LW{4,3}(1,:) = expected(21:22);
             net.b{4,1} = expected(23);
 
             tc.assertEqual(net.getWeightVector(), expected);
@@ -130,10 +148,15 @@ classdef networkUtilTest < matlab.unittest.TestCase
             
             expected = rand(12,1);
             % fill neural network weights
-            net.IW{1} = reshape(expected(1:4), [2 2]);
+            net.IW{1} = zeros(2);
+            net.IW{1}(1,:) = expected(1:2);
+            net.IW{1}(2,:) = expected(3:4);
             net.b{1,1} = expected(5:6);
-            net.LW{2,1} = reshape(expected(7:10), [2 2]);
+            net.LW{2,1} = zeros(2);
+            net.LW{2,1}(1,:) = expected(7:8);
+            net.LW{2,1}(2,:) = expected(9:10);
             net.b{2,1} = expected(11:12);
+%             net.setWeights(expected);
 
             tc.assertEqual(net.getWeightVector(), expected);
         end

@@ -4,10 +4,14 @@ function weightVector = getWeightVector(net)
     for layer = 1:net.numLayers
         if layer == 1
             % layer weights
-            startDim = offset +1;
-            endDim = net.inputs{layer}.size * net.layers{layer}.size;
-            weightVector(startDim:endDim,1) = weightVector(startDim:endDim,1) + net.IW{layer}(:);
-            offset = endDim;
+            R = net.inputs{layer}.size;
+            S_1 = net.layers{layer}.size;
+            for k = 1:S_1
+                startDim = offset +1;
+                endDim = offset + R;
+                weightVector(startDim:endDim,1) = weightVector(startDim:endDim,1) + net.IW{layer}(k, :)';            
+                offset = endDim;
+            end
             % bias weights
             startDim = offset +1;
             endDim = offset + net.layers{layer}.size; 
@@ -15,10 +19,14 @@ function weightVector = getWeightVector(net)
             offset = endDim;
         elseif layer == net.numLayers
             % layer weights
-            startDim = offset +1;
-            endDim = offset + net.layers{layer-1}.size * net.outputs{layer}.size;
-            weightVector(startDim:endDim,1) = weightVector(startDim:endDim,1) + net.LW{layer,layer-1}(:);
-            offset = endDim;
+            S_m = net.layers{layer-1}.size; % size of layer m-1
+            S_M = net.outputs{layer}.size; % size of layer M
+            for k = 1:S_M
+                startDim = offset +1;
+                endDim = offset + S_m;
+                weightVector(startDim:endDim,1) = weightVector(startDim:endDim,1) + net.LW{layer,layer-1}(k, :)';
+                offset = endDim;
+            end
             % bias weights
             startDim = offset +1;
             endDim = offset + net.outputs{layer}.size;
@@ -26,10 +34,14 @@ function weightVector = getWeightVector(net)
             offset = endDim;                    
         else
             % layer weights
-            startDim = offset +1;                    
-            endDim = offset + net.layers{layer-1}.size * net.layers{layer}.size;
-            weightVector(startDim:endDim,1) = weightVector(startDim:endDim,1) + net.LW{layer,layer-1}(:);
-            offset = endDim;
+            S_n = net.layers{layer-1}.size; % S_n = size of layer before current layer
+            S_m = net.layers{layer}.size; % S_m = size of current layer
+            for k = 1:S_m
+                startDim = offset +1;                    
+                endDim = offset + S_n;
+                weightVector(startDim:endDim,1) = weightVector(startDim:endDim,1) + net.LW{layer,layer-1}(k, :)';
+                offset = endDim;
+            end
             % bias weights
             startDim = offset +1;
             endDim = offset + net.layers{layer}.size; 
