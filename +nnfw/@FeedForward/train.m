@@ -25,17 +25,18 @@ function [E, g, output, lambda, jacobian] = train(net, input, target)
     % ------------------
     % fminunc
     % ------------------
-%     costFcn = net.makeCostFcn(@nnfw.Util.mse, input, target);
+%     costFcn = net.makeCostFcn(@nnfw.Util.mse, in, tn);
 % 
 %     options = optimoptions('fminunc','GradObj','on', 'PlotFcns', {@optimplotfval, @optimplotstepsize}, 'MaxFunEvals', 30);
 %     [x,y,exitFlag,output,g] = fminunc(costFcn,net.getWeightVector(),options);
 %     g = g';
+%     lambda = 0;
+%     jacobian = 0;
 
     % ------------------
     % lsqnonlin
     % ------------------
     g = 0; % TODO replace with gradient
-%     costFcn = net.makeCostFcn2(@nnfw.Util.componentError, in, tn);
     costFcn = net.makeCostFcn2(@nnfw.Util.componentError, in, tn);
     
 %     options = optimoptions('lsqnonlin', 'Algorithm', 'levenberg-marquardt', 'Jacobian','on','PlotFcns', {@optimplotfval, @optimplotstepsize, @optimplotx, @optimplotfirstorderopt});

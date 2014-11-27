@@ -13,19 +13,20 @@ function costFcn = makeCostFcn(net, fcn, input, target)
         % calculate cost function
         Q = length(input); % number of training samples
         E = 0;
-        s_M = zeros(1, Q);
+%         s_M = zeros(1, Q);
+        s_M = zeros(size(target));
+        s_m = cell(Q, net.numLayers-1);
         gradients = zeros(1, net.getNumWeights());
         for q = 1:Q
             % cost function
-            E = E + fcn(y(q), target(:, q));
+            E = E + fcn(y(:, q), target(:, q));
 
             % calculate sensitivity of last layer
             bpFunction = net.outputs{net.numLayers}.f.backprop;
-            s_M(q) = -2 * diag(bpFunction(a{q, net.numLayers})) * (target(:, q) - y(q));
+            s_M(:, q) = -2 * diag(bpFunction(a{q, net.numLayers})) * (target(:, q) - y(:, q));
 
             % calculate remaining sensitivities
             % backward M-1, ..., 2, 1
-            s_m = cell(Q, net.numLayers-1);
             for layer = net.numLayers-1:-1:1
                 bpFunction = net.layers{layer}.f.backprop;
 
@@ -35,7 +36,7 @@ function costFcn = makeCostFcn(net, fcn, input, target)
                 F_m = diag(bpFunction(a{q, layer}));
                 % sensitivities
                 if ( layer == net.numLayers-1 )
-                    s_m{q, layer} = F_m * net.LW{layer+1, layer}' * s_M(q);
+                    s_m{q, layer} = F_m * net.LW{layer+1, layer}' * s_M(:, q);
                 else
                     s_m{q, layer} = F_m * net.LW{layer+1, layer}' * s_m{q, layer+1};
                 end
@@ -48,8 +49,8 @@ function costFcn = makeCostFcn(net, fcn, input, target)
                     grads = s_m{q, layer} * input(:, q)';
                     bgrads = s_m{q, layer};
                 elseif (layer == net.numLayers)
-                    grads = s_M(q) * a{q, layer-1}';
-                    bgrads = s_M(q);
+                    grads = s_M(:, q) * a{q, layer-1}';
+                    bgrads = s_M(:, q);
                 else
                     grads = s_m{q, layer} * a{q, layer-1}';
                     bgrads = s_m{q, layer};
