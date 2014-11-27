@@ -19,7 +19,7 @@ function [y, a] = simulate(net, varargin)
     % -------------------------------------
     % feed forward
     % -------------------------------------
-    Q = length(input);
+    Q = size(input,2);
     a = cell(Q,net.numLayers);
     outputSize = net.outputs{net.numLayers}.size;
     y = zeros(outputSize,Q);

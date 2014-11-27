@@ -4,27 +4,28 @@ clc;
 % --------------------------------------
 % init training values
 % --------------------------------------
-p = [-2:.1:2; -2:.1:2];
-t = [sin(pi*p(1,:)/2); cos(pi*p(2,:)/2)];
+% p = (-2:.1:2);
+p = (-5:.1:5);
+t = cos(pi*p/2);
 
 % --------------------------------------
 % init/train nn-toolbox
 % --------------------------------------
-% net1 = feedforwardnet(4);
+% net1 = feedforwardnet(5);
 % net1 = train(net1,p,t);
 % y_d = net1(p);
 
 % --------------------------------------
 % init nn-framework
 % --------------------------------------
-net = nnfw.FeedForward(3);
+net = nnfw.FeedForward(5);
 net.configure(p,t);
 % net.layers{1}.f = nnfw.Util.Activation.LOGSIG;
 
 % --------------------------------------
 % train network
 % --------------------------------------
-[E, ~, output, lambda, jacobian] = net.train(p,t);
+[E, g, output, lambda, jacobian] = net.train(p,t);
 y_d = net.simulate(p);
 
 % --------------------------------------
@@ -33,10 +34,10 @@ y_d = net.simulate(p);
 figure(2);
 hold on
 
-plot(t(1,:), 'r'); % target
-plot(t(2,:), 'b'); % target
-plot(y_d(1,:), 'y'); % ba
-plot(y_d(2,:), 'g'); % ba
-legend('target sin','target cos', 'y_d sin', 'y_d cos');
+plot(t, 'r'); % target
+plot(y_d, 'g'); % ba
+% plot(toolbox, 'k'); % toolbox
+% legend('target','toobox','ba');
+legend('target','ba');
 
 hold off

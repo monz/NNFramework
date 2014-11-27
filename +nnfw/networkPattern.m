@@ -9,23 +9,26 @@ clc;
 % --------------------------------------
 % init/train nn-toolbox
 % --------------------------------------
-net1 = feedforwardnet(10);
-net1 = train(net1,p,t);
-y_d = net1(p);
+% net1 = feedforwardnet(5);
+% net1 = train(net1,p,t);
+% y_d = net1(p);
 
 % --------------------------------------
 % init nn-framework
 % --------------------------------------
-net = nnfw.FeedForward(10);
+net = nnfw.FeedForward(5);
 net.configure(p,t);
-net.layers{2}.f = nnfw.Util.Activation.LOGSIG;
+% net.layers{2}.f = nnfw.Util.Activation.LOGSIG;
 
 % --------------------------------------
 % train network
 % --------------------------------------
-% [E, ~, output, lambda, jacobian] = net.train(p,t);
-% y_d = net.simulate(p);
+[E, ~, output, lambda, jacobian] = net.train(p,t);
+y_d = net.simulate(p);
+
+% --------------------------------------
 % map outputs to 0...1
+% --------------------------------------
 y_d2 = zeros(size(y_d));
 % extract indexes of max value of each column
 [~, i] = max(y_d, [], 1);
