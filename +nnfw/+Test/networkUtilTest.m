@@ -156,7 +156,6 @@ classdef networkUtilTest < matlab.unittest.TestCase
             net.LW{2,1}(1,:) = expected(7:8);
             net.LW{2,1}(2,:) = expected(9:10);
             net.b{2,1} = expected(11:12);
-%             net.setWeights(expected);
 
             tc.assertEqual(net.getWeightVector(), expected);
         end
@@ -194,8 +193,8 @@ classdef networkUtilTest < matlab.unittest.TestCase
             S_1 = net.layers{1}.size;
             tc.assertEqual(size(net.IW{1}), [S_1 R]);
             % assert LW{1} weights
-            tc.assertEqual(net.IW{1}(1,:), weights(1:13,1)');
-            tc.assertEqual(net.IW{1}(2,:), weights(14:26,1)');
+            tc.assertEqual(net.IW{1}(1, :), weights(1:13,1)'); % check row 1
+            tc.assertEqual(net.IW{1}(2, :), weights(14:26,1)'); % check row 2
             tc.assertEqual(net.b{1}, weights(27:28,1));
             
             % assert LW{2} dimensions first
@@ -223,7 +222,9 @@ classdef networkUtilTest < matlab.unittest.TestCase
             S_1 = net.layers{1}.size;
             tc.assertEqual(size(net.IW{1}), [S_1 R]);
             % assert LW{1} weights
-            tc.assertEqual(net.IW{1}, weights(1:3,1));
+            tc.assertEqual(net.IW{1}(1, :), weights(1,1)); % check row 1
+            tc.assertEqual(net.IW{1}(2, :), weights(2,1)); % check row 2
+            tc.assertEqual(net.IW{1}(3, :), weights(3,1)); % check row 3
             tc.assertEqual(net.b{1}, weights(4:6,1));
             
             % assert LW{2} dimensions first
@@ -231,8 +232,8 @@ classdef networkUtilTest < matlab.unittest.TestCase
             S_2 = net.layers{2}.size;
             tc.assertEqual(size(net.LW{2,1}), [S_2 S_1]);
             % assert LW{2} weights
-            tc.assertEqual(net.LW{2,1}(1,:), weights(7:9,1)');
-            tc.assertEqual(net.LW{2,1}(2,:), weights(10:12,1)');
+            tc.assertEqual(net.LW{2,1}(1, :), weights(7:9,1)'); % check row 1
+            tc.assertEqual(net.LW{2,1}(2, :), weights(10:12,1)'); % check row 2
             tc.assertEqual(net.b{2}, weights(13:14));
             
             % assert LW{3} dimensions first
@@ -240,7 +241,7 @@ classdef networkUtilTest < matlab.unittest.TestCase
             S_3 = net.outputs{3}.size;
             tc.assertEqual(size(net.LW{3,2}), [S_3 S_2]);
             % assert LW{3} weights
-            tc.assertEqual(net.LW{3,2}, weights(15:16,1)');
+            tc.assertEqual(net.LW{3,2}(1, :), weights(15:16,1)'); % check row 1
             tc.assertEqual(net.b{3}, weights(17));
         end
         
@@ -260,8 +261,8 @@ classdef networkUtilTest < matlab.unittest.TestCase
             S_1 = net.layers{1}.size;
             tc.assertEqual(size(net.IW{1}), [S_1 R]);
             % assert LW{1} weights
-            expectedWeights = reshape(weights(1:4,1), [2 2])';
-            tc.assertEqual(net.IW{1}, expectedWeights);
+            tc.assertEqual(net.IW{1}(1, :), weights(1:2,1)'); % check row 1
+            tc.assertEqual(net.IW{1}(2, :), weights(3:4,1)'); % check row 2
             tc.assertEqual(net.b{1}, weights(5:6,1));
             
             % assert LW{2} dimensions first
@@ -269,9 +270,41 @@ classdef networkUtilTest < matlab.unittest.TestCase
             S_2 = net.outputs{2}.size;
             tc.assertEqual(size(net.LW{2,1}), [S_2 S_1]);
             % assert LW{2} weights
-            expectedWeights = reshape(weights(7:10,1), [2 2])';
-            tc.assertEqual(net.LW{2,1}, expectedWeights);
+            tc.assertEqual(net.LW{2,1}(1, :), weights(7:8,1)'); % check row 1
+            tc.assertEqual(net.LW{2,1}(2, :), weights(9:10,1)'); % check row 2
             tc.assertEqual(net.b{2}, weights(11:12,1));
+        end
+        
+        function setWeights_05(tc)
+            % --------------------------------------
+            % init network, 2-2-4 nn framework
+            % --------------------------------------
+            net = nnfw.FeedForward(2);
+            net.inputs{1}.size = 2;
+            net.outputs{2}.size = 4;
+            
+            weights = rand(18,1);
+            net.setWeights(weights);
+            
+            % assert LW{1} dimensions first
+            R = net.inputs{1}.size;
+            S_1 = net.layers{1}.size;
+            tc.assertEqual(size(net.IW{1}), [S_1 R]);
+            % assert weights
+            tc.assertEqual(net.IW{1}(1, :), weights(1:2,1)'); % check row 1
+            tc.assertEqual(net.IW{1}(2, :), weights(3:4,1)'); % check row 2
+            tc.assertEqual(net.b{1}, weights(5:6,1));
+            
+            % assert LW{2} dimensions first
+            S_1 = net.layers{1}.size;
+            S_2 = net.outputs{2}.size;
+            tc.assertEqual(size(net.LW{2,1}), [S_2 S_1]);
+            % assert LW{2} weights
+            tc.assertEqual(net.LW{2,1}(1, :), weights(7:8,1)'); % check row 1
+            tc.assertEqual(net.LW{2,1}(2, :), weights(9:10,1)'); % check row 2
+            tc.assertEqual(net.LW{2,1}(3, :), weights(11:12,1)'); % check row 3
+            tc.assertEqual(net.LW{2,1}(4, :), weights(13:14,1)'); % check row 4
+            tc.assertEqual(net.b{2}, weights(15:18,1));
         end
     end
     
