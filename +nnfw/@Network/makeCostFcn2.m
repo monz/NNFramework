@@ -86,7 +86,7 @@ function costFcn = makeCostFcn2(net, fcn, input, target)
                         startDim = offset+1;
                         endDim = offset+length(jEntriesWeights);
                         
-                        rowIdx = q + ((q-1) + (outputNr-1))*idxActive;
+                        rowIdx = (q-1)*s_MSize + (outputNr);
                         J(rowIdx, startDim:endDim) = J(rowIdx, startDim:endDim) + jEntriesWeights;                
                         
                         offset = endDim;

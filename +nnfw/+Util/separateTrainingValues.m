@@ -52,7 +52,7 @@ function [ output ] = separateTrainingValues( input, target, vlFactor, tsFactor 
     % fill training data set with remaining data - therefor use the unused
     % indizes
     trIndex = 1;
-    for ind = 1:numInputElements
+    for ind = 1:size(input,2)
        if ~ismember(ind, usedIndizes) && trIndex <= numTrElements
           trInput(:, trIndex) = input(:, ind);
           trTarget(:, trIndex) = target(:, ind);
