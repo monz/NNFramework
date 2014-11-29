@@ -17,10 +17,10 @@ function [E, g, output, lambda, jacobian] = train(net, input, target)
     tn = values{1,2};
 %     trainValues = values{1,1};
 %     trainTargets = values{1,2};
-    testValues = values{2,1};
-    testTargets = values{2,2};
-    validateValues = values{3,1};
-    validateTargets = values{3,2};
+    validateValues = values{2,1};
+    validateTargets = values{2,2};
+    testValues = values{3,1};
+    testTargets = values{3,2};
     
     % ------------------
     % fminunc
