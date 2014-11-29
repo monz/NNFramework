@@ -15,7 +15,6 @@ function costFcn = makeCostFcn2(net, fcn, input, target)
         F = zeros(size(target));
         s_M = zeros(size(target));
         s_MSize = net.outputs{net.numLayers}.size;
-        idxActive = s_MSize > 1; % activate extended indexing for jacibian matrices with NN output sizes > 1
         s_m = cell(Q, net.numLayers-1);
         if nargout > 1   % Two output arguments
             J = zeros(Q*s_MSize, net.getNumWeights());
