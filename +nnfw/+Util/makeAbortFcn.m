@@ -95,7 +95,7 @@ function [ abortFcn ] = makeAbortFcn( net, values )
                     set(plotValue.val,'Tag','validateError');
                     set(plotValue.tes,'Tag','testError');
                     ylabel('MSE');
-                    title('myTitle');
+                    title(['Best ValidationErrorValue: ', num2str(EValidate), ' in Iteration: ', num2str(optimValues.iteration)]);
                     legend('TrainError', 'ValidationError','TestError');
                     hold off
                 else
@@ -110,7 +110,7 @@ function [ abortFcn ] = makeAbortFcn( net, values )
                     set(plotValue.tra,'Xdata',newX, 'Ydata',newTrainY);
                     set(plotValue.val,'Xdata',newX, 'Ydata',newValidateY);
                     set(plotValue.tes,'Xdata',newX, 'Ydata',newTestY);
-                    set(get(gca,'Title'),'String', 'myTitle');
+                    set(get(gca,'Title'),'String', ['Best ValidationErrorValue: ', num2str(EValidate), ' in Iteration: ', num2str(optimValues.iteration)]);
                     legend('TrainError', 'ValidationError','TestError');
                     hold off
                 end
