@@ -6,7 +6,14 @@ classdef FeedForward < nnfw.Network
     end
     
     methods
-        function net = FeedForward(hiddenLayerSizes)
+        function net = FeedForward(varargin)
+            if nargin > 2 
+               error('wrong number of input parameters') 
+            elseif nargin == 2
+                net.isPatternNet = varargin{2};
+            end
+            
+            hiddenLayerSizes = varargin{1};
             net.initNetwork(hiddenLayerSizes);
             
             % -------------------------------------

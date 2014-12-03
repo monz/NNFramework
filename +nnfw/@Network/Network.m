@@ -3,6 +3,8 @@ classdef (Abstract) Network < handle
     %   Detailed explanation goes here
     
     properties
+        isPatternNet = false;
+        
         minmaxInputSettings;
         minmaxTargetSettings;
         

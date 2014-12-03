@@ -5,7 +5,7 @@ function configure(net, varargin)
         if nargin < 3
             error('not enough arguments');
         elseif nargin > 3
-            error('to much arguments');
+            error('too much arguments');
         end
 
         % -------------------------------------

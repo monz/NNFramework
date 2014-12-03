@@ -46,4 +46,15 @@ function [y, a] = simulate(net, varargin)
             y(:,q) = a{q,net.numLayers};
         end
     end
+    % --------------------------------------
+    % map outputs to 0...1 if is pattern net
+    % --------------------------------------
+    if net.isPatternNet && applyValueMapping
+        y_d = zeros(size(y));
+        % extract indexes of max value of each column
+        [~, i] = max(y, [], 1);
+        % map max values to given value
+        y_d(sub2ind(size(y), i, 1:length(i))) = 1;
+        y = y_d;
+    end
 end
