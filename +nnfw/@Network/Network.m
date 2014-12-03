@@ -49,6 +49,7 @@ classdef (Abstract) Network < handle
             obj.optim.maxErrorIncrease = 3; % if the test error increases x times, training gets aborted
             
             obj.optim.stopTraining = false; % if true training get stopped
+            obj.optim.maxIter = 100; % max number of iterations in optimization
         end
     end
     

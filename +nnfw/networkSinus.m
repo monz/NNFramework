@@ -20,6 +20,8 @@ t = cos(pi*p/2);
 % --------------------------------------
 net = nnfw.FeedForward(5);
 net.configure(p,t);
+net.optim.abortThreshold = 1e-5;
+% net.optim.maxIter = 10;
 % net.layers{1}.f = nnfw.Util.Activation.LOGSIG;
 
 % --------------------------------------
