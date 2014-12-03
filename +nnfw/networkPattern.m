@@ -16,7 +16,8 @@ clc;
 % --------------------------------------
 % init nn-framework
 % --------------------------------------
-net = nnfw.FeedForward(5, true);
+isPatternNet = true;
+net = nnfw.FeedForward(5, isPatternNet);
 net.configure(p,t);
 % net.layers{2}.f = nnfw.Util.Activation.LOGSIG;
 

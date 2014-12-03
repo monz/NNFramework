@@ -1,5 +1,6 @@
 clear;
 clc;
+close all;
 
 % --------------------------------------
 % init training values
@@ -19,6 +20,8 @@ t = [sin(pi*p(1,:)/2); cos(pi*p(2,:)/2)];
 % --------------------------------------
 net = nnfw.FeedForward(3);
 net.configure(p,t);
+% net.optim.plotFcns = {nnfw.Util.PlotFcn.FIRSTORDEROPT.f};
+net.optim.abortThreshold = 1e-4;
 % net.layers{1}.f = nnfw.Util.Activation.LOGSIG;
 
 % --------------------------------------

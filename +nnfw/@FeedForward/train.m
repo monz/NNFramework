@@ -12,15 +12,9 @@ function [E, g, output, lambda, jacobian] = train(net, input, target)
     % ------------------
     % separate input data into train, validate, test data
     % ------------------
-    values = nnfw.Util.separateTrainingValues(in, tn, 0.20, 0.05);
+    values = nnfw.Util.separateTrainingValues(in, tn, net.optim.vlFactor, net.optim.tsFactor);
     in = values{1,1};
     tn = values{1,2};
-%     trainValues = values{1,1};
-%     trainTargets = values{1,2};
-    validateValues = values{2,1};
-    validateTargets = values{2,2};
-    testValues = values{3,1};
-    testTargets = values{3,2};
     
     % ------------------
     % fminunc
@@ -36,26 +30,17 @@ function [E, g, output, lambda, jacobian] = train(net, input, target)
     % ------------------
     % lsqnonlin
     % ------------------
-    g = 0; % TODO replace with gradient
     costFcn = net.makeCostFcn2(@nnfw.Util.componentError, in, tn);
-    
-%     options = optimoptions('lsqnonlin', 'Algorithm', 'levenberg-marquardt', 'Jacobian','on','PlotFcns', {@optimplotfval, @optimplotstepsize, @optimplotx, @optimplotfirstorderopt});
-    abort = nnfw.Util.makeAbortFcn(net, validateValues, validateTargets);
-    options = optimoptions('lsqnonlin', 'OutputFcn', abort, 'Algorithm', 'levenberg-marquardt', 'Jacobian','on','PlotFcns', {@optimplotfval, @optimplotstepsize, @optimplotx, @optimplotfirstorderopt});
+    % register abort function
+    abort = nnfw.Util.makeAbortFcn(net, values);
+    % start cost function optimazation
+    options = optimoptions('lsqnonlin', 'OutputFcn', abort, 'Algorithm', 'levenberg-marquardt', 'Jacobian','on','PlotFcns', net.optim.plotFcns);
     [x, ~, ~, ~, output, lambda, jacobian] = lsqnonlin(costFcn,net.getWeightVector(), [], [], options);
     
     % set network weights found by optimization function
     net.setWeights(x);
-
-    % forward propagate with current weights
-    % neuron outputs needed for backpropagation will be stored in a
-    [y, ~] = simulate(net, in, false);
-
-    % calculate cost function
-    Q = length(in); % number of training samples
-    E = 0;
-    for q = 1:Q
-        % cost function
-        E = E + nnfw.Util.mse(y(:, q), tn(:, q));
-    end
+    
+    % calculate error and gradient
+    gradient = net.makeCostFcn(@nnfw.Util.mse, in, tn);
+    [E, g] = gradient(x);
 end

@@ -5,6 +5,8 @@ classdef (Abstract) Network < handle
     properties
         isPatternNet = false;
         
+        optim = struct;
+        
         minmaxInputSettings;
         minmaxTargetSettings;
         
@@ -32,6 +34,22 @@ classdef (Abstract) Network < handle
         initWeights(obj) % set random layer weights for train purpose
         costFcn = makeCostFcn(net, fcn, input, target); % for fminunc
         costFcn = makeCostFcn2(net, fcn, input, target); % for lsqnonlin
+        
+        function obj = Network()
+            initOptimValues(obj)
+        end
+        % initialize optimazation values with defaults
+        function initOptimValues(obj) 
+            obj.optim.plotFcns = {};
+        
+            obj.optim.vlFactor = 0.20; % validation data factor, default 20 percent of input data are used for validation
+            obj.optim.tsFactor = 0.05; % test data factor, default 5 percent of input data are used for testing
+            
+            obj.optim.abortThreshold = 1e-2; % if test error is below this value, training gets aborted
+            obj.optim.maxErrorIncrease = 3; % if the test error increases x times, training gets aborted
+            
+            obj.optim.stopTraining = false; % if true training get stopped
+        end
     end
     
     methods (Abstract)
