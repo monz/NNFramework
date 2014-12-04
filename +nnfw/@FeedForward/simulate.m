@@ -22,28 +22,31 @@ function [y, a] = simulate(net, varargin)
     Q = size(input,2);
     a = cell(Q,net.numLayers);
     outputSize = net.outputs{net.numLayers}.size;
+    % load often used variables only once for performance improvements
+    netSize = net.numLayers; % for performance improvement
+    inputTransFcn = net.layers{1}.f.f; % for performance improvement
+    inputLW = net.IW{1}; % for performance improvement
+    outputTransFcn = net.outputs{netSize}.f.f; % for performance improvement
+    outputLW = net.LW{netSize,netSize-1}; % for performance improvement
     y = zeros(outputSize,Q);
     for q = 1:Q
-        for layer = 1:net.numLayers
+        for layer = 1:netSize
             if layer == 1 % input layer
-                LW = net.IW{layer};
                 p = input(:,q);
-                transf = net.layers{layer}.f.f;
-            elseif layer == net.numLayers % output layer
-                LW = net.LW{layer,layer-1};
+                a{q, layer} = inputTransFcn( inputLW*p + net.b{layer} );
+            elseif layer == netSize % output layer
                 p = a{q, layer-1};
-                transf = net.outputs{net.numLayers}.f.f;
+                a{q, layer} = outputTransFcn( outputLW*p + net.b{layer} );
             else % hidden layer
                 LW = net.LW{layer,layer-1};
                 p = a{q, layer-1};
-                transf = net.layers{layer}.f.f;
+                a{q, layer} = net.layers{layer}.f.f( LW*p + net.b{layer} );
             end
-            a{q, layer} = transf( LW*p + net.b{layer} );
         end
         if applyValueMapping
-            y(:,q) = nnfw.Util.minmaxMappingRevert(a{q,net.numLayers}, net.minmaxTargetSettings);
+            y(:,q) = nnfw.Util.minmaxMappingRevert(a{q,netSize}, net.minmaxTargetSettings);
         else
-            y(:,q) = a{q,net.numLayers};
+            y(:,q) = a{q,netSize};
         end
     end
     % --------------------------------------

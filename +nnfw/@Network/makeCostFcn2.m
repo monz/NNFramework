@@ -22,10 +22,11 @@ function costFcn = makeCostFcn2(net, fcn, input, target)
         F = bsxfun(@minus,target,y); % for performance improvement
         % load often used variables only once for performance improvements
         netSize = net.numLayers; % for performance improvement
+        outputBpFcn = net.outputs{netSize}.f.backprop; % for performance improvement
         for q = 1:Q
             if nargout > 1   % Two output arguments
                 % calculate marquardt sensitivity of last layer
-                bpFunction = net.outputs{netSize}.f.backprop;
+                bpFunction = outputBpFcn;
                 s_M(:, q) = -bpFunction(a{q, netSize});
 
                 % calculate remaining marquardt sensitivities
