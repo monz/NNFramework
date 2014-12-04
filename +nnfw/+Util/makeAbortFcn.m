@@ -7,6 +7,8 @@ function [ abortFcn ] = makeAbortFcn( net, values )
     function stop = abort(x,optimValues,state)
         persistent lastETest
         persistent increaseCounter;
+
+        legendString = {'TrainError', 'ValidationError','TestError'};
         
         lastETest = intmax;        
         stop = false;
@@ -95,8 +97,8 @@ function [ abortFcn ] = makeAbortFcn( net, values )
                     set(plotValue.val,'Tag','validateError');
                     set(plotValue.tes,'Tag','testError');
                     ylabel('MSE');
-                    title(['Best ValidationErrorValue: ', num2str(EValidate), ' in Iteration: ', num2str(optimValues.iteration)]);
-                    legend('TrainError', 'ValidationError','TestError');
+                    title(sprintf('Best ValidationErrorValue: %0.5e  in Iteration: %d', EValidate, optimValues.iteration));
+                    legend(legendString);
                     hold off
                 else
                     hold on
@@ -110,8 +112,7 @@ function [ abortFcn ] = makeAbortFcn( net, values )
                     set(plotValue.tra,'Xdata',newX, 'Ydata',newTrainY);
                     set(plotValue.val,'Xdata',newX, 'Ydata',newValidateY);
                     set(plotValue.tes,'Xdata',newX, 'Ydata',newTestY);
-                    set(get(gca,'Title'),'String', ['Best ValidationErrorValue: ', num2str(EValidate), ' in Iteration: ', num2str(optimValues.iteration)]);
-                    legend('TrainError', 'ValidationError','TestError');
+                    set(get(gca,'Title'),'String', sprintf('Best ValidationErrorValue: %0.5e  in Iteration: %d', EValidate, optimValues.iteration));
                     hold off
                 end
                 % check if stop button was pushed

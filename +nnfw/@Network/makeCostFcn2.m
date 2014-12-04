@@ -12,25 +12,24 @@ function costFcn = makeCostFcn2(net, fcn, input, target)
 
         % calculate cost function
         Q = size(input,2); % number of training samples
-        F = zeros(size(target));
         s_M = zeros(size(target));
         s_MSize = net.outputs{net.numLayers}.size;
         s_m = cell(Q, net.numLayers-1);
         if nargout > 1   % Two output arguments
             J = zeros(Q*s_MSize, net.getNumWeights());
         end
+        % cost function
+        F = bsxfun(@minus,target,y); % for performance enhancement
+        netSize = net.numLayers; % for performance enhancement
         for q = 1:Q
-            % cost function
-            F(:, q) = fcn(y(:, q), target(:, q));
-
             if nargout > 1   % Two output arguments
                 % calculate marquardt sensitivity of last layer
-                bpFunction = net.outputs{net.numLayers}.f.backprop;
-                s_M(:, q) = -bpFunction(a{q, net.numLayers});
+                bpFunction = net.outputs{netSize}.f.backprop;
+                s_M(:, q) = -bpFunction(a{q, netSize});
 
                 % calculate remaining marquardt sensitivities
                 % backward M-1, ..., 2, 1
-                for layer = net.numLayers-1:-1:1
+                for layer = netSize-1:-1:1
                     bpFunction = net.layers{layer}.f.backprop;
 
                     % create derivated values matrix F_m
@@ -38,7 +37,7 @@ function costFcn = makeCostFcn2(net, fcn, input, target)
                     % all other elements remain zero
                     F_m = diag(bpFunction(a{q, layer}));
                     % sensitivities
-                    if ( layer == net.numLayers-1 )
+                    if ( layer == netSize-1 )
                         s_m{q, layer} = F_m * net.LW{layer+1, layer}' * s_M(q);
                     else
                         s_m{q, layer} = F_m * net.LW{layer+1, layer}' * s_m{q, layer+1};
@@ -48,13 +47,13 @@ function costFcn = makeCostFcn2(net, fcn, input, target)
                 for outputNr = 1:s_MSize % for every output index, calculate a row in the jacobian matrix
                     % generate jacobian matrix
                     offset = 0;
-                    for layer = 1:net.numLayers 
+                    for layer = 1:netSize
                         if ( layer == 1 )
                             jEntriesWeights = s_m{q, layer}(:, outputNr) * input(:, q)';
                             jEntriesBias = s_m{q, layer}(:, outputNr);
                             layerSize = net.inputs{layer}.size;
                             layerP1Size = net.layers{layer}.size;
-                        elseif ( layer == net.numLayers )
+                        elseif ( layer == netSize )
                             s_MVector = zeros(s_MSize, 1);
                             s_MVector(outputNr) = s_M(outputNr,q);
                             jEntriesWeights = s_MVector * a{q, layer-1}';
@@ -78,7 +77,6 @@ function costFcn = makeCostFcn2(net, fcn, input, target)
                             offset2 = endDim2;
                         end
                         jEntriesWeights = jEntriesWeights2;
-%                         jEntriesWeights = jEntriesWeights(:)'; % error derived at weights
                         jEntriesBias = jEntriesBias(:)'; % error derived at bias
                         % save jacobian entries to the q-th jacobian matrix row
                         % jEntries of weights
