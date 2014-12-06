@@ -1,4 +1,5 @@
-clear all;
+% clear all;
+clear;
 clc;
 
 import matlab.unittest.TestSuite;

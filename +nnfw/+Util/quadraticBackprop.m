@@ -4,7 +4,7 @@ function x = quadraticBackprop( a )
 % <a href="matlab:doc nnfw.Util.Activation">Activation</a>. These Objects
 % provide more information needed for internal use.
 
-    x = 2*sqrt(a);
+    x = 2.*sqrt(a);
     
 end
 

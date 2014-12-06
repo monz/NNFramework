@@ -21,33 +21,31 @@ function [y, a] = simulate(net, varargin)
     % -------------------------------------
     Q = size(input,2);
     a = cell(Q,net.numLayers);
-    outputSize = net.outputs{net.numLayers}.size;
     % load often used variables only once for performance improvements
     netSize = net.numLayers; % for performance improvement
     inputTransFcn = net.layers{1}.f.f; % for performance improvement
     inputLW = net.IW{1}; % for performance improvement
+    inputBias = net.b{1}; % for performance improvement
     outputTransFcn = net.outputs{netSize}.f.f; % for performance improvement
     outputLW = net.LW{netSize,netSize-1}; % for performance improvement
-    y = zeros(outputSize,Q);
-    for q = 1:Q
-        for layer = 1:netSize
-            if layer == 1 % input layer
-                p = input(:,q);
-                a{q, layer} = inputTransFcn( inputLW*p + net.b{layer} );
-            elseif layer == netSize % output layer
-                p = a{q, layer-1};
-                a{q, layer} = outputTransFcn( outputLW*p + net.b{layer} );
-            else % hidden layer
-                LW = net.LW{layer,layer-1};
-                p = a{q, layer-1};
-                a{q, layer} = net.layers{layer}.f.f( LW*p + net.b{layer} );
-            end
-        end
-        if applyValueMapping
-            y(:,q) = nnfw.Util.minmaxMappingRevert(a{q,netSize}, net.minmaxTargetSettings);
-        else
-            y(:,q) = a{q,netSize};
-        end
+    outputBias = net.b{netSize}; % for performance improvement
+
+    % currentOut varialbe describes the current layers computed output
+    % currentOut is always given to the next layer as input
+    % compute input layer completely % for performance improvement
+    currentOut = inputTransFcn(bsxfun(@plus,inputLW*input,inputBias));
+    a(:,1) = num2cell(currentOut,1);
+    % compute each hidden layer completely % for performance improvement
+    for layer = 2:netSize-1
+        LW = net.LW{layer,layer-1};
+        currentOut = net.layers{layer}.f.f(bsxfun(@plus,LW*currentOut,net.b{layer}));
+        a(:, layer) = num2cell(currentOut,1);
+    end
+    % compute output layer completely % for performance improvement
+    y = outputTransFcn(bsxfun(@plus,outputLW*currentOut,outputBias));
+    a(:,netSize) = num2cell(y,1);
+    if applyValueMapping
+        y = nnfw.Util.minmaxMappingRevert(y, net.minmaxTargetSettings);
     end
     % --------------------------------------
     % map outputs to 0...1 if is pattern net

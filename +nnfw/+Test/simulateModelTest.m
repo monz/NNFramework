@@ -25,6 +25,122 @@ classdef simulateModelTest < matlab.unittest.TestCase
               tc.assertThat(net.simulate(p(q), false), IsEqualTo(target(q), 'Within', AbsoluteTolerance(1e4*eps(target(q)))));
             end
         end
+        
+        function simulateTest_02(tc)
+            import matlab.unittest.constraints.IsEqualTo;
+            import matlab.unittest.constraints.AbsoluteTolerance;
+            % --------------------------------------
+            % init training values
+            % --------------------------------------
+            input = (-5:.1:5);
+            target = cos(pi*input/2);
+
+            % --------------------------------------
+            % init nn-framework 1-10-1
+            % --------------------------------------
+            net = nnfw.FeedForward(10);
+            net.configure(input,target);
+            net.initWeights();
+            % --------------------------------------
+            % old simulation algorithm - before performance optimization
+            % --------------------------------------
+            applyValueMapping = false;
+            netSize = net.numLayers;
+            inputTransFcn = net.layers{1}.f.f;
+            inputLW = net.IW{1}; 
+            inputBias = net.b{1};
+            outputTransFcn = net.outputs{netSize}.f.f;
+            outputLW = net.LW{netSize,netSize-1};
+            outputBias = net.b{netSize};
+            Q = size(input,2);
+            a_expected = cell(Q,net.numLayers);
+            outputSize = net.outputs{net.numLayers}.size;
+            y_expected = zeros(outputSize,Q);
+            for q = 1:Q
+                for layer = 1:netSize
+                    if layer == 1 % input layer
+                        p = input(:,q);
+                        a_expected{q, layer} = inputTransFcn( inputLW*p + inputBias );
+                    elseif layer == netSize % output layer
+                        p = a_expected{q, layer-1};
+                        a_expected{q, layer} = outputTransFcn( outputLW*p + outputBias );
+                    else % hidden layer
+                        LW = net.LW{layer,layer-1};
+                        p = a_expected{q, layer-1};
+                        a_expected{q, layer} = net.layers{layer}.f.f( LW*p + net.b{layer} );
+                    end
+                end
+                if applyValueMapping
+%                     y_expected(:,q) = nnfw.Util.minmaxMappingRevert(a_expected{q,netSize}, net.minmaxTargetSettings);
+                else
+                    y_expected(:,q) = a_expected{q,netSize};
+                end
+            end
+            % --------------------------------------
+            % check if values of the new algorithm are the same
+            % --------------------------------------
+            [y, a] = net.simulate(input, false);
+            tc.assertThat(y, IsEqualTo(y_expected, 'Within', AbsoluteTolerance(1e-15)));
+            tc.assertThat(a, IsEqualTo(a_expected, 'Within', AbsoluteTolerance(1e-14)));
+        end
+        
+        function simulateTest_03(tc)
+            import matlab.unittest.constraints.IsEqualTo;
+            import matlab.unittest.constraints.AbsoluteTolerance;
+            % --------------------------------------
+            % init training values
+            % --------------------------------------
+            input = (-5:.1:5);
+            target = cos(pi*input/2);
+
+            % --------------------------------------
+            % init nn-framework 1-3-5-1
+            % --------------------------------------
+            net = nnfw.FeedForward([3 5]);
+            net.configure(input,target);
+            net.initWeights();
+            % --------------------------------------
+            % old simulation algorithm - before performance optimization
+            % --------------------------------------
+            applyValueMapping = false;
+            netSize = net.numLayers;
+            inputTransFcn = net.layers{1}.f.f;
+            inputLW = net.IW{1}; 
+            inputBias = net.b{1};
+            outputTransFcn = net.outputs{netSize}.f.f;
+            outputLW = net.LW{netSize,netSize-1};
+            outputBias = net.b{netSize};
+            Q = size(input,2);
+            a_expected = cell(Q,net.numLayers);
+            outputSize = net.outputs{net.numLayers}.size;
+            y_expected = zeros(outputSize,Q);
+            for q = 1:Q
+                for layer = 1:netSize
+                    if layer == 1 % input layer
+                        p = input(:,q);
+                        a_expected{q, layer} = inputTransFcn( inputLW*p + inputBias );
+                    elseif layer == netSize % output layer
+                        p = a_expected{q, layer-1};
+                        a_expected{q, layer} = outputTransFcn( outputLW*p + outputBias );
+                    else % hidden layer
+                        LW = net.LW{layer,layer-1};
+                        p = a_expected{q, layer-1};
+                        a_expected{q, layer} = net.layers{layer}.f.f( LW*p + net.b{layer} );
+                    end
+                end
+                if applyValueMapping
+%                     y_expected(:,q) = nnfw.Util.minmaxMappingRevert(a_expected{q,netSize}, net.minmaxTargetSettings);
+                else
+                    y_expected(:,q) = a_expected{q,netSize};
+                end
+            end
+            % --------------------------------------
+            % check if values of the new algorithm are the same
+            % --------------------------------------
+            [y, a] = net.simulate(input, false);
+            tc.assertThat(y, IsEqualTo(y_expected, 'Within', AbsoluteTolerance(1e-15)));
+            tc.assertThat(a, IsEqualTo(a_expected, 'Within', AbsoluteTolerance(1e-14)));
+        end
     end
     
 end

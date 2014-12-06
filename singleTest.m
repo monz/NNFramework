@@ -23,5 +23,7 @@ import matlab.unittest.TestSuite;
 % suite = matlab.unittest.TestSuite.fromMethod(?nnfw.Test.separateTrainValuesTest, 'separateTrainValuesTest_04');
 % suite = matlab.unittest.TestSuite.fromMethod(?nnfw.Test.separateTrainValuesTest, 'separateTrainValuesTest_04');
 % suite = matlab.unittest.TestSuite.fromMethod(?nnfw.Test.separateTrainValuesTest, 'separateTrainValuesTest_05');
-suite = matlab.unittest.TestSuite.fromMethod(?nnfw.Test.mseTest, 'mseTest_01');
+% suite = matlab.unittest.TestSuite.fromMethod(?nnfw.Test.mseTest, 'mseTest_01');
+% suite = matlab.unittest.TestSuite.fromMethod(?nnfw.Test.simulateModelTest, 'simulateTest_02');
+suite = matlab.unittest.TestSuite.fromMethod(?nnfw.Test.simulateModelTest, 'simulateTest_03');
 result = run(suite)
