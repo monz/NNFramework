@@ -33,20 +33,12 @@ function [ abortFcn ] = makeAbortFcn( net, values )
                 % calculate training error
                 % -------------------------
                 [y, ~] = simulate(net, trainValues, false);
-                Q = size(trainValues, 2);
-                ETraining = 0;
-                for q = 1:Q
-                    ETraining = ETraining + nnfw.Util.mse(y(:, q), trainTargets(:, q));
-                end
+                ETraining = nnfw.Util.mseFast(y, trainTargets);
                 % -------------------------
                 % calculate validation error
                 % -------------------------
                 [y, ~] = simulate(net, validateValues, false);
-                Q = size(validateValues, 2);
-                EValidate = 0;
-                for q = 1:Q
-                    EValidate = EValidate + nnfw.Util.mse(y(:, q), validateTargets(:, q));
-                end
+                EValidate = nnfw.Util.mseFast(y, validateTargets);
                 if EValidate < lastETest
                     lastETest = EValidate;
                 else
@@ -60,11 +52,7 @@ function [ abortFcn ] = makeAbortFcn( net, values )
                 % calculate test error
                 % -------------------------
                 [y, ~] = simulate(net, testValues, false);
-                Q = size(testValues, 2);
-                ETest = 0;
-                for q = 1:Q
-                    ETest = ETest + nnfw.Util.mse(y(:, q), testTargets(:, q));
-                end
+                ETest = nnfw.Util.mseFast(y, testTargets);
                 if ETest < lastETest
                     lastETest = ETest;
                     % maybe store here best weight vector in e.g. net.bestWeights

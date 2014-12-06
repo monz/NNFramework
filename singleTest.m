@@ -5,7 +5,7 @@ import matlab.unittest.TestSuite;
 % suite = matlab.unittest.TestSuite.fromMethod(?nnfw.Test.networkUtilTest, 'setWeights_02');
 % suite = matlab.unittest.TestSuite.fromMethod(?nnfw.Test.networkUtilTest, 'setWeights_03');
 % suite = matlab.unittest.TestSuite.fromMethod(?nnfw.Test.networkUtilTest, 'setWeights_04');
-suite = matlab.unittest.TestSuite.fromMethod(?nnfw.Test.networkUtilTest, 'setWeights_05');
+% suite = matlab.unittest.TestSuite.fromMethod(?nnfw.Test.networkUtilTest, 'setWeights_05');
 % suite = matlab.unittest.TestSuite.fromMethod(?nnfw.Test.networkUtilTest, 'getWeightVectorTest_02');
 % suite = matlab.unittest.TestSuite.fromMethod(?nnfw.Test.networkUtilTest, 'getWeightVectorTest_03');
 % suite = matlab.unittest.TestSuite.fromMethod(?nnfw.Test.networkUtilTest, 'getWeightVectorTest_04');
@@ -23,4 +23,5 @@ suite = matlab.unittest.TestSuite.fromMethod(?nnfw.Test.networkUtilTest, 'setWei
 % suite = matlab.unittest.TestSuite.fromMethod(?nnfw.Test.separateTrainValuesTest, 'separateTrainValuesTest_04');
 % suite = matlab.unittest.TestSuite.fromMethod(?nnfw.Test.separateTrainValuesTest, 'separateTrainValuesTest_04');
 % suite = matlab.unittest.TestSuite.fromMethod(?nnfw.Test.separateTrainValuesTest, 'separateTrainValuesTest_05');
+suite = matlab.unittest.TestSuite.fromMethod(?nnfw.Test.mseTest, 'mseTest_01');
 result = run(suite)

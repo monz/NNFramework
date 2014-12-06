@@ -41,6 +41,6 @@ function [E, g, output, lambda, jacobian] = train(net, input, target)
     net.setWeights(x);
     
     % calculate error and gradient
-    gradient = net.makeCostFcn(@nnfw.Util.mse, in, tn);
+    gradient = net.makeCostFcn(@nnfw.Util.mseFast, in, tn);
     [E, g] = gradient(x);
 end

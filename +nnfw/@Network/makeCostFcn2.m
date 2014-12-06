@@ -19,7 +19,7 @@ function costFcn = makeCostFcn2(net, fcn, input, target)
             J = zeros(Q*s_MSize, net.getNumWeights());
         end
         % cost function
-        F = bsxfun(@minus,target,y); % for performance improvement
+        F = bsxfun(fcn,y,target); % for performance improvement
         % load often used variables only once for performance improvements
         netSize = net.numLayers; % for performance improvement
         outputBpFcn = net.outputs{netSize}.f.backprop; % for performance improvement
