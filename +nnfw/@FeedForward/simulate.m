@@ -20,7 +20,7 @@ function [y, a] = simulate(net, varargin)
     % feed forward
     % -------------------------------------
     Q = size(input,2);
-    a = cell(Q,net.numLayers);
+    a = cell(Q,net.numLayers-1);
     % load often used variables only once for performance improvements
     netSize = net.numLayers; % for performance improvement
     inputTransFcn = net.layers{1}.f.f; % for performance improvement

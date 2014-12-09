@@ -53,7 +53,7 @@ classdef simulateModelTest < matlab.unittest.TestCase
             outputLW = net.LW{netSize,netSize-1};
             outputBias = net.b{netSize};
             Q = size(input,2);
-            a_expected = cell(Q,net.numLayers);
+            a_expected = cell(Q,net.numLayers-1);
             outputSize = net.outputs{net.numLayers}.size;
             y_expected = zeros(outputSize,Q);
             for q = 1:Q
@@ -109,7 +109,7 @@ classdef simulateModelTest < matlab.unittest.TestCase
             outputLW = net.LW{netSize,netSize-1};
             outputBias = net.b{netSize};
             Q = size(input,2);
-            a_expected = cell(Q,net.numLayers);
+            a_expected = cell(Q,net.numLayers-1);
             outputSize = net.outputs{net.numLayers}.size;
             y_expected = zeros(outputSize,Q);
             for q = 1:Q
