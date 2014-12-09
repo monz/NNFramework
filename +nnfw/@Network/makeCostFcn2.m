@@ -12,7 +12,6 @@ function costFcn = makeCostFcn2(net, fcn, input, target)
 
         % calculate cost function
         Q = size(input,2); % number of training samples
-        s_M = zeros(size(target));
         s_MSize = net.outputs{net.numLayers}.size;
         s_m = cell(Q, net.numLayers-1);
         if nargout > 1   % Two output arguments
@@ -23,12 +22,10 @@ function costFcn = makeCostFcn2(net, fcn, input, target)
         % load often used variables only once for performance improvements
         netSize = net.numLayers; % for performance improvement
         outputBpFcn = net.outputs{netSize}.f.backprop; % for performance improvement
-        for q = 1:Q
-            if nargout > 1   % Two output arguments
-                % calculate marquardt sensitivity of last layer
-                bpFunction = outputBpFcn;
-                s_M(:, q) = -bpFunction(a{q, netSize});
-
+        % calculate all marquardt sensitivities of last layer at once
+        s_M = -outputBpFcn(y); % for performance improvement
+        if nargout > 1   % Two output arguments
+            for q = 1:Q
                 % calculate remaining marquardt sensitivities
                 % backward M-1, ..., 2, 1
                 for layer = netSize-1:-1:1

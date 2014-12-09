@@ -43,7 +43,6 @@ function [y, a] = simulate(net, varargin)
     end
     % compute output layer completely % for performance improvement
     y = outputTransFcn(bsxfun(@plus,outputLW*currentOut,outputBias));
-    a(:,netSize) = num2cell(y,1);
     if applyValueMapping
         y = nnfw.Util.minmaxMappingRevert(y, net.minmaxTargetSettings);
     end

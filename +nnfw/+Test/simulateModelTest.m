@@ -63,7 +63,7 @@ classdef simulateModelTest < matlab.unittest.TestCase
                         a_expected{q, layer} = inputTransFcn( inputLW*p + inputBias );
                     elseif layer == netSize % output layer
                         p = a_expected{q, layer-1};
-                        a_expected{q, layer} = outputTransFcn( outputLW*p + outputBias );
+                        y_expected(:,q) = outputTransFcn( outputLW*p + outputBias );
                     else % hidden layer
                         LW = net.LW{layer,layer-1};
                         p = a_expected{q, layer-1};
@@ -72,8 +72,6 @@ classdef simulateModelTest < matlab.unittest.TestCase
                 end
                 if applyValueMapping
 %                     y_expected(:,q) = nnfw.Util.minmaxMappingRevert(a_expected{q,netSize}, net.minmaxTargetSettings);
-                else
-                    y_expected(:,q) = a_expected{q,netSize};
                 end
             end
             % --------------------------------------
@@ -121,7 +119,7 @@ classdef simulateModelTest < matlab.unittest.TestCase
                         a_expected{q, layer} = inputTransFcn( inputLW*p + inputBias );
                     elseif layer == netSize % output layer
                         p = a_expected{q, layer-1};
-                        a_expected{q, layer} = outputTransFcn( outputLW*p + outputBias );
+                        y_expected(:,q) = outputTransFcn( outputLW*p + outputBias );
                     else % hidden layer
                         LW = net.LW{layer,layer-1};
                         p = a_expected{q, layer-1};
@@ -130,8 +128,6 @@ classdef simulateModelTest < matlab.unittest.TestCase
                 end
                 if applyValueMapping
 %                     y_expected(:,q) = nnfw.Util.minmaxMappingRevert(a_expected{q,netSize}, net.minmaxTargetSettings);
-                else
-                    y_expected(:,q) = a_expected{q,netSize};
                 end
             end
             % --------------------------------------
