@@ -25,26 +25,44 @@ function costFcn = makeCostFcn2(net, fcn, input, target)
         % calculate all marquardt sensitivities of last layer at once
         s_M = -outputBpFcn(y); % for performance improvement
         if nargout > 1   % Two output arguments
-            for q = 1:Q
-                % calculate remaining marquardt sensitivities
-                % backward M-1, ..., 2, 1
-                for layer = netSize-1:-1:1
-                    bpFunction = net.layers{layer}.f.backprop;
-
-                    % create derivated values matrix F_m
-                    % diag creates a matrix with the values on the diagonal
-                    % all other elements remain zero
-                    F_m = diag(bpFunction(a{q, layer}));
-                    % sensitivities
-                    if ( layer == netSize-1 )
-                        s_m{q, layer} = F_m * net.LW{layer+1, layer}' * s_M(q);
-                    else
-                        s_m{q, layer} = F_m * net.LW{layer+1, layer}' * s_m{q, layer+1};
+            % calculate remaining marquardt sensitivities
+            % backward M-1, ..., 2, 1
+            for layer = netSize-1:-1:1
+                bpFunction = net.layers{layer}.f.backprop;
+                LWtransp = net.LW{layer+1, layer}';
+                % calculcate the derivated values of the layer neuron's
+                % outputs for all training values at once - these values
+                % are prepared for the F_m diagonal-matrix
+                dValues = bpFunction(reshape([a{:,layer}], size(a{1,layer},1), size(a,1))');
+                if ( layer == netSize-1 )
+                    for q = 1:Q
+                        % create derivated values matrix F_m
+                        % diag creates a matrix with the values on the diagonal
+                        % all other elements remain zero
+                        F_m = diag(dValues(q,1:end));
+                        % sensitivities
+                        % TODO check if computation is correct here, maybe each
+                        % outputNr need separate computation see Script Prof.Endisch
+                        % chapter 5 jacobian computation conclusion senction 2
+                        % for linear output function it is correct - all
+                        % s_M values are equal to -1
+                        s_m{q, layer} = F_m * LWtransp * s_M(q);
+                    end
+                else
+                    for q = 1:Q
+                        % create derivated values matrix F_m
+                        % diag creates a matrix with the values on the diagonal
+                        % all other elements remain zero
+                        F_m = diag(dValues(q,1:end));
+                        % sensitivities
+                        s_m{q, layer} = F_m * LWtransp * s_m{q, layer+1};
                     end
                 end
-                
+            end
+
+            % generate jacobian matrix
+            for q = 1:Q
                 for outputNr = 1:s_MSize % for every output index, calculate a row in the jacobian matrix
-                    % generate jacobian matrix
                     offset = 0;
                     for layer = 1:netSize
                         if ( layer == 1 )
