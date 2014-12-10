@@ -30,18 +30,16 @@ function [ output ] = separateTrainingValues( input, target, vlFactor, tsFactor 
     while j <= numRandElements
         ind = ceil(mod(rand(1,1)*numInputElements, numInputElements));
         
-        if ~ismember(ind, vlInput) && vlIndex <= numVlElements
+        if ~ismember(ind, usedIndizes) && vlIndex <= numVlElements
             vlInput(:, vlIndex) = input(:, ind);
             vlTarget(:, vlIndex) = target(:, ind);
             
             vlIndex = vlIndex + 1;
-%             j = j + 1;
-        elseif ~ismember(ind, tsInput) && tsIndex <= numTsElements
+        elseif ~ismember(ind, usedIndizes) && tsIndex <= numTsElements
             tsInput(:, tsIndex) = input(:, ind);
             tsTarget(:, tsIndex) = target(:, ind);
             
             tsIndex = tsIndex + 1;
-%             j = j + 1;
         else
            continue 
         end
@@ -51,15 +49,9 @@ function [ output ] = separateTrainingValues( input, target, vlFactor, tsFactor 
     
     % fill training data set with remaining data - therefor use the unused
     % indizes
-    trIndex = 1;
-    for ind = 1:size(input,2)
-       if ~ismember(ind, usedIndizes) && trIndex <= numTrElements
-          trInput(:, trIndex) = input(:, ind);
-          trTarget(:, trIndex) = target(:, ind);
-          
-          trIndex = trIndex + 1;
-       end
-    end
+    ind = ~ismember(1:size(input,2),usedIndizes); % all UNused indizes
+    trInput = input(:, ind);
+    trTarget = target(:, ind);
     
     % return the separated training values
     output = cell(3,2);

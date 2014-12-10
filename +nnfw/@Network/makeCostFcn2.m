@@ -79,20 +79,19 @@ function costFcn = makeCostFcn2(net, fcn, input, target)
                         % prepare jacobian entries to be saved in a row of
                         % jacobian matrix
                         jEntriesWeights = reshape(jEntriesWeights', 1, numel(jEntriesWeights));
-                        sensitivities = sensitivities(:)'; % error derived at bias
                         % save jacobian entries to the q-th jacobian matrix row
                         % jEntries of weights
                         startDim = offset+1;
                         offset = offset+length(jEntriesWeights);
                         
                         rowIdx = (q-1)*s_MSize + (outputNr);
-                        J(rowIdx, startDim:offset) = J(rowIdx, startDim:offset) + jEntriesWeights;
+                        J(rowIdx, startDim:offset) = jEntriesWeights;
                         
                         % jEntries of biases
                         startDim = offset+1;
                         offset = offset + length(sensitivities);
                         
-                        J(rowIdx, startDim:offset) = J(rowIdx, startDim:offset) + sensitivities;
+                        J(rowIdx, startDim:offset) = sensitivities;
                     end 
                 end
             end
