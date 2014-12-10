@@ -48,21 +48,20 @@ function costFcn = makeCostFcn2(net, fcn, input, target)
                     offset = 0;
                     for layer = 1:netSize
                         if ( layer == 1 )
-                            jEntriesWeights = s_m{q, layer}(:, outputNr) * input(:, q)';
-                            jEntriesBias = s_m{q, layer}(:, outputNr);
+                            sensitivities = s_m{q, layer}(:, outputNr);
+                            jEntriesWeights = sensitivities * input(:, q)';
                         elseif ( layer == netSize )
-                            s_MVector = zeros(s_MSize, 1);
-                            s_MVector(outputNr) = s_M(outputNr,q);
-                            jEntriesWeights = s_MVector * a{q, layer-1}';
-                            jEntriesBias = s_MVector;
+                            sensitivities = zeros(s_MSize, 1);
+                            sensitivities(outputNr) = s_M(outputNr,q);
+                            jEntriesWeights = sensitivities * a{q, layer-1}';
                         else
-                            jEntriesWeights = s_m{q, layer}(:, outputNr) * a{q, layer-1}';
-                            jEntriesBias = s_m{q, layer}(:, outputNr);
+                            sensitivities = s_m{q, layer}(:, outputNr);
+                            jEntriesWeights = sensitivities * a{q, layer-1}';
                         end
                         % prepare jacobian entries to be saved in a row of
                         % jacobian matrix
-                        jEntriesWeights = reshape(jEntriesWeights',[1, numel(jEntriesWeights)]);
-                        jEntriesBias = jEntriesBias(:)'; % error derived at bias
+                        jEntriesWeights = reshape(jEntriesWeights', 1, numel(jEntriesWeights));
+                        sensitivities = sensitivities(:)'; % error derived at bias
                         % save jacobian entries to the q-th jacobian matrix row
                         % jEntries of weights
                         startDim = offset+1;
@@ -73,9 +72,9 @@ function costFcn = makeCostFcn2(net, fcn, input, target)
                         
                         % jEntries of biases
                         startDim = offset+1;
-                        offset = offset + length(jEntriesBias);
+                        offset = offset + length(sensitivities);
                         
-                        J(rowIdx, startDim:offset) = J(rowIdx, startDim:offset) + jEntriesBias;
+                        J(rowIdx, startDim:offset) = J(rowIdx, startDim:offset) + sensitivities;
                     end 
                 end
             end
