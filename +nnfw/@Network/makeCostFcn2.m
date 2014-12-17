@@ -64,6 +64,7 @@ function costFcn = makeCostFcn2(net, fcn, input, target)
             for q = 1:Q
                 for outputNr = 1:s_MSize % for every output index, calculate a row in the jacobian matrix
                     offset = 0;
+                    rowIdx = (q-1)*s_MSize + (outputNr);
                     for layer = 1:netSize
                         if ( layer == 1 )
                             sensitivities = s_m{q, layer}(:, outputNr);
@@ -84,7 +85,6 @@ function costFcn = makeCostFcn2(net, fcn, input, target)
                         startDim = offset+1;
                         offset = offset+length(jEntriesWeights);
                         
-                        rowIdx = (q-1)*s_MSize + (outputNr);
                         J(rowIdx, startDim:offset) = jEntriesWeights;
                         
                         % jEntries of biases
