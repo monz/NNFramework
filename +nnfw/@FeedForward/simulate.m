@@ -34,12 +34,12 @@ function [y, a] = simulate(net, varargin)
     % currentOut is always given to the next layer as input
     % compute input layer completely % for performance improvement
     currentOut = inputTransFcn(bsxfun(@plus,inputLW*input,inputBias));
-    a(:,1) = num2cell(currentOut,1);
+    a(:,1) = nnfw.Util.myNum2Cell(currentOut);
     % compute each hidden layer completely % for performance improvement
     for layer = 2:netSize-1
         LW = net.LW{layer,layer-1};
         currentOut = net.layers{layer}.f.f(bsxfun(@plus,LW*currentOut,net.b{layer}));
-        a(:, layer) = num2cell(currentOut,1);
+        a(:,layer) = nnfw.Util.myNum2Cell(currentOut);
     end
     % compute output layer completely % for performance improvement
     y = outputTransFcn(bsxfun(@plus,outputLW*currentOut,outputBias));
