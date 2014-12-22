@@ -12,14 +12,13 @@ function costFcn = makeCostFcn(net, fcn, input, target)
 
         % calculate cost function
         Q = length(input); % number of training samples
-        E = 0;
         s_M = zeros(size(target));
         s_m = cell(Q, net.numLayers-1);
         gradients = zeros(1, net.getNumWeights());
+        % load often used variables only once for performance improvements
+        % cost function
+        E = fcn(y, target); % for performance improvement
         for q = 1:Q
-            % cost function
-            E = E + fcn(y(:, q), target(:, q));
-
             % calculate sensitivity of last layer
             bpFunction = net.outputs{net.numLayers}.f.backprop;
             s_M(:, q) = -2 * diag(bpFunction(y(:,q))) * (target(:, q) - y(:, q));
