@@ -47,6 +47,7 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
             mycell_data[i] = input_matrix[i+(j*nrows)];
         }
         mxSetCell(cell_array_ptr, j, mxDuplicateArray(mycell));
+        mxDestroyArray(mycell);
     }
     plhs[0] = cell_array_ptr;
 }
