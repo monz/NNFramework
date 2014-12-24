@@ -39,7 +39,7 @@ function costFcn = makeCostFcn2(net, fcn, input, target)
                         % create derivated values matrix F_m
                         % diag creates a matrix with the values on the diagonal
                         % all other elements remain zero
-                        F_m = diag(dValues(q,1:end));
+                        F_m = diag(dValues(q,:));
                         % sensitivities
                         % TODO check if computation is correct here, maybe each
                         % outputNr need separate computation see Script Prof.Endisch

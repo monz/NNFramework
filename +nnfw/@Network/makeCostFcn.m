@@ -16,12 +16,12 @@ function costFcn = makeCostFcn(net, fcn, input, target)
         s_m = cell(Q, net.numLayers-1);
         gradients = zeros(1, net.getNumWeights());
         % load often used variables only once for performance improvements
+        outputBpFcn = net.outputs{net.numLayers}.f.backprop; % for performance improvement
         % cost function
         E = fcn(y, target); % for performance improvement
         for q = 1:Q
             % calculate sensitivity of last layer
-            bpFunction = net.outputs{net.numLayers}.f.backprop;
-            s_M(:, q) = -2 * diag(bpFunction(y(:,q))) * (target(:, q) - y(:, q));
+            s_M(:, q) = -2 * diag(outputBpFcn(y(:,q))) * (target(:, q) - y(:, q));
 
             % calculate remaining sensitivities
             % backward M-1, ..., 2, 1
@@ -59,14 +59,12 @@ function costFcn = makeCostFcn(net, fcn, input, target)
                 % save gradients to the comprehensive gradient vector g
                 % gradients of weights
                 startDim = offset+1;
-                endDim = offset+length(grads);
-                gradients(1,startDim:endDim) = gradients(1,startDim:endDim) + grads;                
-                offset = endDim;
+                offset = offset+length(grads);
+                gradients(1,startDim:offset) = gradients(1,startDim:offset) + grads;
                 % gradients of biases
                 startDim = offset+1;
-                endDim = offset + length(bgrads);
-                gradients(1,startDim:endDim) = gradients(1,startDim:endDim) + bgrads;                
-                offset = endDim;                
+                offset = offset + length(bgrads);
+                gradients(1,startDim:offset) = gradients(1,startDim:offset) + bgrads;
             end
         end
     end
