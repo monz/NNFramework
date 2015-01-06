@@ -18,19 +18,19 @@ dataindexKT3 = ismember(clusteringData(idPtidC).testbench, 'kt3');
 
 % p = clusteringData(idPtidC).xData(:,dataindexKT2)';
 % t = clusteringData(idPtidC).yData(:,dataindexKT2)';
-% p = clusteringData(idPtidC).xData(:,2:4)';
 p = clusteringData(idPtidC).yData(:,2)';
 t = clusteringData(idPtidC).yData(:,1)';
 
 % toolbox
-% net = feedforwardnet(10);
+% net = feedforwardnet(15);
+% net.trainParam.epochs = 50;
 % net = train(net, p,t);
 % y = net(p);
 
 % nnfw
 net = nnfw.FeedForward([10 10]);
 net.configure(p,t);
-net.optim.maxIter = 150;
+net.optim.maxIter = 100;
 net.train(p,t);
 y = net.simulate(p);
 
