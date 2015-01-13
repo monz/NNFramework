@@ -32,7 +32,7 @@ function [E, g, output, lambda, jacobian] = train(net, input, target)
     % ------------------
     costFcn = net.makeCostFcn2(@nnfw.Util.componentError, in, tn);
     % register abort function
-    abort = nnfw.Util.makeAbortFcn(net, values);
+    abort = nnfw.Util.makeAbortFcn(net, values, net.optim.maxErrorIncrease);
     % start cost function optimazation
     options = optimoptions('lsqnonlin', 'OutputFcn', abort, 'Algorithm', 'levenberg-marquardt', 'Jacobian','on','PlotFcns', net.optim.plotFcns, 'MaxIter', net.optim.maxIter);
     [x, ~, ~, ~, output, lambda, jacobian] = lsqnonlin(costFcn,net.getWeightVector(), [], [], options);
