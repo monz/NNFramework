@@ -1,4 +1,4 @@
-function [ abortFcn ] = makeAbortFcn( net, values, maxErrIncrease )
+function [ abortFcn ] = makeAbortFcn( net, values )
 %ABORT Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -47,7 +47,7 @@ function [ abortFcn ] = makeAbortFcn( net, values, maxErrIncrease )
                     bestWeights = x;
                 else
                     increaseCounter = increaseCounter + 1;
-                    if increaseCounter >= maxErrIncrease
+                    if increaseCounter >= net.optim.maxErrorIncrease;
                         stop = true;
                         fprintf('aborted on increasing validation error %d times; E = %d\n', increaseCounter, EValidate);
                         fprintf('reseting best weights');

@@ -12,7 +12,7 @@ function [E, g, output, lambda, jacobian] = train(net, input, target)
     % ------------------
     % separate input data into train, validate, test data
     % ------------------
-    values = nnfw.Util.separateTrainingValues(in, tn, net.optim.vlFactor, net.optim.tsFactor);
+    [values, net.valueIndexes] = nnfw.Util.separateTrainingValues(in, tn, net.optim.vlFactor, net.optim.tsFactor);
     in = values{1,1};
     tn = values{1,2};
     
@@ -32,7 +32,7 @@ function [E, g, output, lambda, jacobian] = train(net, input, target)
     % ------------------
     costFcn = net.makeCostFcn2(@nnfw.Util.componentError, in, tn);
     % register abort function
-    abort = nnfw.Util.makeAbortFcn(net, values, net.optim.maxErrorIncrease);
+    abort = nnfw.Util.makeAbortFcn(net, values);
     % start cost function optimazation
     options = optimoptions('lsqnonlin', 'OutputFcn', abort, 'Algorithm', 'levenberg-marquardt', 'Jacobian','on','PlotFcns', net.optim.plotFcns, 'MaxIter', net.optim.maxIter);
     [x, ~, ~, ~, output, lambda, jacobian] = lsqnonlin(costFcn,net.getWeightVector(), [], [], options);

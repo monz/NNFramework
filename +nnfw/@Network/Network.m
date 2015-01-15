@@ -3,12 +3,14 @@ classdef (Abstract) Network < handle
     %   Detailed explanation goes here
     
     properties
-        isPatternNet = false;
+        isPatternNet = false; % if true, exit node converts values in range [0...1]
         
-        optim = struct;
+        optim = struct; % contains training abort thresholds
         
-        minmaxInputSettings;
-        minmaxTargetSettings;
+        minmaxInputSettings; % settings for min/max conversion
+        minmaxTargetSettings; % settings for min/max conversion
+        
+        valueIndexes; % indexes of separated input/target values
         
         numInputs = 0 % total number of network input vectors
         numLayers = 0 % number of network hidden layers
@@ -18,10 +20,10 @@ classdef (Abstract) Network < handle
         layers = {} % hidden layer information
         outputs = {} % output layer information
         
-        biasConnect = []
-        inputConnect = []
-        layerConnect = []
-        outputConnect = []
+        biasConnect = [] % currently unused
+        inputConnect = [] % currently unused
+        layerConnect = [] % currently unused
+        outputConnect = [] % currently unused
         
         IW = {} % input weights for each input vector
         LW = {} % layer weights for each hidden layer
