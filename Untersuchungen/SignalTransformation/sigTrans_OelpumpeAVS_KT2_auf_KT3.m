@@ -73,4 +73,4 @@ hold on
     
     legend('ANN', 'KT3 Mean', 'extrapolation');
 hold off;
-PlotOelpumpeAVS_KT2_auf_KT3;
+plot_kt2_to_kt3(idPtidC);
