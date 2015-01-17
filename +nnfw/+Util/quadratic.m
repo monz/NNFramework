@@ -4,7 +4,7 @@ function x = quadratic( n )
 % <a href="matlab:doc nnfw.Util.Activation">Activation</a>. These Objects
 % provide more information needed for internal use.
 
-    x = n*n;
+    x = n.*n;
     
 end
 

@@ -1,4 +1,4 @@
-function [ output ] = separateTrainingValues( input, target, vlFactor, tsFactor )
+function [ values, indexes ] = separateTrainingValues( input, target, vlFactor, tsFactor )
 %SEPARATEINPUTVALUES Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -9,39 +9,45 @@ function [ output ] = separateTrainingValues( input, target, vlFactor, tsFactor 
         error('Separation factors too big. No data for training left.')
     end
     
-    % determine the number of elements containt by each data set
+    % determine the number of elements contained by each data set
     numInputElements = length(input);
     numVlElements = floor(numInputElements * vlFactor);
     numTsElements = ceil(numInputElements * tsFactor);
-    numTrElements = numInputElements - numVlElements - numTsElements;
 
-    trInput = NaN(size(input,1),numTrElements); % contains e.g. 75-percent of data
-    vlInput = NaN(size(input,1),numVlElements); % 20-percent
-    tsInput = NaN(size(input,1),numTsElements); % 5-percent
+    % training data contains e.g. 75-percent of data
+    vlInput = NaN(size(input,1),numVlElements); % validation data 20-percent
+    tsInput = NaN(size(input,1),numTsElements); % test data 5-percent
         
-    trTarget = NaN(size(target,1),numTrElements);
     vlTarget = NaN(size(target,1),numVlElements);
     tsTarget = NaN(size(target,1),numTsElements);
+    
+    vlIndexes = zeros(1, numVlElements);
+    tsIndexes = zeros(1, numTsElements);
    
     % fill validation and test data sets with randomly choosen data.
     numRandElements = numVlElements + numTsElements;
     usedIndizes = zeros(1, numRandElements);
-    j = 1; tsIndex = 1; vlIndex = 1;
+    j = 1; tsIndexNum = 1; vlIndexNum = 1;
     while j <= numRandElements
         ind = ceil(mod(rand(1,1)*numInputElements, numInputElements));
         
-        if ~ismember(ind, vlInput) && vlIndex <= numVlElements
-            vlInput(:, vlIndex) = input(:, ind);
-            vlTarget(:, vlIndex) = target(:, ind);
+        indMember = ismember(ind, usedIndizes);
+        if ~indMember && vlIndexNum <= numVlElements
+            vlInput(:, vlIndexNum) = input(:, ind);
+            vlTarget(:, vlIndexNum) = target(:, ind);
             
-            vlIndex = vlIndex + 1;
-%             j = j + 1;
-        elseif ~ismember(ind, tsInput) && tsIndex <= numTsElements
-            tsInput(:, tsIndex) = input(:, ind);
-            tsTarget(:, tsIndex) = target(:, ind);
+            % save index
+            vlIndexes(vlIndexNum) = ind;
             
-            tsIndex = tsIndex + 1;
-%             j = j + 1;
+            vlIndexNum = vlIndexNum + 1;
+        elseif ~indMember && tsIndexNum <= numTsElements
+            tsInput(:, tsIndexNum) = input(:, ind);
+            tsTarget(:, tsIndexNum) = target(:, ind);
+            
+            % save index
+            tsIndexes(tsIndexNum) = ind;
+            
+            tsIndexNum = tsIndexNum + 1;
         else
            continue 
         end
@@ -49,25 +55,25 @@ function [ output ] = separateTrainingValues( input, target, vlFactor, tsFactor 
         j = j + 1;
     end
     
-    % fill training data set with remaining data - therefor use the unused
+    % fill training data set with remaining data - therefore use the unused
     % indizes
-    trIndex = 1;
-    for ind = 1:size(input,2)
-       if ~ismember(ind, usedIndizes) && trIndex <= numTrElements
-          trInput(:, trIndex) = input(:, ind);
-          trTarget(:, trIndex) = target(:, ind);
-          
-          trIndex = trIndex + 1;
-       end
-    end
+    trIndexes = ~ismember(1:size(input,2),usedIndizes); % all UNused indizes
+    trInput = input(:, trIndexes);
+    trTarget = target(:, trIndexes);
     
     % return the separated training values
-    output = cell(3,2);
-    output{1,1} = trInput;
-    output{1,2} = trTarget;
-    output{2,1} = vlInput;
-    output{2,2} = vlTarget;
-    output{3,1} = tsInput;
-    output{3,2} = tsTarget;
+    values = cell(3,2);
+    values{1,1} = trInput;
+    values{1,2} = trTarget;
+    values{2,1} = vlInput;
+    values{2,2} = vlTarget;
+    values{3,1} = tsInput;
+    values{3,2} = tsTarget;
+    
+    % return indexes
+    indexes = cell(3,1);
+    indexes{1,1} = trIndexes;
+    indexes{2,1} = vlIndexes;
+    indexes{3,1} = tsIndexes;
 end
 

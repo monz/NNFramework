@@ -3,12 +3,14 @@ classdef (Abstract) Network < handle
     %   Detailed explanation goes here
     
     properties
-        isPatternNet = false;
+        isPatternNet = false; % if true, exit node converts values in range [0...1]
         
-        optim = struct;
+        optim = struct; % contains training abort thresholds
         
-        minmaxInputSettings;
-        minmaxTargetSettings;
+        minmaxInputSettings; % settings for min/max conversion
+        minmaxTargetSettings; % settings for min/max conversion
+        
+        valueIndexes; % indexes of separated input/target values
         
         numInputs = 0 % total number of network input vectors
         numLayers = 0 % number of network hidden layers
@@ -18,10 +20,10 @@ classdef (Abstract) Network < handle
         layers = {} % hidden layer information
         outputs = {} % output layer information
         
-        biasConnect = []
-        inputConnect = []
-        layerConnect = []
-        outputConnect = []
+        biasConnect = [] % currently unused
+        inputConnect = [] % currently unused
+        layerConnect = [] % currently unused
+        outputConnect = [] % currently unused
         
         IW = {} % input weights for each input vector
         LW = {} % layer weights for each hidden layer
@@ -45,11 +47,11 @@ classdef (Abstract) Network < handle
             obj.optim.vlFactor = 0.20; % validation data factor, default 20 percent of input data are used for validation
             obj.optim.tsFactor = 0.05; % test data factor, default 5 percent of input data are used for testing
             
-            obj.optim.abortThreshold = 1e-2; % if test error is below this value, training gets aborted
-            obj.optim.maxErrorIncrease = 3; % if the test error increases x times, training gets aborted
+            obj.optim.abortThreshold = 1e-2; % if validation error is below this value, training gets aborted
+            obj.optim.maxErrorIncrease = 5; % if the validation error increases x times, training gets aborted
             
             obj.optim.stopTraining = false; % if true training get stopped
-            obj.optim.maxIter = 100; % max number of iterations in optimization
+            obj.optim.maxIter = 1000; % max number of iterations in optimization
         end
     end
     

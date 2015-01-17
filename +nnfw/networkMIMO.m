@@ -18,10 +18,12 @@ t = [sin(pi*p(1,:)/2); cos(pi*p(2,:)/2)];
 % --------------------------------------
 % init nn-framework
 % --------------------------------------
-net = nnfw.FeedForward(3);
+net = nnfw.FeedForward(10);
 net.configure(p,t);
+net.optim.abortThreshold = 1e-10;
+net.optim.maxIter = 100;
 % net.optim.plotFcns = {nnfw.Util.PlotFcn.FIRSTORDEROPT.f};
-net.optim.abortThreshold = 1e-4;
+% net.optim.abortThreshold = 1e-4;
 % net.layers{1}.f = nnfw.Util.Activation.LOGSIG;
 
 % --------------------------------------

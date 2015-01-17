@@ -18,7 +18,7 @@ t = cos(pi*p/2);
 % --------------------------------------
 % init nn-framework
 % --------------------------------------
-net = nnfw.FeedForward(5);
+net = nnfw.FeedForward([10 5]);
 net.configure(p,t);
 net.optim.abortThreshold = 1e-5;
 % net.optim.maxIter = 10;

@@ -12,89 +12,86 @@ function costFcn = makeCostFcn2(net, fcn, input, target)
 
         % calculate cost function
         Q = size(input,2); % number of training samples
-        F = zeros(size(target));
-        s_M = zeros(size(target));
         s_MSize = net.outputs{net.numLayers}.size;
         s_m = cell(Q, net.numLayers-1);
         if nargout > 1   % Two output arguments
             J = zeros(Q*s_MSize, net.getNumWeights());
         end
-        for q = 1:Q
-            % cost function
-            F(:, q) = fcn(y(:, q), target(:, q));
-
-            if nargout > 1   % Two output arguments
-                % calculate marquardt sensitivity of last layer
-                bpFunction = net.outputs{net.numLayers}.f.backprop;
-                s_M(:, q) = -bpFunction(a{q, net.numLayers});
-
-                % calculate remaining marquardt sensitivities
-                % backward M-1, ..., 2, 1
-                for layer = net.numLayers-1:-1:1
-                    bpFunction = net.layers{layer}.f.backprop;
-
-                    % create derivated values matrix F_m
-                    % diag creates a matrix with the values on the diagonal
-                    % all other elements remain zero
-                    F_m = diag(bpFunction(a{q, layer}));
-                    % sensitivities
-                    if ( layer == net.numLayers-1 )
-                        s_m{q, layer} = F_m * net.LW{layer+1, layer}' * s_M(q);
-                    else
-                        s_m{q, layer} = F_m * net.LW{layer+1, layer}' * s_m{q, layer+1};
+        % cost function
+        F = bsxfun(fcn,y,target); % for performance improvement
+        % load often used variables only once for performance improvements
+        netSize = net.numLayers; % for performance improvement
+        outputBpFcn = net.outputs{netSize}.f.backprop; % for performance improvement
+        % calculate all marquardt sensitivities of last layer at once
+        s_M = -outputBpFcn(y); % for performance improvement
+        if nargout > 1   % Two output arguments
+            % calculate remaining marquardt sensitivities
+            % backward M-1, ..., 2, 1
+            for layer = netSize-1:-1:1
+                bpFunction = net.layers{layer}.f.backprop;
+                LWtransp = net.LW{layer+1, layer}';
+                % calculcate the derivated values of the layer neuron's
+                % outputs for all training values at once - these values
+                % are prepared for the F_m diagonal-matrix
+                dValues = bpFunction(reshape([a{:,layer}], size(a{1,layer},1), size(a,1))');
+                if ( layer == netSize-1 )
+                    for q = 1:Q
+                        % create derivated values matrix F_m
+                        % diag creates a matrix with the values on the diagonal
+                        % all other elements remain zero
+                        F_m = diag(dValues(q,:));
+                        % sensitivities
+                        % TODO check if computation is correct here, maybe each
+                        % outputNr need separate computation see Script Prof.Endisch
+                        % chapter 5 jacobian computation conclusion senction 2
+                        % for linear output function it is correct - all
+                        % s_M values are equal to -1
+                        s_m{q, layer} = F_m * LWtransp * s_M(q);
+                    end
+                else
+                    for q = 1:Q
+                        % create derivated values matrix F_m
+                        % diag creates a matrix with the values on the diagonal
+                        % all other elements remain zero
+                        F_m = diag(dValues(q,1:end));
+                        % sensitivities
+                        s_m{q, layer} = F_m * LWtransp * s_m{q, layer+1};
                     end
                 end
-                
+            end
+
+            % generate jacobian matrix
+            for q = 1:Q
                 for outputNr = 1:s_MSize % for every output index, calculate a row in the jacobian matrix
-                    % generate jacobian matrix
                     offset = 0;
-                    for layer = 1:net.numLayers 
+                    rowIdx = (q-1)*s_MSize + (outputNr);
+                    for layer = 1:netSize
                         if ( layer == 1 )
-                            jEntriesWeights = s_m{q, layer}(:, outputNr) * input(:, q)';
-                            jEntriesBias = s_m{q, layer}(:, outputNr);
-                            layerSize = net.inputs{layer}.size;
-                            layerP1Size = net.layers{layer}.size;
-                        elseif ( layer == net.numLayers )
-                            s_MVector = zeros(s_MSize, 1);
-                            s_MVector(outputNr) = s_M(outputNr,q);
-                            jEntriesWeights = s_MVector * a{q, layer-1}';
-                            jEntriesBias = s_MVector;
-                            layerSize = net.layers{layer-1}.size;
-                            layerP1Size = net.outputs{layer}.size;
+                            sensitivities = s_m{q, layer}(:, outputNr);
+                            jEntriesWeights = sensitivities * input(:, q)';
+                        elseif ( layer == netSize )
+                            sensitivities = zeros(s_MSize, 1);
+                            sensitivities(outputNr) = s_M(outputNr,q);
+                            jEntriesWeights = sensitivities * a{q, layer-1}';
                         else
-                            jEntriesWeights = s_m{q, layer}(:, outputNr) * a{q, layer-1}';
-                            jEntriesBias = s_m{q, layer}(:, outputNr);
-                            layerSize = net.layers{layer-1}.size;
-                            layerP1Size = net.layers{layer}.size;
+                            sensitivities = s_m{q, layer}(:, outputNr);
+                            jEntriesWeights = sensitivities * a{q, layer-1}';
                         end
                         % prepare jacobian entries to be saved in a row of
                         % jacobian matrix
-                        jEntriesWeights2 = zeros(1, layerSize*layerP1Size);
-                        offset2 = 0;
-                        for k = 1:layerP1Size
-                            startDim2 = offset2 +1;
-                            endDim2 = offset2 + layerSize;
-                            jEntriesWeights2(1, startDim2:endDim2) = jEntriesWeights2(1, startDim2:endDim2) + jEntriesWeights(k,:); % error derived at weights
-                            offset2 = endDim2;
-                        end
-                        jEntriesWeights = jEntriesWeights2;
-%                         jEntriesWeights = jEntriesWeights(:)'; % error derived at weights
-                        jEntriesBias = jEntriesBias(:)'; % error derived at bias
+                        jEntriesWeights = reshape(jEntriesWeights', 1, numel(jEntriesWeights));
                         % save jacobian entries to the q-th jacobian matrix row
                         % jEntries of weights
                         startDim = offset+1;
-                        endDim = offset+length(jEntriesWeights);
+                        offset = offset+length(jEntriesWeights);
                         
-                        rowIdx = (q-1)*s_MSize + (outputNr);
-                        J(rowIdx, startDim:endDim) = J(rowIdx, startDim:endDim) + jEntriesWeights;                
+                        J(rowIdx, startDim:offset) = jEntriesWeights;
                         
-                        offset = endDim;
                         % jEntries of biases
                         startDim = offset+1;
-                        endDim = offset + length(jEntriesBias);
+                        offset = offset + length(sensitivities);
                         
-                        J(rowIdx, startDim:endDim) = J(rowIdx, startDim:endDim) + jEntriesBias;                
-                        offset = endDim;                
+                        J(rowIdx, startDim:offset) = sensitivities;
                     end 
                 end
             end
