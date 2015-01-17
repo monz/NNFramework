@@ -5,8 +5,9 @@ close all;
 
 %% choose parameter
 
-useToolbox = true;
 numNeurons = 2;
+useToolbox = true;
+useMinmaxMapping = false;
 
 %% prepare values
 
@@ -35,19 +36,25 @@ p = t2'; % transpose input values, net input is a entire curve
 t = repmat(t', 1, numInputs); % repeat output, for each input curve one output curve, always the same
 
 % change every second reference curve by smalles possible amount
-ind = 2:2:numInputs;
-t(:,ind) = t(:,ind) + eps(t(:,ind)); % add smalles possible amount, leads to expected behavior with nn-toolbox
+% ind = 2:2:numInputs;
+% ind = 1;
+% t(:,ind) = t(:,ind) + eps(t(:,ind)); % add smalles possible amount, leads to expected behavior with nn-toolbox
 
 %% train net
 
 if useToolbox
     net = feedforwardnet(numNeurons);
+    if ~useMinmaxMapping
+        net.inputs{1}.processFcns = {};
+        net.outputs{2}.processFcns = {};
+    end
     net.trainParam.epochs = 50;
     net = train(net, p, t);
 else
     net = nnfw.FeedForward(numNeurons);
     net.configure(p,t);
     net.optim.maxIter = 50;
+    net.optim.minmaxMapping = useMinmaxMapping;
     net.optim.abortThreshold = 1e-32;
     net.train(p,t);
 end
