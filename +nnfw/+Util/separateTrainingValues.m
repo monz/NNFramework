@@ -10,7 +10,7 @@ function [ values, indexes ] = separateTrainingValues( input, target, vlFactor, 
     end
     
     % determine the number of elements contained by each data set
-    numInputElements = length(input);
+    numInputElements = size(input, 2);
     numVlElements = floor(numInputElements * vlFactor);
     numTsElements = ceil(numInputElements * tsFactor);
 

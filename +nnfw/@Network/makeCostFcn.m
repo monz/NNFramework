@@ -11,7 +11,7 @@ function costFcn = makeCostFcn(net, fcn, input, target)
         [y, a] = simulate(net, input, false);
 
         % calculate cost function
-        Q = length(input); % number of training samples
+        Q = size(input,2); % number of training samples
         s_M = zeros(size(target));
         s_m = cell(Q, net.numLayers-1);
         gradients = zeros(1, net.getNumWeights());
