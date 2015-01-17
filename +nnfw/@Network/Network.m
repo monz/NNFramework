@@ -52,6 +52,8 @@ classdef (Abstract) Network < handle
             
             obj.optim.stopTraining = false; % if true training get stopped
             obj.optim.maxIter = 1000; % max number of iterations in optimization
+
+            obj.optim.minmaxMapping = true; % enable/disable value mapping
         end
     end
     

@@ -1,7 +1,7 @@
 function [y, a] = simulate(net, varargin)
 
     if nargin == 2
-        applyValueMapping = true;
+        applyValueMapping = net.optim.minmaxMapping;
     elseif nargin == 3
         applyValueMapping = varargin{2};
     else
