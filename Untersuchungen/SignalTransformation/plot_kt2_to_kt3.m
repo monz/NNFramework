@@ -1,4 +1,4 @@
-function plot_kt2_to_kt3( idPtidC )
+function plot_kt2_to_kt3( idPtidC, meanOnly )
 
     %% plot data KT2 to KT3
     % clear;
@@ -25,13 +25,18 @@ function plot_kt2_to_kt3( idPtidC )
         ylabel(clusteringData(idPtidC).yLabel);
         title(clusteringData(idPtidC).partTypeName);
         % plot data
-        kt2Plot = plot(clusteringData(idPtidC).xData(:,dataindexKT2), clusteringData(idPtidC).yData(:,dataindexKT2), 'Color', [0.0 0.0 0.7]);
-        kt3Plot = plot(clusteringData(idPtidC).xData(:,dataindexKT3), clusteringData(idPtidC).yData(:,dataindexKT3), 'Color', [0.0 0.7 0.0]);
+        if ~meanOnly
+            kt2Plot = plot(clusteringData(idPtidC).xData(:,dataindexKT2), clusteringData(idPtidC).yData(:,dataindexKT2), 'Color', [0.0 0.0 0.7]);
+            kt3Plot = plot(clusteringData(idPtidC).xData(:,dataindexKT3), clusteringData(idPtidC).yData(:,dataindexKT3), 'Color', [0.0 0.7 0.0]);
+        end
         % plot mean data
-        kt2MeanPlot = plot(clusteringData(idPtidC).xData(:,dataindexKT2), yMeanKT2, 'r', 'LineWidth', 2);
+        kt2MeanPlot = plot(clusteringData(idPtidC).xData(:,dataindexKT2), yMeanKT2, 'm', 'LineWidth', 2);
         kt3MeanPlot = plot(clusteringData(idPtidC).xData(:,dataindexKT2), yMeanKT3, 'k', 'LineWidth', 2);
-
-        legend([kt2Plot(1), kt3Plot(1), kt2MeanPlot(1), kt3MeanPlot(1)], 'KT2','KT3', 'Mean KT2', 'Mean KT3');
+        if ~meanOnly
+            legend([kt2Plot(1), kt3Plot(1), kt2MeanPlot(1), kt3MeanPlot(1)], 'KT2','KT3', 'Mean KT2', 'Mean KT3');
+        else
+            legend([kt2MeanPlot(1), kt3MeanPlot(1)], 'Mean KT2', 'Mean KT3');
+        end
     hold off
 
 end
