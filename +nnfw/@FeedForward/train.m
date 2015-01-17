@@ -12,7 +12,7 @@ function [E, g, output, lambda, jacobian] = train(net, input, target)
     % ------------------
     % separate input data into train, validate, test data
     % ------------------
-    values = nnfw.Util.separateTrainingValues(in, tn, net.optim.vlFactor, net.optim.tsFactor);
+    [values, net.valueIndexes] = nnfw.Util.separateTrainingValues(in, tn, net.optim.vlFactor, net.optim.tsFactor);
     in = values{1,1};
     tn = values{1,2};
     

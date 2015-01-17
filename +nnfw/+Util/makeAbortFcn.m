@@ -5,14 +5,11 @@ function [ abortFcn ] = makeAbortFcn( net, values )
     abortFcn = @abort;
 
     function stop = abort(x,optimValues,state)
-        persistent lastETest
+        persistent lastE;
+        persistent bestWeights;
         persistent increaseCounter;
         persistent myTitle;
-
-        legendString = {'TrainError', 'ValidationError','TestError'};
-
-        lastETest = intmax;        
-        stop = false;
+        persistent legendString;
         
         trainValues = values{1,1};
         trainTargets = values{1,2};
@@ -20,7 +17,9 @@ function [ abortFcn ] = makeAbortFcn( net, values )
         validateTargets = values{2,2};
         testValues = values{3,1};
         testTargets = values{3,2};
-        
+
+        stop = false;
+
         % define push button callback function
         function cbStopFcn(hObject,eventdata,handles)
             net.optim.stopTraining = true;
@@ -28,7 +27,9 @@ function [ abortFcn ] = makeAbortFcn( net, values )
         
         switch state
             case 'init'
-                % do nothing
+                legendString = {'TrainError', 'ValidationError','TestError'};
+                increaseCounter = 0;
+                lastE = intmax;
             case 'iter'
                 % -------------------------
                 % calculate training error
@@ -40,35 +41,28 @@ function [ abortFcn ] = makeAbortFcn( net, values )
                 % -------------------------
                 [y, ~] = simulate(net, validateValues, false);
                 EValidate = nnfw.Util.mseFast(y, validateTargets);
-                if EValidate < lastETest
-                    lastETest = EValidate;
+                if EValidate < lastE
+                    %fprintf('lastE %d; EValidate %d \n', lastE, EValidate);
+                    lastE = EValidate;
+                    bestWeights = x;
                 else
                     increaseCounter = increaseCounter + 1;
-                    if increaseCounter > 3
+                    if increaseCounter >= net.optim.maxErrorIncrease;
                         stop = true;
-                        disp(['aborted training: E = ' num2str(EValidate)]);
+                        fprintf('aborted on increasing validation error %d times; E = %d\n', increaseCounter, EValidate);
+                        fprintf('reseting best weights');
+                        net.setWeights(bestWeights);
                     end
+                end
+                if EValidate < net.optim.abortThreshold
+                    stop = true;
+                    sprintf('Validation error reached abort threshold, aborted training: E = %d\n', EValidate);
                 end
                 % -------------------------
                 % calculate test error
                 % -------------------------
                 [y, ~] = simulate(net, testValues, false);
                 ETest = nnfw.Util.mseFast(y, testTargets);
-                if ETest < lastETest
-                    lastETest = ETest;
-                    % maybe store here best weight vector in e.g. net.bestWeights
-                    % set net.bestWeights in at the bottom of train function
-                else
-                    increaseCounter = increaseCounter + 1;
-                    if increaseCounter > net.optim.maxErrorIncrease
-                        stop = true;
-                        disp(['aborted training: ValidationError increased = ' num2str(increaseCounter) ' times']);
-                    end
-                end
-                if ETest < net.optim.abortThreshold
-                    stop = true;
-                    disp(['aborted training: E = ' num2str(ETest)]);
-                end
                 % -------------------------
                 % plot error values
                 % -------------------------
@@ -88,6 +82,7 @@ function [ abortFcn ] = makeAbortFcn( net, values )
                     ylabel('MSE');
                     title(sprintf('Best ValidationErrorValue: %0.5e  in Iteration: %d', EValidate, optimValues.iteration));
                     myTitle = get(gca,'Title');
+                    set(gca,'YScale','log');
                     legend(legendString);
                     hold off
                 else
