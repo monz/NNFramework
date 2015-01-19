@@ -31,13 +31,17 @@ function plotCommon( data )
         % plot data
         figure(figureNr)
         hold on
+            if ~meanOnly
+                TB1Plot = plot(xDataTB1, yDataTB1, 'Color', colorTB1);
+                TB2Plot = plot(xDataTB2, yDataTB2, 'Color', colorTB2);
+            end
+            
             TB1MeanPlot = plot(xDataTB1, yDataMeanTB1, 'Color', colorMeanTB1, 'LineStyle', lineStyleMeanTB1, 'LineWidth', 2);
             TB2MeanPlot = plot(xDataTB2, yDataMeanTB2, 'Color', colorMeanTB2, 'LineStyle', lineStyleMeanTB2,'LineWidth', 2);
+
             if meanOnly
                 legend([TB1MeanPlot(1), TB2MeanPlot(1), inputLine(1), testInputLine(1)], strcat('Mean ', lgTB1), strcat('Mean ', lgTB2), lgInput, lgTestInput);
             else
-                TB1Plot = plot(xDataTB1, yDataTB1, 'Color', colorTB1);
-                TB2Plot = plot(xDataTB2, yDataTB2, 'Color', colorTB2);
                 legend([TB1Plot(1), TB2Plot(1), TB1MeanPlot(1), TB2MeanPlot(1), inputLine(1), testInputLine(1)], lgTB1, lgTB2, strcat('Mean ', lgTB1), strcat('Mean ', lgTB2), lgInput, lgTestInput);
             end
         hold off
