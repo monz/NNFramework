@@ -13,6 +13,7 @@ function plotCommon( data )
         lgTB2 = data.lgTB2;
         lgInput = data.lgInput;
         lgTestInput = data.lgTestInput;
+        lgExtraInput = data.lgExtraInput;
         
         colorTB1 = data.colorTB1;
         colorTB2 = data.colorTB2;
@@ -28,6 +29,7 @@ function plotCommon( data )
         % extract line handles from former line plotting
         inputLine = findobj('Tag','input');
         testInputLine = findobj('Tag','testInput');
+        extraInputLine = findobj('Tag','extraInput');
         % plot data
         figure(figureNr)
         hold on
@@ -40,9 +42,9 @@ function plotCommon( data )
             TB2MeanPlot = plot(xDataTB2, yDataMeanTB2, 'Color', colorMeanTB2, 'LineStyle', lineStyleMeanTB2,'LineWidth', 2);
 
             if meanOnly
-                legend([TB1MeanPlot(1), TB2MeanPlot(1), inputLine(1), testInputLine(1)], strcat('Mean ', lgTB1), strcat('Mean ', lgTB2), lgInput, lgTestInput);
+                legend([TB1MeanPlot(1), TB2MeanPlot(1), inputLine(1), testInputLine(1), extraInputLine], strcat('Mean ', lgTB1), strcat('Mean ', lgTB2), lgInput, lgTestInput, lgExtraInput);
             else
-                legend([TB1Plot(1), TB2Plot(1), TB1MeanPlot(1), TB2MeanPlot(1), inputLine(1), testInputLine(1)], lgTB1, lgTB2, strcat('Mean ', lgTB1), strcat('Mean ', lgTB2), lgInput, lgTestInput);
+                legend([TB1Plot(1), TB2Plot(1), TB1MeanPlot(1), TB2MeanPlot(1), inputLine(1), testInputLine(1), extraInputLine], lgTB1, lgTB2, strcat('Mean ', lgTB1), strcat('Mean ', lgTB2), lgInput, lgTestInput, lgExtraInput);
             end
         hold off
 end

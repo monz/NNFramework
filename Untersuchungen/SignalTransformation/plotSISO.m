@@ -8,11 +8,14 @@ function plotSISO( data )
     yLabel = data.yLabel;
     lgInput = data.lgInput;
     lgTestInput = data.lgTestInput;
+    lgExtraInput = data.lgExtraInput;
     
     lwInput = data.lwInput;
     lwTestInput = data.lwTestInput;
+    lwExtraInput = data.lwExtraInput;
     colorInput = data.colorInput;
     colorTestInput = data.colorTestInput;
+    colorExtraInput = data.colorExtraInput;
     
     dataSize = data.size;
     numInputs = data.numInputs;
@@ -20,6 +23,7 @@ function plotSISO( data )
     
     y = data.y;
     yTest = data.yTest;
+    yExtra = data.yExtra;
     xData = data.xAxis';
     xData = xData(1,:);
     
@@ -36,8 +40,9 @@ function plotSISO( data )
         for k = 1:numTest
             plotTestInput = plot(xData, yTest((k-1)*dataSize+1:k*dataSize), 'Color', colorTestInput, 'LineWidth', lwTestInput, 'Tag', 'testInput');
         end
-
-        legend([plotInput(1), plotTestInput(1)], lgInput, lgTestInput);
+        % plot extraploation data
+        plotExtraInput = plot(xData, yExtra, 'Color', colorExtraInput, 'LineWidth', lwExtraInput, 'Tag', 'extraInput');
+        legend([plotInput(1), plotTestInput(1), plotExtraInput], lgInput, lgTestInput, lgExtraInput);
     hold off;
     
 end

@@ -6,6 +6,7 @@ numNeurons = 2;
 maxIter = 50;
 useToolbox = true;
 plotMeanOnly = false;
+trainTargetMean = false;
 % select test part
 idPtidC = 143;
 
@@ -18,7 +19,10 @@ tb_kt3 = sigTrans_loadData(idPtidC, 'kt3', 'y');
 % separate test data from train data
 [values, indexes] = nnfw.Util.separateTrainingValues(tb_kt2, tb_kt2, 0.2, 0);
 input = values{1,1};
-testP = values{2,1};
+testData = values{2,1};
+
+% prepare extrapolated data
+extraData = testData(:,1)*1.2; % 30-percent above normal input value
 
 % extract number of test values
 numInputs = length(find(indexes{1,1}));
@@ -27,10 +31,15 @@ numTests = length(indexes{2,1});
 % extract data size
 dataSize = size(input,1);
 
-% calculate mean of reference test bench
-mean_tb_kt3 = mean(tb_kt3, 2);
+if trainTargetMean
+    % calculate mean of reference test bench
+    mean_tb_kt3 = mean(tb_kt3, 2);
+    target = mean_tb_kt3;
+else
+    target = tb_kt3;
+end
 
-[p, t] = prepareDataSISO(input', mean_tb_kt3');
+[p, t, testP, extraP] = prepareDataSISO(input', target', testData', extraData');
 
 %% train network
 
@@ -48,11 +57,26 @@ end
 %% simulate 
 simData.p = p;
 simData.testP = testP;
+simData.extraP = extraP;
 simData.t = t;
 simData.numTests = numTests;
 simData.size = dataSize;
 
-[y, yTest, fit, fitTest, db, dbTest] = simSISO(net, simData, useToolbox);
+[simOutData] = simSISO(net, simData, useToolbox);
+
+y = simOutData.y;
+yTest = simOutData.yTest;
+yExtra = simOutData.yExtra;
+fit = simOutData.fit;
+fitTest = simOutData.fitTest;
+fitExtra = simOutData.fitExtra;
+db = simOutData.db;
+dbTest = simOutData.dbTest;
+dbExtra = simOutData.dbExtra;
+
+%% rate data
+fitTestMean = mean(fitTest);
+dbTestMean = mean(dbTest);
 
 %% plot simulated data
 
@@ -60,14 +84,18 @@ plotData.figureNr = 2;
 [plotData.title, plotData.xLabel, plotData.yLabel] = loadPlotData(idPtidC);
 plotData.lgInput = 'ANN';
 plotData.lgTestInput = 'Test Data';
+plotData.lgExtraInput = 'Extra Data';
 
 plotData.lwInput = 1;
 plotData.lwTestInput = 1;
+plotData.lwExtraInput = 2;
 plotData.colorInput = [0.0 1.0 0.0];
 plotData.colorTestInput = [1.0 0.0 0.0];
+plotData.colorExtraInput = [0.5 0.5 0.5];
 
 plotData.y = y;
 plotData.yTest = yTest;
+plotData.yExtra = yExtra;
 plotData.xAxis = sigTrans_loadData(idPtidC, 'kt3', 'x');
 plotData.size = dataSize;
 plotData.numInputs = numInputs;
@@ -90,6 +118,7 @@ plotOrigData.lgTB1 = 'KT2';
 plotOrigData.lgTB2 = 'KT3';
 plotOrigData.lgInput = 'ANN';
 plotOrigData.lgTestInput = 'Test Data';
+plotOrigData.lgExtraInput = 'Extra Data';
 
 plotOrigData.colorTB1 = 'm';
 plotOrigData.colorTB2 = 'c';
@@ -99,3 +128,14 @@ plotOrigData.lineStyleMeanTB1 = '--';
 plotOrigData.lineStyleMeanTB2 = '--';
 
 plotCommon(plotOrigData);
+
+%% add original extrapolation data to plot
+% figure(plotData.figureNr);
+% hold on;
+%     plot(plotData.xAxis, extraData, ':k', 'LineWidth',2);
+% hold off
+
+%% re-plot with mean values only
+% plotOrigData.meanOnly = 1;
+% plotSISO(plotData);
+% plotCommon(plotOrigData);
