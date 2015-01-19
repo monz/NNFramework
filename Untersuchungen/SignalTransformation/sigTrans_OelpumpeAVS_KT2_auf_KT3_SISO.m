@@ -6,19 +6,21 @@ numNeurons = 2;
 maxIter = 50;
 useToolbox = true;
 plotMeanOnly = false;
-trainInputMean = false;
+trainInputMean = true;
 trainTargetMean = true;
 % select test part
 idPtidC = 143;
+tb1 = 'kt2';
+tb2 = 'kt3';
 
 %% prepare data
 
 % load signal transformation data
-tb_kt2 = sigTrans_loadData(idPtidC, 'kt2', 'y');
-tb_kt3 = sigTrans_loadData(idPtidC, 'kt3', 'y');
+tb1 = sigTrans_loadData(idPtidC, tb1, 'y');
+tb2 = sigTrans_loadData(idPtidC, tb2, 'y');
 
 % separate test data from train data
-[values, indexes] = nnfw.Util.separateTrainingValues(tb_kt2, tb_kt2, 0.2, 0);
+[values, indexes] = nnfw.Util.separateTrainingValues(tb1, tb1, 0.2, 0);
 input = values{1,1};
 testData = values{2,1};
 
@@ -34,14 +36,14 @@ end
 % prepare target data
 if trainTargetMean
     % calculate mean of reference test bench
-    mean_tb_kt3 = mean(tb_kt3, 2);
-    target = mean_tb_kt3;
+    mean_tb2 = mean(tb2, 2);
+    target = mean_tb2;
 else
-    target = tb_kt3;
+    target = tb2;
 end
 
 % prepare extrapolated data
-extraData = testData(:,1)*1.2; % 30-percent above normal input value
+extraData = testData(:,1)*1.2; % 20-percent above normal input value
 
 % extract number of test values
 numTests = length(indexes{2,1});
