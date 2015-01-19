@@ -6,7 +6,8 @@ numNeurons = 2;
 maxIter = 50;
 useToolbox = true;
 plotMeanOnly = false;
-trainTargetMean = false;
+trainInputMean = false;
+trainTargetMean = true;
 % select test part
 idPtidC = 143;
 
@@ -21,16 +22,16 @@ tb_kt3 = sigTrans_loadData(idPtidC, 'kt3', 'y');
 input = values{1,1};
 testData = values{2,1};
 
-% prepare extrapolated data
-extraData = testData(:,1)*1.2; % 30-percent above normal input value
+% prepare input data
+if trainInputMean
+    % calculate mean of input test bench
+    input = mean(input, 2);
+    numInputs = 1;
+else  
+    numInputs = length(find(indexes{1,1}));
+end
 
-% extract number of test values
-numInputs = length(find(indexes{1,1}));
-numTests = length(indexes{2,1});
-
-% extract data size
-dataSize = size(input,1);
-
+% prepare target data
 if trainTargetMean
     % calculate mean of reference test bench
     mean_tb_kt3 = mean(tb_kt3, 2);
@@ -38,6 +39,15 @@ if trainTargetMean
 else
     target = tb_kt3;
 end
+
+% prepare extrapolated data
+extraData = testData(:,1)*1.2; % 30-percent above normal input value
+
+% extract number of test values
+numTests = length(indexes{2,1});
+
+% extract data size
+dataSize = size(input,1);
 
 [p, t, testP, extraP] = prepareDataSISO(input', target', testData', extraData');
 

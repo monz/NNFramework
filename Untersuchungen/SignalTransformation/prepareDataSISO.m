@@ -21,6 +21,8 @@ function [ p, t, teData, exData ] = prepareDataSISO( input, target, testData, ex
         end
     elseif numTargets > numInputs
         t = target(1:numInputs,:);
+    else
+        t = target;
     end
 
     % reshape to one row for SISO trainig

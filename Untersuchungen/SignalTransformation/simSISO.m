@@ -4,6 +4,7 @@ function [ outData ] = simSISO( net, data, useToolbox )
 
     numTests = data.numTests;
     dataSize = data.size;
+    targetSize = length(data.t);
     yTest = zeros(1, numTests);
     fitTest = zeros(1, numTests);
     dbTest = zeros(1, numTests);
@@ -13,18 +14,22 @@ function [ outData ] = simSISO( net, data, useToolbox )
         yExtra = net(data.extraP);
         for k = 1:numTests
             ind = (k-1)*dataSize+1:k*dataSize;
+            indEndTarget = min(targetSize, k*length(ind));
+            indStartTarget = (indEndTarget - dataSize) +1;
             yTest(ind) = net(data.testP(ind));
-            fitTest(k) = nnfw.goodnessOfFit(yTest(ind)', data.t(ind)', 'NRMSE');
-            dbTest(k) = daviesBouldin(yTest(ind), data.t(ind));
+            fitTest(k) = nnfw.goodnessOfFit(yTest(ind)', data.t(indStartTarget:indEndTarget)', 'NRMSE');
+            dbTest(k) = daviesBouldin(yTest(ind), data.t(indStartTarget:indEndTarget));
         end
     else
         y = net.simulate(data.p);
         yExtra = net.simulate(data.extraP);
         for k = 1:numTests
             ind = (k-1)*dataSize+1:k*dataSize;
+            indEndTarget = min(targetSize, k*length(ind));
+            indStartTarget = (indEndTarget - dataSize) +1;
             yTest(ind) = net.simulate(data.testP(ind));
-            fitTest(k) = nnfw.goodnessOfFit(yTest(ind)', data.t(ind)', 'NRMSE');
-            dbTest(k) = daviesBouldin(yTest(ind), data.t(ind));
+            fitTest(k) = nnfw.goodnessOfFit(yTest(ind)', data.t(indStartTarget:indEndTarget)', 'NRMSE');
+            dbTest(k) = daviesBouldin(yTest(ind), data.t(indStartTarget:indEndTarget));
         end
     end
 
