@@ -16,11 +16,11 @@ tb2 = 'kt3';
 %% prepare data
 
 % load signal transformation data
-tb1 = sigTrans_loadData(idPtidC, tb1, 'y');
-tb2 = sigTrans_loadData(idPtidC, tb2, 'y');
+tb1Data = sigTrans_loadData(idPtidC, tb1, 'y');
+tb2Data = sigTrans_loadData(idPtidC, tb2, 'y');
 
 % separate test data from train data
-[values, indexes] = nnfw.Util.separateTrainingValues(tb1, tb1, 0.2, 0);
+[values, indexes] = nnfw.Util.separateTrainingValues(tb1Data, tb1Data, 0.2, 0);
 input = values{1,1};
 testData = values{2,1};
 
@@ -36,10 +36,10 @@ end
 % prepare target data
 if trainTargetMean
     % calculate mean of reference test bench
-    mean_tb2 = mean(tb2, 2);
+    mean_tb2 = mean(tb2Data, 2);
     target = mean_tb2;
 else
-    target = tb2;
+    target = tb2Data;
 end
 
 % prepare extrapolated data
@@ -108,7 +108,7 @@ plotData.colorExtraInput = [0.5 0.5 0.5];
 plotData.y = y;
 plotData.yTest = yTest;
 plotData.yExtra = yExtra;
-plotData.xAxis = sigTrans_loadData(idPtidC, 'kt3', 'x');
+plotData.xAxis = sigTrans_loadData(idPtidC, tb2, 'x');
 plotData.size = dataSize;
 plotData.numInputs = numInputs;
 plotData.numTest = numTests;
@@ -119,15 +119,15 @@ plotSISO(plotData);
 plotOrigData.figureNr = plotData.figureNr;
 plotOrigData.meanOnly = plotMeanOnly;
 
-plotOrigData.xAxisTB1 = sigTrans_loadData(idPtidC, 'kt2', 'x');
-plotOrigData.xAxisTB2 = sigTrans_loadData(idPtidC, 'kt3', 'x');
-plotOrigData.yAxisTB1 = sigTrans_loadData(idPtidC, 'kt2', 'y');
-plotOrigData.yAxisTB2 = sigTrans_loadData(idPtidC, 'kt3', 'y');
+plotOrigData.xAxisTB1 = sigTrans_loadData(idPtidC, tb1, 'x');
+plotOrigData.xAxisTB2 = sigTrans_loadData(idPtidC, tb2, 'x');
+plotOrigData.yAxisTB1 = sigTrans_loadData(idPtidC, tb1, 'y');
+plotOrigData.yAxisTB2 = sigTrans_loadData(idPtidC, tb2, 'y');
 plotOrigData.yAxisMeanTB1 = mean(plotOrigData.yAxisTB1,2);
 plotOrigData.yAxisMeanTB2 = mean(plotOrigData.yAxisTB2,2);
         
-plotOrigData.lgTB1 = 'KT2';
-plotOrigData.lgTB2 = 'KT3';
+plotOrigData.lgTB1 = tb1;
+plotOrigData.lgTB2 = tb2;
 plotOrigData.lgInput = 'ANN';
 plotOrigData.lgTestInput = 'Test Data';
 plotOrigData.lgExtraInput = 'Extra Data';
