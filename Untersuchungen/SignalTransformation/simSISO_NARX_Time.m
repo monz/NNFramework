@@ -46,9 +46,9 @@ function [ outData ] = simSISO_NARX_Time( net, data )
     y = cell2mat(yp);
     yExtra = cell2mat(ypExtra);
     
-    outData.fit = nnfw.goodnessOfFit(y', data.t', 'NRMSE');
+    outData.fit = nnfw.goodnessOfFit(y', data.t(:, shift+1:end)', 'NRMSE');
     outData.fitExtra = nnfw.goodnessOfFit(yExtra', data.t(:, shift+1:dataSize)', 'NRMSE');
-    outData.db = daviesBouldin(y, data.t);
+    outData.db = daviesBouldin(y, data.t(:, shift+1:end));
     outData.dbExtra = daviesBouldin(yExtra, data.t(:, shift+1:dataSize));
     
     outData.y = y;
