@@ -4,18 +4,18 @@ clear;
 close all;
 
 %% set options
-numNeurons = [10];
+numNeurons = [10 10];
 maxIter = 100;
 delay1 = [1:2];
 delay2 = [1:2];
 plotMeanOnly = false;
 plotReferenceOnly = true;
 trainInputMean = false;
-trainTargetMean = true;
+trainTargetMean = false;
 addTimeInput = true;
 % select test part
-idPtidC = 14;
-tb1 = 'kt4';
+idPtidC = 81;
+tb1 = 'kt2';
 tb2 = 'kt3';
 
 %% prepare data
@@ -129,7 +129,7 @@ plotData.y = y;
 plotData.yTest = yTest;
 plotData.yExtra = yExtra;
 plotData.shift = shift;
-plotData.xAxis = t(inputRows,:);
+plotData.xAxis = sigTrans_loadData(idPtidC, tb2, 'x');
 plotData.size = dataSize;
 plotData.numInputs = numInputs;
 plotData.numTest = numTests;
