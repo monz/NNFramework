@@ -6,13 +6,14 @@ close all;
 %% set options
 numNeurons = [10];
 maxIter = 100;
-delay1 = [1:3];
+delay1 = [1:2];
 delay2 = [1:2];
 plotMeanOnly = true;
 trainInputMean = false;
 trainTargetMean = false;
+addTimeInput = false;
 % select test part
-idPtidC = 81;
+idPtidC = 35;
 tb1 = 'kt4';
 tb2 = 'kt3';
 
@@ -59,8 +60,14 @@ numTests = length(indexes{2,1});
 % extract data size
 dataSize = size(input,1);
 
-% [p, t, testP, extraP] = prepareDataSISO(input', target', testData', extraData');
-[p, t, testP, extraP] = prepareDataSISO_Time(input', target', testData', extraData', times');
+if addTimeInput
+    [p, t, testP, extraP] = prepareDataSISO_Time(input', target', testData', extraData', times');
+else
+    [p, t, testP, extraP] = prepareDataSISO(input', target', testData', extraData');
+end
+
+% extract input rows
+inputRows = size(p,1);
 
 %% train network
 
@@ -82,6 +89,7 @@ simData.testP = testP;
 simData.extraP = extraP;
 simData.t = t;
 simData.numTests = numTests;
+simData.inputRows = inputRows;
 simData.size = dataSize;
 simData.shift = shift;
 
@@ -120,7 +128,7 @@ plotData.y = y;
 plotData.yTest = yTest;
 plotData.yExtra = yExtra;
 plotData.shift = shift;
-plotData.xAxis = t(2,:);
+plotData.xAxis = t(inputRows,:);
 plotData.size = dataSize;
 plotData.numInputs = numInputs;
 plotData.numTest = numTests;

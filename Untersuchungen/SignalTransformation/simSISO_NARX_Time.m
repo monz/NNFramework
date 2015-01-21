@@ -5,9 +5,10 @@ function [ outData ] = simSISO_NARX_Time( net, data )
     numTests = data.numTests;
     shift = data.shift;
     dataSize = data.size;
+    inputRows = data.inputRows;
     targetSize = length(data.t);
-    yTest = zeros(2, numTests*dataSize);
-    fitTest = zeros(2, numTests);
+    yTest = zeros(inputRows, numTests*dataSize);
+    fitTest = zeros(inputRows, numTests);
     dbTest = zeros(1, numTests);
     
     % simulate normal input data
