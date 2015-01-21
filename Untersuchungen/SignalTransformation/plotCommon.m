@@ -23,6 +23,7 @@ function plotCommon( data )
         lineStyleMeanTB2 = data.lineStyleMeanTB2;
         
         meanOnly = data.meanOnly;
+        referenceOnly = data.referenceOnly;
         figureNr = data.figureNr;
         
         
@@ -34,8 +35,11 @@ function plotCommon( data )
         figure(figureNr)
         hold on
             if ~meanOnly
-                TB1Plot = plot(xDataTB1, yDataTB1, 'Color', colorTB1);
-                TB2Plot = plot(xDataTB2, yDataTB2, 'Color', colorTB2);
+                if referenceOnly
+                    TB2Plot = plot(xDataTB2, yDataTB2, 'Color', colorTB2);
+                else
+                    TB1Plot = plot(xDataTB1, yDataTB1, 'Color', colorTB1);
+                end
             end
             
             TB1MeanPlot = plot(xDataTB1, yDataMeanTB1, 'Color', colorMeanTB1, 'LineStyle', lineStyleMeanTB1, 'LineWidth', 2);
@@ -44,7 +48,11 @@ function plotCommon( data )
             if meanOnly
                 legend([TB1MeanPlot(1), TB2MeanPlot(1), inputLine(1), testInputLine(1), extraInputLine], strcat('Mean ', lgTB1), strcat('Mean ', lgTB2), lgInput, lgTestInput, lgExtraInput);
             else
-                legend([TB1Plot(1), TB2Plot(1), TB1MeanPlot(1), TB2MeanPlot(1), inputLine(1), testInputLine(1), extraInputLine], lgTB1, lgTB2, strcat('Mean ', lgTB1), strcat('Mean ', lgTB2), lgInput, lgTestInput, lgExtraInput);
+                if referenceOnly
+                    legend([TB2Plot(1), TB1MeanPlot(1), TB2MeanPlot(1), inputLine(1), testInputLine(1), extraInputLine], lgTB2, strcat('Mean ', lgTB1), strcat('Mean ', lgTB2), lgInput, lgTestInput, lgExtraInput);
+                else
+                    legend([TB1Plot(1), TB2Plot(1), TB1MeanPlot(1), TB2MeanPlot(1), inputLine(1), testInputLine(1), extraInputLine], lgTB1, lgTB2, strcat('Mean ', lgTB1), strcat('Mean ', lgTB2), lgInput, lgTestInput, lgExtraInput);
+                end
             end
         hold off
 end

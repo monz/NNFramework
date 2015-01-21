@@ -4,15 +4,16 @@ clear;
 close all;
 
 %% set options
-numNeurons = 4;
-maxIter = 1000;
+numNeurons = [50];
+maxIter = 100;
 useToolbox = true;
 plotMeanOnly = false;
-trainInputMean = true;
+plotReferenceOnly = true;
+trainInputMean = false;
 trainTargetMean = true;
 % select test part
-idPtidC = 146;
-tb1 = 'kt2';
+idPtidC = 14;
+tb1 = 'kt4';
 tb2 = 'kt3';
 
 %% prepare data
@@ -125,6 +126,7 @@ plotSISO_Time(plotData);
 %% plot original data
 plotOrigData.figureNr = plotData.figureNr;
 plotOrigData.meanOnly = plotMeanOnly;
+plotOrigData.referenceOnly = plotReferenceOnly;
 
 plotOrigData.xAxisTB1 = sigTrans_loadData(idPtidC, tb1, 'x');
 plotOrigData.xAxisTB2 = sigTrans_loadData(idPtidC, tb2, 'x');

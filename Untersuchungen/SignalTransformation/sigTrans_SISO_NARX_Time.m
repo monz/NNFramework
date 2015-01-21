@@ -8,12 +8,13 @@ numNeurons = [10];
 maxIter = 100;
 delay1 = [1:2];
 delay2 = [1:2];
-plotMeanOnly = true;
+plotMeanOnly = false;
+plotReferenceOnly = true;
 trainInputMean = false;
-trainTargetMean = false;
-addTimeInput = false;
+trainTargetMean = true;
+addTimeInput = true;
 % select test part
-idPtidC = 35;
+idPtidC = 14;
 tb1 = 'kt4';
 tb2 = 'kt3';
 
@@ -138,6 +139,7 @@ plotSISO_NARX_Time(plotData);
 %% plot original data
 plotOrigData.figureNr = plotData.figureNr;
 plotOrigData.meanOnly = plotMeanOnly;
+plotOrigData.referenceOnly = plotReferenceOnly;
 
 plotOrigData.xAxisTB1 = sigTrans_loadData(idPtidC, tb1, 'x');
 plotOrigData.xAxisTB2 = sigTrans_loadData(idPtidC, tb2, 'x');
@@ -169,5 +171,5 @@ plotCommon(plotOrigData);
 
 %% re-plot with mean values only
 % plotOrigData.meanOnly = 1;
-% plotSISO(plotData);
+% plotSISO_NARX_Time(plotData);
 % plotCommon(plotOrigData);
