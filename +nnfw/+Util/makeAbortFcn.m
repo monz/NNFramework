@@ -10,6 +10,7 @@ function [ abortFcn ] = makeAbortFcn( net, values )
         persistent increaseCounter;
         persistent myTitle;
         persistent legendString;
+        persistent numTrainValues;
         
         trainValues = values{1,1};
         trainTargets = values{1,2};
@@ -30,39 +31,45 @@ function [ abortFcn ] = makeAbortFcn( net, values )
                 legendString = {'TrainError', 'ValidationError','TestError'};
                 increaseCounter = 0;
                 lastE = intmax;
+                numTrainValues = size(trainValues,2);
             case 'iter'
                 % -------------------------
                 % calculate training error
                 % -------------------------
                 [y, ~] = simulate(net, trainValues, false);
                 ETraining = nnfw.Util.mseFast(y, trainTargets);
-                % -------------------------
-                % calculate validation error
-                % -------------------------
-                [y, ~] = simulate(net, validateValues, false);
-                EValidate = nnfw.Util.mseFast(y, validateTargets);
-                if EValidate < lastE
-                    %fprintf('lastE %d; EValidate %d \n', lastE, EValidate);
-                    lastE = EValidate;
-                    bestWeights = x;
-                else
-                    increaseCounter = increaseCounter + 1;
-                    if increaseCounter >= net.optim.maxErrorIncrease;
-                        stop = true;
-                        fprintf('aborted on increasing validation error %d times; E = %d\n', increaseCounter, EValidate);
-                        fprintf('reseting best weights');
-                        net.setWeights(bestWeights);
+                if numTrainValues > 1
+                    % -------------------------
+                    % calculate validation error
+                    % -------------------------
+                    [y, ~] = simulate(net, validateValues, false);
+                    EValidate = nnfw.Util.mseFast(y, validateTargets);
+                    if EValidate < lastE
+                        %fprintf('lastE %d; EValidate %d \n', lastE, EValidate);
+                        lastE = EValidate;
+                        bestWeights = x;
+                    else
+                        increaseCounter = increaseCounter + 1;
+                        if increaseCounter >= net.optim.maxErrorIncrease;
+                            stop = true;
+                            fprintf('aborted on increasing validation error %d times; E = %d\n', increaseCounter, EValidate);
+                            fprintf('reseting best weights');
+                            net.setWeights(bestWeights);
+                        end
                     end
+                    if EValidate < net.optim.abortThreshold
+                        stop = true;
+                        sprintf('Validation error reached abort threshold, aborted training: E = %d\n', EValidate);
+                    end
+                    % -------------------------
+                    % calculate test error
+                    % -------------------------
+                    [y, ~] = simulate(net, testValues, false);
+                    ETest = nnfw.Util.mseFast(y, testTargets);
+                else
+                    EValidate = 0;
+                    ETest = 0;
                 end
-                if EValidate < net.optim.abortThreshold
-                    stop = true;
-                    sprintf('Validation error reached abort threshold, aborted training: E = %d\n', EValidate);
-                end
-                % -------------------------
-                % calculate test error
-                % -------------------------
-                [y, ~] = simulate(net, testValues, false);
-                ETest = nnfw.Util.mseFast(y, testTargets);
                 % -------------------------
                 % plot error values
                 % -------------------------

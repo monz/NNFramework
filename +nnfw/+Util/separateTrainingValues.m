@@ -11,6 +11,18 @@ function [ values, indexes ] = separateTrainingValues( input, target, vlFactor, 
     
     % determine the number of elements contained by each data set
     numInputElements = size(input, 2);
+    if numInputElements <= 1
+        values = cell(3,2);
+        values{1,1} = input;
+        values{1,2} = target;
+
+        % return indexes
+        indexes = cell(3,1);
+        indexes{1,1} = 1;
+        
+        return
+    end
+    
     numVlElements = floor(numInputElements * vlFactor);
     numTsElements = ceil(numInputElements * tsFactor);
 
