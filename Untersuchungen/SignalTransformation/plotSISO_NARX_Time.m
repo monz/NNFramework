@@ -17,10 +17,11 @@ function plotSISO_NARX_Time( data )
     colorTestInput = data.colorTestInput;
     colorExtraInput = data.colorExtraInput;
     
+    shift = data.shift;
     dataSize = data.size;
+    dataSizeShifted = dataSize-shift;
     numInputs = data.numInputs;
     numTest = data.numTest;
-    shift = data.shift;
     
     y = data.y;
     yTest = data.yTest;
@@ -47,16 +48,10 @@ function plotSISO_NARX_Time( data )
             plotInput = plot(xData(xStart:xEnd), y(1, yStart:yEnd), 'Color', colorInput, 'LineWidth', lwInput, 'Tag', 'input');
         end
         % plot simulated data from test data inputs
+        xStart = shift + 1;
         for k = 1:numTest
-            if k == 1
-                xStart = shift + 1;
-                yEnd = dataSize - shift;
-                yStart = 1;
-            else
-                xStart = (xEnd - dataSize)+1;
-                yEnd = yEnd + dataSize;
-                yStart = (yEnd - dataSize) + 1;
-            end
+            yEnd = k*dataSizeShifted;
+            yStart = (yEnd - dataSizeShifted) + 1;
             plotTestInput = plot(xData(xStart:xEnd), yTest(1, yStart:yEnd), 'Color', colorTestInput, 'LineWidth', lwTestInput, 'Tag', 'testInput');
         end
         % plot extraploation data
