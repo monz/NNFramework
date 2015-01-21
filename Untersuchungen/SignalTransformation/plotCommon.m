@@ -39,6 +39,7 @@ function plotCommon( data )
                     TB2Plot = plot(xDataTB2, yDataTB2, 'Color', colorTB2);
                 else
                     TB1Plot = plot(xDataTB1, yDataTB1, 'Color', colorTB1);
+                    TB2Plot = plot(xDataTB2, yDataTB2, 'Color', colorTB2);
                 end
             end
             
