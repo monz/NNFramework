@@ -1,4 +1,5 @@
 *.*~
+*.asv
 *.sh
 *.mat
 profile_results_*
