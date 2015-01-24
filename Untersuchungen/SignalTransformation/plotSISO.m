@@ -38,7 +38,7 @@ function plotSISO( data )
         end
         % plot simulated data from test data inputs
         for k = 1:numTest
-            plotTestInput = plot(xData, yTest((k-1)*dataSize+1:k*dataSize), 'Color', colorTestInput, 'LineWidth', lwTestInput, 'Tag', 'testInput');
+            plotTestInput = plot(xData, yTest((k-1)*dataSize+1:k*dataSize), 'Color', colorTestInput, 'LineWidth', lwTestInput, 'Marker', 'x', 'Tag', 'testInput');
         end
         % plot extraploation data
         plotExtraInput = plot(xData, yExtra, 'Color', colorExtraInput, 'LineWidth', lwExtraInput, 'Tag', 'extraInput');

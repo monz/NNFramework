@@ -2,14 +2,23 @@ clear;
 close all;
 
 %% set options
+
+% network options
 numNeurons = [2];
-maxIter = 10;
+maxIter = 15;
 useToolbox = true;
-plotMeanOnly = false;
-plotReferenceOnly = true;
+
+% data options
 trainInputMean = false;
 trainTargetMean = false;
 maxDimension = 400;
+
+% plot options
+plotMeanOnly = false;
+plotReferenceOnly = true;
+figureNr = 2;
+plotName = 'Block';
+
 % select test part
 idPtidC = 143;
 tb1 = 'kt4';
@@ -21,15 +30,10 @@ tb2 = 'kt3';
 tb1Data = sigTrans_loadData(idPtidC, tb1, 'y');
 tb2Data = sigTrans_loadData(idPtidC, tb2, 'y');
 
-% select single data
-% tb1Data = tb1Data(:,1:10);
-tb2Data = tb2Data(:,1);
-
 % separate test data from train data
 [values, indexes] = nnfw.Util.separateTrainingValues(tb1Data, tb1Data, 0.99, 0);
 input = values{1,1};
 testData = values{2,1};
-% testData = tb1Data;
 
 % prepare input data
 if trainInputMean
@@ -118,7 +122,7 @@ dbTestMean = mean(dbTest);
 
 %% plot simulated data
 
-plotData.figureNr = 2;
+plotData.figureNr = figureNr;
 [plotData.title, plotData.xLabel, plotData.yLabel] = loadPlotData(idPtidC);
 plotData.lgInput = 'ANN';
 plotData.lgTestInput = 'Test Data';
@@ -167,6 +171,56 @@ plotOrigData.lineStyleMeanTB1 = '--';
 plotOrigData.lineStyleMeanTB2 = '--';
 
 plotCommon(plotOrigData);
+
+%% save figures
+
+ext = {'fig','png'};
+% save figure with all data
+close all;
+
+plotOrigData.meanOnly = false;
+plotOrigData.referenceOnly = false;
+
+plotSISO(plotData);
+plotCommon(plotOrigData);
+set(gcf, 'PaperPositionMode', 'auto');
+set(gcf,'units','normalized','outerposition',[0 0 1 1]);
+
+for k = 1:length(ext)
+    saveas(gcf, sprintf('figures/%d_%s_all.%s', idPtidC, plotName, ext{k}));
+end
+
+% save figure with reference data only
+close all;
+
+plotOrigData.meanOnly = false;
+plotOrigData.referenceOnly = true;
+
+plotSISO(plotData);
+plotCommon(plotOrigData);
+set(gcf, 'PaperPositionMode', 'auto');
+set(gcf,'units','normalized','outerposition',[0 0 1 1]);
+
+for k = 1:length(ext)
+    saveas(gcf, sprintf('figures/%d_%s_reference.%s', idPtidC, plotName, ext{k}));
+end
+
+% save figure with mean data only
+close all;
+
+plotOrigData.meanOnly = true;
+plotOrigData.referenceOnly = false;
+
+plotSISO(plotData);
+plotCommon(plotOrigData);
+set(gcf, 'PaperPositionMode', 'auto');
+set(gcf,'units','normalized','outerposition',[0 0 1 1]);
+
+for k = 1:length(ext)
+    saveas(gcf, sprintf('figures/%d_%s_mean.%s', idPtidC, plotName, ext{k}));
+end
+
+close all;
 
 %% add original extrapolation data to plot
 % figure(plotData.figureNr);
