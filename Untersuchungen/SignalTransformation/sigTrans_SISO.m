@@ -2,13 +2,21 @@ clear;
 close all;
 
 %% set options
+
+% network options
 numNeurons = [10];
 maxIter = 100;
 useToolbox = true;
-plotMeanOnly = false;
-plotReferenceOnly = true;
+
+% data options
 trainInputMean = false;
 trainTargetMean = true;
+
+% plot options
+plotMeanOnly = false;
+plotReferenceOnly = true;
+plotName = 'SISO';
+
 % select test part
 idPtidC = 14;
 tb1 = 'kt4';
@@ -142,6 +150,56 @@ plotOrigData.lineStyleMeanTB1 = '--';
 plotOrigData.lineStyleMeanTB2 = '--';
 
 plotCommon(plotOrigData);
+
+%% save figures
+
+ext = {'fig','png'};
+% save figure with all data
+close all;
+
+plotOrigData.meanOnly = false;
+plotOrigData.referenceOnly = false;
+
+plotSISO(plotData);
+plotCommon(plotOrigData);
+set(gcf, 'PaperPositionMode', 'auto');
+set(gcf,'units','normalized','outerposition',[0 0 1 1]);
+
+for k = 1:length(ext)
+    saveas(gcf, sprintf('figures/%d_%s_all.%s', idPtidC, plotName, ext{k}));
+end
+
+% save figure with reference data only
+close all;
+
+plotOrigData.meanOnly = false;
+plotOrigData.referenceOnly = true;
+
+plotSISO(plotData);
+plotCommon(plotOrigData);
+set(gcf, 'PaperPositionMode', 'auto');
+set(gcf,'units','normalized','outerposition',[0 0 1 1]);
+
+for k = 1:length(ext)
+    saveas(gcf, sprintf('figures/%d_%s_reference.%s', idPtidC, plotName, ext{k}));
+end
+
+% save figure with mean data only
+close all;
+
+plotOrigData.meanOnly = true;
+plotOrigData.referenceOnly = false;
+
+plotSISO(plotData);
+plotCommon(plotOrigData);
+set(gcf, 'PaperPositionMode', 'auto');
+set(gcf,'units','normalized','outerposition',[0 0 1 1]);
+
+for k = 1:length(ext)
+    saveas(gcf, sprintf('figures/%d_%s_mean.%s', idPtidC, plotName, ext{k}));
+end
+
+close all;
 
 %% add original extrapolation data to plot
 % figure(plotData.figureNr);

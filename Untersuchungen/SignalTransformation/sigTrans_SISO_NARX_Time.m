@@ -4,20 +4,29 @@ clear;
 close all;
 
 %% set options
-numNeurons = [5 5];
-maxIter = 100;
+
+% network options
+numNeurons = [10];
+maxIter = 50;
 delay1 = [1:20];
 delay2 = [1:2];
-plotMeanOnly = false;
-plotReferenceOnly = true;
+delayNet = true;
+narxVariant = 'closed';
+
+% data options
 trainInputMean = false;
 trainTargetMean = false;
 addTimeInput = false;
-delayNet = true;
-flipTime = true;
+flipTime = false;
+
+% plot options
+plotMeanOnly = false;
+plotReferenceOnly = false;
+plotName = 'TimeDelay-NARX';
+
 % select test part
-idPtidC = 39;
-tb1 = 'kt4';
+idPtidC = 81;
+tb1 = 'kt2';
 tb2 = 'kt3';
 
 %% prepare data
@@ -91,7 +100,7 @@ if delayNet
     [pr,Pi,Ai,tr,~,shift] = preparets(net,u,y);
     net = train(net,pr,tr,Pi,Ai);
 else
-    net = narxnet(delay1,delay2,numNeurons);
+    net = narxnet(delay1,delay2,numNeurons, narxVariant);
     net.trainParam.epochs = maxIter;
 
     [pr,Pi,Ai,tr, ~, shift] = preparets(net,u,{},y);
@@ -189,6 +198,56 @@ plotOrigData.lineStyleMeanTB1 = '--';
 plotOrigData.lineStyleMeanTB2 = '--';
 
 plotCommon(plotOrigData);
+
+%% save figures
+
+ext = {'fig','png'};
+% save figure with all data
+close all;
+
+plotOrigData.meanOnly = false;
+plotOrigData.referenceOnly = false;
+
+plotSISO_NARX_Time(plotData);
+plotCommon(plotOrigData);
+set(gcf, 'PaperPositionMode', 'auto');
+set(gcf,'units','normalized','outerposition',[0 0 1 1]);
+
+for k = 1:length(ext)
+    saveas(gcf, sprintf('figures/%d_%s_all.%s', idPtidC, plotName, ext{k}));
+end
+
+% save figure with reference data only
+close all;
+
+plotOrigData.meanOnly = false;
+plotOrigData.referenceOnly = true;
+
+plotSISO_NARX_Time(plotData);
+plotCommon(plotOrigData);
+set(gcf, 'PaperPositionMode', 'auto');
+set(gcf,'units','normalized','outerposition',[0 0 1 1]);
+
+for k = 1:length(ext)
+    saveas(gcf, sprintf('figures/%d_%s_reference.%s', idPtidC, plotName, ext{k}));
+end
+
+% save figure with mean data only
+close all;
+
+plotOrigData.meanOnly = true;
+plotOrigData.referenceOnly = false;
+
+plotSISO_NARX_Time(plotData);
+plotCommon(plotOrigData);
+set(gcf, 'PaperPositionMode', 'auto');
+set(gcf,'units','normalized','outerposition',[0 0 1 1]);
+
+for k = 1:length(ext)
+    saveas(gcf, sprintf('figures/%d_%s_mean.%s', idPtidC, plotName, ext{k}));
+end
+
+close all;
 
 %% add original extrapolation data to plot
 % figure(plotData.figureNr);
