@@ -10,6 +10,7 @@ function [ outData ] = simSISO_NARX_Time( net, data )
     yTest = zeros(inputRows, numTests*(dataSize-shift));
     fitTest = zeros(inputRows, numTests);
     dbTest = zeros(1, numTests);
+    delayNet = data.delayNet;
     
     % simulate normal input data
     yp = net(data.pr, data.Pi);
@@ -17,7 +18,11 @@ function [ outData ] = simSISO_NARX_Time( net, data )
     % prepare extrapolation data for simulation
     y = con2seq(data.t(:, 1:dataSize));
     u = con2seq(data.extraP);
-    [pr,Pi, ~, ~, ~] = preparets(net,u,{},y);
+    if delayNet
+        [pr,Pi, ~, ~, ~] = preparets(net,u,y);
+    else
+        [pr,Pi, ~, ~, ~] = preparets(net,u,{},y);
+    end
     % simulate extraplotion data
     ypExtra = net(pr, Pi);
 
@@ -33,7 +38,11 @@ function [ outData ] = simSISO_NARX_Time( net, data )
         % prepare test data for simulation
         y = con2seq(data.t(:, indStartPrepareTarget:indEndTarget));
         u = con2seq(data.testP(:, ind));
-        [pr,Pi, ~, ~, ~] = preparets(net,u,{},y);
+        if delayNet
+            [pr,Pi, ~, ~, ~] = preparets(net,u,y);
+        else
+            [pr,Pi, ~, ~, ~] = preparets(net,u,{},y);
+        end
         % simulate
         ypTest = net(pr, Pi);
         % convert result

@@ -28,34 +28,68 @@ function plotSISO_NARX_Time( data )
     yExtra = data.yExtra;
     xData = data.xAxis(1:dataSize);
     
+    flipTime = data.flipTime;
+    
     figure(figureNr);
     hold on
         title(titleText);
         xlabel(xLabel);
         ylabel(yLabel);
         % plot simulated data from trained inputs
-        xEnd = dataSize;
-        for k = 1:numInputs
-            if k == 1
-                xStart = shift + 1;
-                yEnd = dataSize - shift;
-                yStart = 1;
-            else
-                xStart = (xEnd - dataSize)+1;
-                yEnd = yEnd + dataSize;
-                yStart = (yEnd - dataSize) + 1;
+        
+        if flipTime
+            xStart = 1;
+            xEnd = dataSize;
+            yEnd = 0;
+            for k = 1:numInputs
+                if k == numInputs
+                    xEnd = dataSizeShifted;
+                    yEnd = dataSizeShifted;
+                    yStart = (yEnd - dataSizeShifted) + 1;
+                else
+                    yEnd = yEnd + dataSize;
+                    yStart = (yEnd - dataSize) + 1;
+                end
+                plotInput = plot(xData(xStart:xEnd), y(1, yStart:yEnd), 'Color', colorInput, 'LineWidth', lwInput, 'Tag', 'input');
             end
-            plotInput = plot(xData(xStart:xEnd), y(1, yStart:yEnd), 'Color', colorInput, 'LineWidth', lwInput, 'Tag', 'input');
+        else
+            xEnd = dataSize;
+            for k = 1:numInputs
+                if k == 1
+                    xStart = shift + 1;
+                    yEnd = dataSize - shift;
+                    yStart = 1;
+                else
+                    xStart = (xEnd - dataSize)+1;
+                    yEnd = yEnd + dataSize;
+                    yStart = (yEnd - dataSize) + 1;
+                end
+                plotInput = plot(xData(xStart:xEnd), y(1, yStart:yEnd), 'Color', colorInput, 'LineWidth', lwInput, 'Tag', 'input');
+            end
         end
         % plot simulated data from test data inputs
-        xStart = shift + 1;
-        for k = 1:numTest
-            yEnd = k*dataSizeShifted;
-            yStart = (yEnd - dataSizeShifted) + 1;
-            plotTestInput = plot(xData(xStart:xEnd), yTest(1, yStart:yEnd), 'Color', colorTestInput, 'LineWidth', lwTestInput, 'Tag', 'testInput');
+        if flipTime
+            xStart = 1;
+            xEnd = dataSizeShifted;
+            for k = 1:numTest
+                yEnd = k*dataSizeShifted;
+                yStart = (yEnd - dataSizeShifted) + 1;
+                plotTestInput = plot(xData(xStart:xEnd), yTest(1, yStart:yEnd), 'Color', colorTestInput, 'LineWidth', lwTestInput, 'Tag', 'testInput');
+            end
+        else
+            xStart = shift + 1;
+            for k = 1:numTest
+                yEnd = k*dataSizeShifted;
+                yStart = (yEnd - dataSizeShifted) + 1;
+                plotTestInput = plot(xData(xStart:xEnd), yTest(1, yStart:yEnd), 'Color', colorTestInput, 'LineWidth', lwTestInput, 'Tag', 'testInput');
+            end
         end
         % plot extraploation data
-        plotExtraInput = plot(xData(shift+1:dataSize), yExtra(1, :), 'Color', colorExtraInput, 'LineWidth', lwExtraInput, 'Tag', 'extraInput');
+        if flipTime
+            plotExtraInput = plot(xData(1:dataSizeShifted), yExtra(1, :), 'Color', colorExtraInput, 'LineWidth', lwExtraInput, 'Tag', 'extraInput');
+        else
+            plotExtraInput = plot(xData(shift+1:dataSize), yExtra(1, :), 'Color', colorExtraInput, 'LineWidth', lwExtraInput, 'Tag', 'extraInput');
+        end
         
         legend([plotInput(1), plotTestInput(1), plotExtraInput], lgInput, lgTestInput, lgExtraInput);
     hold off;

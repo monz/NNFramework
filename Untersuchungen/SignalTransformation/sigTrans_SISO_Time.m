@@ -4,15 +4,16 @@ clear;
 close all;
 
 %% set options
-numNeurons = [50];
+numNeurons = [5 5 5];
 maxIter = 100;
 useToolbox = true;
 plotMeanOnly = false;
 plotReferenceOnly = true;
 trainInputMean = false;
-trainTargetMean = true;
+trainTargetMean = false;
+flipTime = true; % FIX: plot_SISO_TIME?
 % select test part
-idPtidC = 14;
+idPtidC = 35;
 tb1 = 'kt4';
 tb2 = 'kt3';
 
@@ -61,6 +62,14 @@ dataSize = size(input,1);
 
 [p, t, testP, extraP] = prepareDataSISO_Time(input', target', testData', extraData', times');
 
+% flip left right
+if flipTime
+    p = fliplr(p);
+    t = fliplr(t);
+    testP = fliplr(testP);
+    extraP = fliplr(extraP);
+end
+
 %% train network
 
 if useToolbox
@@ -93,6 +102,13 @@ fitExtra = simOutData.fitExtra;
 db = simOutData.db;
 dbTest = simOutData.dbTest;
 dbExtra = simOutData.dbExtra;
+
+% revert flip left right
+if flipTime
+    y = fliplr(y);
+    yTest = fliplr(yTest);
+    yExtra = fliplr(yExtra);
+end
 
 %% rate data
 fitTestMean = mean(fitTest, 2);
@@ -128,6 +144,7 @@ plotOrigData.figureNr = plotData.figureNr;
 plotOrigData.meanOnly = plotMeanOnly;
 plotOrigData.referenceOnly = plotReferenceOnly;
 
+plotOrigData.shift = 0;
 plotOrigData.xAxisTB1 = sigTrans_loadData(idPtidC, tb1, 'x');
 plotOrigData.xAxisTB2 = sigTrans_loadData(idPtidC, tb2, 'x');
 plotOrigData.yAxisTB1 = sigTrans_loadData(idPtidC, tb1, 'y');

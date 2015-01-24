@@ -4,18 +4,20 @@ clear;
 close all;
 
 %% set options
-numNeurons = [10 10];
+numNeurons = [5 5];
 maxIter = 100;
-delay1 = [1:2];
+delay1 = [1:20];
 delay2 = [1:2];
 plotMeanOnly = false;
 plotReferenceOnly = true;
 trainInputMean = false;
 trainTargetMean = false;
-addTimeInput = true;
+addTimeInput = false;
+delayNet = true;
+flipTime = true;
 % select test part
-idPtidC = 81;
-tb1 = 'kt2';
+idPtidC = 39;
+tb1 = 'kt4';
 tb2 = 'kt3';
 
 %% prepare data
@@ -67,6 +69,14 @@ else
     [p, t, testP, extraP] = prepareDataSISO(input', target', testData', extraData');
 end
 
+% flip left right
+if flipTime
+    p = fliplr(p);
+    t = fliplr(t);
+    testP = fliplr(testP);
+    extraP = fliplr(extraP);
+end
+
 % extract input rows
 inputRows = size(p,1);
 
@@ -75,12 +85,19 @@ inputRows = size(p,1);
 y = con2seq(t);
 u = con2seq(p);
 
-net = narxnet(delay1,delay2,numNeurons);
-net.trainParam.epochs = maxIter;
+if delayNet
+    net = timedelaynet(delay1,numNeurons);
+    net.trainParam.epochs = maxIter;
+    [pr,Pi,Ai,tr,~,shift] = preparets(net,u,y);
+    net = train(net,pr,tr,Pi,Ai);
+else
+    net = narxnet(delay1,delay2,numNeurons);
+    net.trainParam.epochs = maxIter;
 
-[pr,Pi,Ai,tr, ~, shift] = preparets(net,u,{},y);
+    [pr,Pi,Ai,tr, ~, shift] = preparets(net,u,{},y);
 
-net = train(net,pr,tr,Pi);
+    net = train(net,pr,tr,Pi);
+end
 
 %% simulate
 
@@ -93,6 +110,7 @@ simData.numTests = numTests;
 simData.inputRows = inputRows;
 simData.size = dataSize;
 simData.shift = shift;
+simData.delayNet = delayNet;
 
 [simOutData] = simSISO_NARX_Time(net, simData);
 
@@ -105,6 +123,13 @@ fitExtra = simOutData.fitExtra;
 db = simOutData.db;
 dbTest = simOutData.dbTest;
 dbExtra = simOutData.dbExtra;
+
+% reverse flip left right
+if flipTime
+    y = fliplr(y);
+    yTest = fliplr(yTest);
+    yExtra = fliplr(yExtra);
+end
 
 %% rate data
 fitTestMean = mean(fitTest, 2);
@@ -133,6 +158,7 @@ plotData.xAxis = sigTrans_loadData(idPtidC, tb2, 'x');
 plotData.size = dataSize;
 plotData.numInputs = numInputs;
 plotData.numTest = numTests;
+plotData.flipTime = flipTime;
 
 plotSISO_NARX_Time(plotData);
 
@@ -141,6 +167,7 @@ plotOrigData.figureNr = plotData.figureNr;
 plotOrigData.meanOnly = plotMeanOnly;
 plotOrigData.referenceOnly = plotReferenceOnly;
 
+plotOrigData.shift = shift;
 plotOrigData.xAxisTB1 = sigTrans_loadData(idPtidC, tb1, 'x');
 plotOrigData.xAxisTB2 = sigTrans_loadData(idPtidC, tb2, 'x');
 plotOrigData.yAxisTB1 = sigTrans_loadData(idPtidC, tb1, 'y');
