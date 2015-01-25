@@ -22,6 +22,9 @@ idPtidC = 14;
 tb1 = 'kt4';
 tb2 = 'kt3';
 
+%% load path
+addpath(genpath(pwd));
+
 %% prepare data
 
 % load signal transformation data
@@ -152,6 +155,10 @@ plotOrigData.lineStyleMeanTB2 = '--';
 plotCommon(plotOrigData);
 
 %% save figures
+outDir = 'figures';
+if ~exist(outDir, 'dir')
+  mkdir(outDir);
+end
 
 ext = {'fig','png'};
 % save figure with all data
@@ -166,7 +173,7 @@ set(gcf, 'PaperPositionMode', 'auto');
 set(gcf,'units','normalized','outerposition',[0 0 1 1]);
 
 for k = 1:length(ext)
-    saveas(gcf, sprintf('figures/%d_%s_all.%s', idPtidC, plotName, ext{k}));
+    saveas(gcf, sprintf('%s/%d_%s_all_%s.%s', outDir, idPtidC, plotName, datestr(now,'dd.mm.yyyy_HHMM'), ext{k}));
 end
 
 % save figure with reference data only
@@ -181,7 +188,7 @@ set(gcf, 'PaperPositionMode', 'auto');
 set(gcf,'units','normalized','outerposition',[0 0 1 1]);
 
 for k = 1:length(ext)
-    saveas(gcf, sprintf('figures/%d_%s_reference.%s', idPtidC, plotName, ext{k}));
+    saveas(gcf, sprintf('%s/%d_%s_reference_%s.%s', outDir, idPtidC, plotName, datestr(now,'dd.mm.yyyy_HHMM'), ext{k}));
 end
 
 % save figure with mean data only
@@ -196,7 +203,7 @@ set(gcf, 'PaperPositionMode', 'auto');
 set(gcf,'units','normalized','outerposition',[0 0 1 1]);
 
 for k = 1:length(ext)
-    saveas(gcf, sprintf('figures/%d_%s_mean.%s', idPtidC, plotName, ext{k}));
+    saveas(gcf, sprintf('%s/%d_%s_mean_%s.%s', outDir, idPtidC, plotName, datestr(now,'dd.mm.yyyy_HHMM'), ext{k}));
 end
 
 close all;
