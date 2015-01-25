@@ -15,11 +15,11 @@ trainTargetMean = true;
 % plot options
 plotMeanOnly = false;
 plotReferenceOnly = true;
-plotName = 'SISO';
+netType = 'SISO';
 
 % select test part
-idPtidC = 14;
-tb1 = 'kt4';
+idPtidC = 137;
+tb1 = 'kt2';
 tb2 = 'kt3';
 
 %% load path
@@ -155,66 +155,38 @@ plotOrigData.lineStyleMeanTB2 = '--';
 plotCommon(plotOrigData);
 
 %% save figures
-outDir = 'figures';
-if ~exist(outDir, 'dir')
-  mkdir(outDir);
-end
 
-ext = {'fig','png'};
-% save figure with all data
-close all;
+data.plotSpecific = @plotSISO;
+data.plotCommon = @plotCommon;
 
+data.timeFlip = 0;
+data.maxDimension = 0;
+data.delay1 = 0;
+
+data.ext = {'fig','png'};
+data.outDir = 'figures';
+data.date = datestr(now,'dd.mm.yyyy_HHMM');
+data.idPtidC = idPtidC;
+data.netType = netType;
+
+data.tb1 = tb1;
+data.tb2 = tb2;
+data.numNeurons = numNeurons;
+data.meanInput = trainInputMean;
+data.meanTarget = trainTargetMean;
+
+% actually save plots
 plotOrigData.meanOnly = false;
 plotOrigData.referenceOnly = false;
-
-plotSISO(plotData);
-plotCommon(plotOrigData);
-set(gcf, 'PaperPositionMode', 'auto');
-set(gcf,'units','normalized','outerposition',[0 0 1 1]);
-
-for k = 1:length(ext)
-    saveas(gcf, sprintf('%s/%d_%s_all_%s.%s', outDir, idPtidC, plotName, datestr(now,'dd.mm.yyyy_HHMM'), ext{k}));
-end
-
-% save figure with reference data only
-close all;
+savePlot(data, plotData, plotOrigData, 'all');
 
 plotOrigData.meanOnly = false;
 plotOrigData.referenceOnly = true;
-
-plotSISO(plotData);
-plotCommon(plotOrigData);
-set(gcf, 'PaperPositionMode', 'auto');
-set(gcf,'units','normalized','outerposition',[0 0 1 1]);
-
-for k = 1:length(ext)
-    saveas(gcf, sprintf('%s/%d_%s_reference_%s.%s', outDir, idPtidC, plotName, datestr(now,'dd.mm.yyyy_HHMM'), ext{k}));
-end
-
-% save figure with mean data only
-close all;
+savePlot(data, plotData, plotOrigData, 'reference');
 
 plotOrigData.meanOnly = true;
 plotOrigData.referenceOnly = false;
+savePlot(data, plotData, plotOrigData, 'mean');
 
-plotSISO(plotData);
-plotCommon(plotOrigData);
-set(gcf, 'PaperPositionMode', 'auto');
-set(gcf,'units','normalized','outerposition',[0 0 1 1]);
-
-for k = 1:length(ext)
-    saveas(gcf, sprintf('%s/%d_%s_mean_%s.%s', outDir, idPtidC, plotName, datestr(now,'dd.mm.yyyy_HHMM'), ext{k}));
-end
-
-close all;
-
-%% add original extrapolation data to plot
-% figure(plotData.figureNr);
-% hold on;
-%     plot(plotData.xAxis, extraData, ':k', 'LineWidth',2);
-% hold off
-
-%% re-plot with mean values only
-% plotOrigData.meanOnly = 1;
-% plotSISO(plotData);
-% plotCommon(plotOrigData);
+%% save data to .mat file
+save(sprintf('%s/%d_%s_%s.mat', data.outDir, idPtidC, netType, data.date));
