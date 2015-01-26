@@ -20,8 +20,8 @@ figureNr = 2;
 netType = 'Block';
 
 % select test part
-idPtidC = 35;
-tb1 = 'kt4';
+idPtidC = 251;
+tb1 = 'kt2';
 tb2 = 'kt3';
 
 %% load path
@@ -62,13 +62,21 @@ dataSize = size(input,1);
 
 % prepare extrapolated data
 extraData = testData(:,1)*1.2; % 20-percent above normal input value
-% extraData = rand(dataSize,1)*50; % 20-percent above normal input value
+% extraData = rand(dataSize,1)*5; % 20-percent above normal input value
 
 % extract number of test values
 numTests = length(indexes{2,1});
 % numTests = 1;
 
-[p, t, testP, extraP] = prepareDataBlock(input', target', testData', extraData');
+[pbf, tbf, testPbf, extraPbf] = prepareDataBlock(input', target', testData', extraData');
+
+% minmaxMapping column Based
+[p, sp] = mapminmax(pbf');
+p = p';
+[t, st] = mapminmax(tbf');
+t = t';
+testP = mapminmax('apply', testPbf', sp)';
+extraP = mapminmax('apply', extraPbf', sp)';
 
 %% train network
 numNets = ceil(size(p,1) / maxDimension);
@@ -88,6 +96,7 @@ for k = 1:numNets
     else
         net = nnfw.FeedForward(numNeurons);
         net.optim.maxIter = maxIter;
+        net.optim.minmaxMapping = false;
         net.configure(p(startInd:endInd),t(startInd:endInd));
         net.train(p(startInd:endInd),t(startInd:endInd));
         nets{k} = net;
@@ -118,6 +127,15 @@ fitExtra = simOutData.fitExtra;
 db = simOutData.db;
 dbTest = simOutData.dbTest;
 dbExtra = simOutData.dbExtra;
+
+% revert minmaxMapping
+y = mapminmax('reverse', y', st);
+y = y';
+yTest = mapminmax('reverse', yTest', st);
+yTest = yTest';
+yExtra = mapminmax('reverse', yExtra', st);
+yExtra = yExtra';
+
 
 %% rate data
 fitTestMean = mean(fitTest);
