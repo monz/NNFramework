@@ -6,7 +6,7 @@
 
 close all;
 % clear all;
-clear;
+% clear;
 
 %% pathes to function-files, measuring data, identified models: 
 % path(path,'.\functions');          
@@ -14,6 +14,7 @@ clear;
 
 %% data sets: (use xxx_RSP)
 filename = '01_APRBS_APK1_sim1_DRV_100Pct_RSP.tim';
+% filename = '02_APRBS_APK1_sim2_DRV_100Pct_RSP.tim';
 
 % rpc2mat:
 [DATA,dt,header] = rpc2mat(filename);
