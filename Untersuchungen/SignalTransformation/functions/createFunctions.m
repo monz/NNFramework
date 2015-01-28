@@ -1,10 +1,24 @@
+%%% -----------------------------------------------------------------------
+%   this script creates simple test signal cluster and saves the generated
+%   data to a file, because of the random data. This file can be loaded
+%   repeatedly to study different neural network architectures.
+%%% -----------------------------------------------------------------------
+
 clear;
 close all;
+
+%% settings
+
+filename = 'noiseFastSinOffset.mat';
 
 range = -2:0.03:2;
 noiseAmplitude = 0.32;
 
 pClusterWidth = -0.3:0.02:0.1;
+tClusterWidth = 0.5:0.02:0.9;
+
+%% create signal cluster
+
 numInputs = length(pClusterWidth);
 p = zeros(numInputs, length(range));
 myRand = rand;
@@ -13,7 +27,6 @@ for k = 1:numInputs
     p(k,:) = p(k,:) + rand(1,length(p(k,:)))*noiseAmplitude;
 end
 
-tClusterWidth = 0.5:0.02:0.9;
 numTargets = length(tClusterWidth);
 myRand = rand;
 for k = 1:numTargets
@@ -31,4 +44,6 @@ hold off
 t = t';
 p = p';
 
-% save('noiseFastSinOffset.mat','p','t','range');
+%% save to file
+
+save(filename,'p','t','range');

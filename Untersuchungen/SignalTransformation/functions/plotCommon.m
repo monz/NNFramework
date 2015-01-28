@@ -1,6 +1,7 @@
 function plotCommon( data )
-%PLOTCOMMON Summary of this function goes here
-%   Detailed explanation goes here
+%PLOTCOMMON   Plots the original data of test bench 1 and 2
+%   This is a helper function to plot the test bench's original data. It
+%   combines the given figure with the additional data.
 
         xDataTB1 = data.xAxisTB1;
         xDataTB2 = data.xAxisTB2;

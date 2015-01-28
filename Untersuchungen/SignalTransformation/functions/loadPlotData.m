@@ -1,8 +1,8 @@
 function [ title, xLabel, yLabel ] = loadPlotData( idPtidC )
-%LOADPLOTDATA Summary of this function goes here
-%   Detailed explanation goes here
+%LOADPLOTDATA   Loads description data from data set
+%   [title, xLabel, yLabel] = LOADPLOTDATA( ID ) loads description of test bench given by ID.
 
-    % load data from .mat-file:
+    % load all data from .mat-file:
     load('clusteringData');
     
     title = clusteringData(idPtidC).partTypeName;
