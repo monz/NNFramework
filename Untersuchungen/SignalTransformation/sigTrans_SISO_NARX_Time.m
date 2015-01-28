@@ -1,4 +1,79 @@
-%% signal transformation NARX
+%%% -----------------------------------------------------------------------
+% =========================================================================
+%   Signal Transformation Script
+%   Train Method: SISO with Delay-Net/NARX-Net
+% =========================================================================
+%
+% #########################################################################
+%   DO NOT CHANGE CODE BELOW THE "set options" SECTION
+% #########################################################################
+%
+%   Possible Settings:
+%   ------------------
+%
+%   numNeurons:         sets the number of neurons and layers in the neural network
+%                       e.g. single hidden layer with 10 neurons; 10
+%                       or two hidden layer with each 10 neurons; [10 10]
+%
+%   maxIter:            sets the max number of training iterations
+%                       - positive number - e.g. 50
+%
+%   delay1:             sets the input delay (for Delay- and NARX-Net)
+%                       e.g. 1:2 or 1:10
+%
+%   delay2:             sets the target delay (for NARX-Net only)
+%
+%   delayNet:           if true use delayNet for training, if false switch
+%                       to NARX-Net
+%
+%   narxVariant:        switches the training method of the NARX-Net
+%                       can be 'open' or 'closed'
+%
+%   trainMeanInput:     if true the mean of all input signals is calculated and
+%                       only this mean value is used as input value for
+%                       network training, if fasle all input signals are used
+%                       for network training
+%
+%   trainMeanTarget:    if true the mean of all target signals is calculated and
+%                       only this mean value is used as target value for
+%                       network training, if false all target signals are used
+%                       for network training 
+%
+%   addTimeInput:       if true values of the x-axis gets added to the input.
+%                       The input dimension is then two.
+%
+%   flipTime:           if true the input and target values get flipped from
+%                       left to right, using the fliplr MATLAB method.
+%
+%   plotMeanOnly:       if true only the calculated mean value of input/target
+%                       signals are plotted - this setting overrides the
+%                       plotReferenceOnly option, which will be ignored then. If
+%                       false all input/target signals are plotted.
+%
+%   plotReferenceOnly:  if true only the target signals are plotted, if
+%                       false all input/target signals are plotted
+%
+%   figureNr:           sets the figure handle
+%
+%   Simulated values of the neural network gets always plotted!
+%
+%   saveFigures:        if true the plot options are ignored. Instead three
+%                       plots with differen settings will be saved to disk.
+%                       One with all data, reference data and mean only.
+%                       The plots get saved as .png and .fig files.
+%                       Additionally to the plot the workspace will be
+%                       saved.
+%
+%   netType:            this is integrated in the file name to distinguish the
+%                       different training methods if the plots get
+%                       automatically saved to disk
+%
+%   idPtidC:            id to select the test bench from data set
+%
+%   tb1:                test bench one - can be one of {'kt2','kt3','kt4'}
+%
+%   tb2:                test bench two - possible values see tb1
+%%% -----------------------------------------------------------------------
 
 clear;
 close all;
@@ -22,6 +97,10 @@ flipTime = true;
 % plot options
 plotMeanOnly = false;
 plotReferenceOnly = false;
+figureNr = 2;
+
+% save figures options
+saveFigures = false;
 netType = 'TimeDelay-NARX';
 
 % select test part
@@ -149,7 +228,7 @@ dbTestMean = mean(dbTest);
 
 %% plot simulated data
 
-plotData.figureNr = 4;
+plotData.figureNr = figureNr;
 [plotData.title, plotData.xLabel, plotData.yLabel] = loadPlotData(idPtidC);
 plotData.lgInput = 'ANN';
 plotData.lgTestInput = 'Test Data';
@@ -203,38 +282,39 @@ plotOrigData.lineStyleMeanTB2 = '--';
 plotCommon(plotOrigData);
 
 %% save figures
+if saveFigures
+    data.plotSpecific = @plotSISO_NARX_Time;
+    data.plotCommon = @plotCommon;
 
-data.plotSpecific = @plotSISO_NARX_Time;
-data.plotCommon = @plotCommon;
+    data.timeFlip = flipTime;
+    data.maxDimension = 0;
+    data.delay1 = delay1;
 
-data.timeFlip = flipTime;
-data.maxDimension = 0;
-data.delay1 = delay1;
+    data.ext = {'fig','png'};
+    data.outDir = 'figures';
+    data.date = datestr(now,'dd.mm.yyyy_HHMM');
+    data.idPtidC = idPtidC;
+    data.netType = netType;
 
-data.ext = {'fig','png'};
-data.outDir = 'figures';
-data.date = datestr(now,'dd.mm.yyyy_HHMM');
-data.idPtidC = idPtidC;
-data.netType = netType;
+    data.tb1 = tb1;
+    data.tb2 = tb2;
+    data.numNeurons = numNeurons;
+    data.meanInput = trainInputMean;
+    data.meanTarget = trainTargetMean;
 
-data.tb1 = tb1;
-data.tb2 = tb2;
-data.numNeurons = numNeurons;
-data.meanInput = trainInputMean;
-data.meanTarget = trainTargetMean;
+    % actually save plots
+    plotOrigData.meanOnly = false;
+    plotOrigData.referenceOnly = false;
+    savePlot(data, plotData, plotOrigData, 'all');
 
-% actually save plots
-plotOrigData.meanOnly = false;
-plotOrigData.referenceOnly = false;
-savePlot(data, plotData, plotOrigData, 'all');
+    plotOrigData.meanOnly = false;
+    plotOrigData.referenceOnly = true;
+    savePlot(data, plotData, plotOrigData, 'reference');
 
-plotOrigData.meanOnly = false;
-plotOrigData.referenceOnly = true;
-savePlot(data, plotData, plotOrigData, 'reference');
+    plotOrigData.meanOnly = true;
+    plotOrigData.referenceOnly = false;
+    savePlot(data, plotData, plotOrigData, 'mean');
 
-plotOrigData.meanOnly = true;
-plotOrigData.referenceOnly = false;
-savePlot(data, plotData, plotOrigData, 'mean');
-
-%% save data to .mat file
-save(sprintf('%s/%d_%s_%s.mat', data.outDir, idPtidC, netType, data.date));
+    %% save data to .mat file
+    save(sprintf('%s/%d_%s_%s.mat', data.outDir, idPtidC, netType, data.date));
+end

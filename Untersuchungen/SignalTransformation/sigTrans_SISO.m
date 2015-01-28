@@ -12,8 +12,11 @@
 %   ------------------
 %
 %   numNeurons:         sets the number of neurons and layers in the neural network
+%                       e.g. single hidden layer with 10 neurons; 10
+%                       or two hidden layer with each 10 neurons; [10 10]
 %
 %   maxIter:            sets the max number of training iterations
+%                       - positive number - e.g. 50
 %
 %   useToolbox:         if true uses MATLAB-NNToolbox for training, if false it
 %                       uses the NN-Framework
@@ -36,6 +39,8 @@
 %   plotReferenceOnly:  if true only the target signals are plotted, if
 %                       false all input/target signals are plotted
 %
+%   figureNr:           sets the figure handle
+%
 %   Simulated values of the neural network gets always plotted!
 %
 %   saveFigures:        if true the plot options are ignored. Instead three
@@ -49,7 +54,7 @@
 %                       different training methods if the plots get
 %                       automatically saved to disk
 %
-%   idPtidC:            id to select the test bench
+%   idPtidC:            id to select the test bench from data set
 %
 %   tb1:                test bench one - can be one of {'kt2','kt3','kt4'}
 %
@@ -73,6 +78,7 @@ trainTargetMean = true;
 % plot options
 plotMeanOnly = true;
 plotReferenceOnly = true;
+figureNr = 2;
 
 % save figures options
 saveFigures = false;
@@ -165,7 +171,7 @@ dbTestMean = mean(dbTest);
 
 %% plot simulated data
 
-plotData.figureNr = 2;
+plotData.figureNr = figureNr;
 [plotData.title, plotData.xLabel, plotData.yLabel] = loadPlotData(idPtidC);
 plotData.lgInput = 'ANN';
 plotData.lgTestInput = 'Test Data';
