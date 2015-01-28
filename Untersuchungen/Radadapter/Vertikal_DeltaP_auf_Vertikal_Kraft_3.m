@@ -5,10 +5,10 @@ close all;
 %% settings
 
 % neural net settings
-numNeurons = [20];
+numNeurons = [10];
 maxIter = 50;
 useToolbox = true;
-delayNet = true;
+delayNet = false;
 flipTime = false;
 delay1 = 1:10;
 
@@ -27,9 +27,10 @@ validatedata = loadDataF(validateFile);
 %% define input and target data
 
 p = [traindata.Vertikal_DeltaP'];
-% p = (p + 1.4)/(0.1*0.001*3978);
 % p = p - p(1);
 t = [traindata.Vertikal_Kraft'];
+t = (t + 1.4)/(0.1*0.001*3978);
+% t = t - t(1);
 pVal = [validatedata.Longitudinal_DeltaP'];
 tVal = [validatedata.Longitudinal_Kraft'];
 
@@ -114,9 +115,9 @@ hold on
     if plotValidateData
         plot(tVal,'c');
         plot(yVal,'k');
-        legend('Target','ANN','Target Validation', 'ANN Validation');
+        legend('Vertikal Kraft','ANN','Target Validation', 'ANN Validation');
     else
-        legend('Simulation','ANN');
+        legend('Vertikal Kraft','ANN');
     end
 hold off
 

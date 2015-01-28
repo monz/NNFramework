@@ -1,37 +1,30 @@
-%% Ansteuerung für Bremse Moment am Messrad Reverse
+%% testo
 
 clear;
 close all;
 %% settings
 
 % neural net settings
-numNeurons = 10;
+numNeurons = [10];
 maxIter = 50;
 delay1 = 1:20;
 useToolbox = true;
-delayNet = false;
+delayNet = true;
 flipTime = false;
 
 % plot settings
 figureNr = 2;
-plotValidateData = false;
 
 %% load data
 
 trainFile = '01_APRBS_APK1_sim1_DRV_100Pct_RSP.tim';
-validateFile = '03_APRBS_APK1_sim3_DRV_100Pct_RSP.tim';
 
 trdata = loadDataF(trainFile);
-valdata = loadDataF(validateFile);
 
 %% define input and target data
 
-% p = [trdata.Longitudinal_DeltaP'; trdata.Vertikal_DeltaP'; trdata.Bremse_DeltaP'];
-p = [trdata.Longitudinal_DeltaP'; trdata.Bremse_LVDT'; trdata.Vertikal_DeltaP'; trdata.Bremse_DeltaP'];
-t = [trdata.MYMR'];
-
-% xV = [valdata.Longitudinal_DeltaP'];
-% tV = [valdata.Longitudinal_Kraft'];
+p = [trdata.MYMR'];
+t = [trdata.Bremse_Moment'];
 
 %% define and train neural network
 
@@ -81,43 +74,15 @@ elseif ~delayNet
     y = net.simulate(p);
 end
 
-if plotValidateData
-    if useToolbox
-        yVal = net(xV);
-    else
-        yVal = net.simulate(xV);
-    end
-end
-
 %% rate results
 fit = nnfw.goodnessOfFit(y',t','NRMSE')
-if plotValidateData
-    fitVal = nnfw.goodnessOfFit(yVal',tV','NRMSE')
-end
 
 %% plot results
 figure(figureNr)
 hold on
-    title('Ansteuerung Bremse Moment');
-    
-    subplot(411)
-    plot(p(1,:),'r')
-    legend('Input 1')
-    subplot(412)
-    plot(p(2,:),'r')
-    legend('Input 2')
-    subplot(413)
-    plot(p(3,:),'r')
-    legend('Input 3');
-    subplot(414)
-    plot(t,'r')
-    hold on
-    plot(y,'g')
-    legend('Target 1','ANN')
-    
-    if plotValidateData
-        plot(tV,'c');
-        plot(yVal,'k');
-        legend('Target','ANN','Target Validation', 'ANN Validation');
-    end
+    title('Ansteuerung Bremse Moment Messrad Reverse');
+    plot(p,'c');
+    plot(t,'r');
+    plot(y,'g');
+    legend('input', 'target', 'ann');
 hold off
