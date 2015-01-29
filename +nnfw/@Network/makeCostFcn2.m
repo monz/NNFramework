@@ -10,6 +10,9 @@ function costFcn = makeCostFcn2(net, fcn, input, target)
 %   fcn:        function handle of cost function, e.g. MSE
 %   input:      net input values
 %   target:     target data the neural network should "learn"
+%
+%   Returns
+%   costFcn:    wrapper function used in a optimization function
 
     costFcn = @CostFcn2;
 

@@ -1,4 +1,12 @@
 function weightVector = getWeightVector(net)
+%GETWEIGHTVECTOR Returns all currently set weight values of the given neural network.
+%   Collects all weight values and puts them into a single vector.
+%
+%   net:            the neural network whose weights get extracted
+%
+%   Returns
+%   weightVector:   vector of all currently set weight values
+    
     weightVector = zeros(net.getNumWeights(),1);
     offset = 0;
     for layer = 1:net.numLayers

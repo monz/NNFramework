@@ -1,4 +1,11 @@
 function setWeights(net, weights)
+%SETWEIGHTS Sets the weight values of the neural network to the given weights.
+%   The weight vector must contain exactly the same number of weights the
+%   network already has.
+%
+%   net:                the neural network whose weights get set
+%   weights:            weight vector containing the network's new weight values
+
     offset = 0;
     for layer = 1:net.numLayers
         if layer == 1

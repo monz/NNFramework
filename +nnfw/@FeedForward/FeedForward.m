@@ -1,12 +1,25 @@
 classdef FeedForward < nnfw.Network
-    %FEEDFORWARD Summary of this class goes here
-    %   Detailed explanation goes here
+    %FEEDFORWARD Contains special attributes and methods for the feedforward neural network type.
+    %   FEEDFORWARD is a subclass of the abstract network class. A
+    %   object of this class inherits all attributes of the parent class.
+    %   This type of neural network has only forward connections.
+    %
+    %   See also HANDLE, NETWORK.
     
     properties
     end
     
     methods
         function net = FeedForward(varargin)
+            % FeedForward creates a feedforward neural network object.
+            % net = FeedForward(hiddenLayerSizes)
+            % net = FeedForward(hiddenLayerSizes, isPatternNet)
+            %
+            % hiddenLayerSizes:     vector of layer sizes, e.g. [10 2 10]
+            %                       describes three hidden layers with 10
+            %                       neurons in the first, 2 neurons in the
+            %                       second and 10 neurons in the third layer
+            % isPatternNet:         if true, exit node converts values in range [0...1
             if nargin > 2 
                error('wrong number of input parameters') 
             elseif nargin == 2
@@ -17,7 +30,7 @@ classdef FeedForward < nnfw.Network
             net.initNetwork(hiddenLayerSizes);
             
             % -------------------------------------
-            % define feedforward layer connections
+            % define feedforward layer connections / currently unused
             % -------------------------------------
             net.biasConnect = ones(1, net.numLayers);
             
