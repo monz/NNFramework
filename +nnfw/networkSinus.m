@@ -1,5 +1,38 @@
+%%% -----------------------------------------------------------------------
+% =========================================================================
+%   Function Approximator
+%   Train Method: SISO
+% =========================================================================
+%
+% #########################################################################
+%   DO NOT CHANGE CODE BELOW THE "set options" SECTION
+% #########################################################################
+%
+%   Possible Settings:
+%   ------------------
+%
+%   numNeurons:         sets the number of neurons and layers in the neural network
+%                       e.g. single hidden layer with 10 neurons; 10
+%                       or two hidden layer with each 10 neurons; [10 10]
+%
+%   maxIter:            sets the max number of training iterations
+%                       - positive number - e.g. 50
+%
+%   useToolbox:         if true uses MATLAB-NNToolbox for training, if false it
+%                       uses the NN-Framework
+%
+%   figureNr:           sets the figure handle
+%%% -----------------------------------------------------------------------
+
 clear;
 clc;
+
+%% set options
+
+numNeurons = 10;
+maxIter = 50;
+useToolbox = false;
+figureNr = 2;
 
 % --------------------------------------
 % init training values
@@ -8,38 +41,26 @@ clc;
 p = (-5:.1:5);
 t = cos(pi*p/2);
 
-% --------------------------------------
-% init/train nn-toolbox
-% --------------------------------------
-% net1 = feedforwardnet(5);
-% net1 = train(net1,p,t);
-% y_d = net1(p);
+%% init and train neural network
 
-% --------------------------------------
-% init nn-framework
-% --------------------------------------
-net = nnfw.FeedForward([10 5]);
-net.configure(p,t);
-net.optim.abortThreshold = 1e-5;
-% net.optim.maxIter = 10;
-% net.layers{1}.f = nnfw.Util.Activation.LOGSIG;
+if useToolbox
+    net = feedforwardnet(numNeurons);
+    net.trainParam.epochs = maxIter;
+    net = train(net,p,t);
+    y_d = net(p);
+else
+    net = nnfw.FeedForward(numNeurons);
+    net.configure(p,t);
+    net.optim.maxIter = maxIter;
+    [E, g, output, lambda, jacobian] = net.train(p,t);
+    y_d = net.simulate(p);
+end
 
-% --------------------------------------
-% train network
-% --------------------------------------
-[E, g, output, lambda, jacobian] = net.train(p,t);
-y_d = net.simulate(p);
+%% plot
 
-% --------------------------------------
-% plot
-% --------------------------------------
-figure(2);
+figure(figureNr);
 hold on
-
-plot(t, 'r'); % target
-plot(y_d, 'g'); % ba
-% plot(toolbox, 'k'); % toolbox
-% legend('target','toobox','ba');
-legend('target','ba');
-
+    plot(t, 'r');
+    plot(y_d, 'g');
+    legend('Target','ANN');
 hold off

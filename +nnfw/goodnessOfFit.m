@@ -42,12 +42,10 @@ if ~iscell(Xref), Xref = {Xref}; end
 if ~iscell(X), X = {X}; end
 
 if ~isequal(size(X),size(Xref)) && ~isscalar(X) && ~isscalar(Xref)
-%    ctrlMsgUtils.error('Ident:analysis:goodnessoffit1')
     error('dimensions do not match');
 else
    for ct = 1:numel(X)
       if ~isequal(size(X{min(ct,1)}),size(Xref{min(ct,1)}))
-%          ctrlMsgUtils.error('Ident:analysis:goodnessoffit2')
     error('dimensions do not match');
       end
    end
