@@ -40,7 +40,7 @@ classdef (Abstract) Network < handle
     end
     
     methods
-        initNetwork(obj, numInputs, numLayers, numOutputs); % initializes the network layers with default values
+        initNetwork(obj, hiddenLayerSizes); % initializes the network layers with default values
         initWeights(obj) % set random layer weights for train purpose
         costFcn = makeCostFcn(net, fcn, input, target); % for fminunc
         costFcn = makeCostFcn2(net, fcn, input, target); % for lsqnonlin
