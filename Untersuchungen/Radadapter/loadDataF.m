@@ -1,4 +1,7 @@
 function outdata = loadDataF(filename)
+%LOADDATAF Loads test data from data structure
+%  
+%   filename:   name of the file whose data should get loaded
 
     % rpc2mat:
     [DATA,dt,header] = rpc2mat(filename);

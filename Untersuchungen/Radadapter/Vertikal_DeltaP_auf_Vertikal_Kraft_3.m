@@ -1,8 +1,51 @@
-%% Vertikal_DeltaP auf Vertikal_Kraft
+%%% -----------------------------------------------------------------------
+% =========================================================================
+%   Wheel behavior Study Script
+%   Train Method: SISO with Feedforward/Delay-Net
+%
+%   Vertikal_DeltaP to Vertikal_Kraft
+% =========================================================================
+%
+% #########################################################################
+%   DO NOT CHANGE CODE BELOW THE "set options" SECTION
+% #########################################################################
+%
+%   Possible Settings:
+%   ------------------
+%
+%   numNeurons:         sets the number of neurons and layers in the neural network
+%                       e.g. single hidden layer with 10 neurons; 10
+%                       or two hidden layer with each 10 neurons; [10 10]
+%
+%   maxIter:            sets the max number of training iterations
+%                       - positive number - e.g. 50
+%
+%   useToolbox:         if true uses MATLAB-NNToolbox for training, if false it
+%                       uses the NN-Framework - except for DelayNet
+%
+%   delayNet:           if true use delayNet for training, if false switch
+%                       to NARX-Net
+%
+%   flipTime:           if true the input and target values get flipped from
+%                       left to right, using the fliplr MATLAB method.
+%
+%   delay1:             sets the input delay (for Delay- and NARX-Net)
+%                       e.g. 1:2 or 1:10
+%
+%   plotValidateData:   if true the validation data gets simulated with the
+%                       trained network and plotted to see how good the
+%                       neural network is for generalization
+%
+%   figureNr:           sets the figure handle
+%
+%   trainFile:          name of file containing the training data
+%
+%   validateFile:       name of file containing the validation data
+%%% -----------------------------------------------------------------------
 
 clear;
 close all;
-%% settings
+%% set options
 
 % neural net settings
 numNeurons = [10];
@@ -16,7 +59,7 @@ delay1 = 1:10;
 figureNr = 2;
 plotValidateData = false;
 
-%% load data
+% load data settings
 
 trainFile = '01_APRBS_APK1_sim1_DRV_100Pct_RSP.tim';
 validateFile = '02_APRBS_APK1_sim2_DRV_100Pct_RSP.tim';
