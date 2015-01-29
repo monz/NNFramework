@@ -1,6 +1,23 @@
 function [ outData ] = simSISO( net, data, useToolbox )
-%SIMSISO Summary of this function goes here
-%   Detailed explanation goes here
+%SIMSISO Simulates the data prepared for SISO training method
+%   Each training method preprocesses the training data differently.
+%   Therefore exists different simulation functions which handle the data
+%   specific to their preparation.
+%
+%   net:           the neural network trained with input and target signals
+%
+%   data is of type struct and should contain at least following
+%   information:
+%
+%   numTests:       number of test singals
+%   size:           data size of the input signals
+%   p:              net input signals
+%   testP:          net test input signals
+%   extraP:         net extrapolation input signals
+%   t:              target data the neural network should "learn"
+%
+%   useToolbox:     if true uses the toolbox to simulate the data,
+%                   otherwise it uses the NN-Framework
 
     numTests = data.numTests;
     dataSize = data.size;

@@ -1,6 +1,8 @@
 function [ p, t, teData, exData ] = prepareDataSISO_Time( input, target, testData, extraData, times )
-%PREPAREDATASISO Summary of this function goes here
-%   Detailed explanation goes here
+%PREPAREDATASISO Prepares the data for SISO_Time training method
+%   Each training method needs specific preprocessing of the training data.
+%   Therefore exists different prepare functions which handle the data
+%   specific to their usage in the neural network.
 
     % calculate sizes
     numInputs = size(input,1);

@@ -1,6 +1,17 @@
 function savePlot( data, plotData, plotOrigData, plotType )
-%SAVEPLOT Summary of this function goes here
-%   Detailed explanation goes here
+%SAVEPLOT Creates a plot and saves it a file to disk.
+%   SAVEPLOT ( data, specificPlotFunction, commonPlotFunction, plotType)
+%
+%   data:           contains the data which was set in the "set options"
+%                   section. It also includes the function handles to the
+%                   plot functions.
+%
+%   plotData:       plot data struct used to plot the simulated data
+%
+%   plotOrigData:   plot data struct used to plot the original test bench
+%                   one and test bench 2 data
+%
+%   plotType:       name of plot type, e.g. 'all', 'referenceOnly' ...
 
     if ~exist(data.outDir, 'dir')
         mkdir(data.outDir);

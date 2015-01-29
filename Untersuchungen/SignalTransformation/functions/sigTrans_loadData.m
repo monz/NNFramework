@@ -1,4 +1,10 @@
 function [ tb_data ] = sigTrans_loadData( idPtidC, test_bench, axis )
+%SIGTRANS_LOADDATA Loads test bench data from data structure
+%  
+%   idPtidC:        id of the test
+%   test_bench:     test bench, one of {'kt2', 'kt3', 'kt4'}
+%   axis:           which axis to load, one of {'x','y'}
+
     % load data from .mat-file:
     load('clusteringData');
     

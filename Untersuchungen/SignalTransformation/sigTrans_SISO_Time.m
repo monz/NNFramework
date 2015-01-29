@@ -53,6 +53,10 @@
 %                       Additionally to the plot the workspace will be
 %                       saved.
 %
+%   extensions:         file extensions of which type the figures are saved
+%
+%   outDir:             directory in which the files are saved
+%
 %   netType:            this is integrated in the file name to distinguish the
 %                       different training methods if the plots get
 %                       automatically saved to disk
@@ -86,6 +90,8 @@ figureNr = 2;
 
 % save figures options
 saveFigures = false;
+extensions = {'fig','png'};
+outDir = 'figures';
 netType = 'SISO-Time';
 
 % select test part
@@ -255,8 +261,8 @@ if saveFigures
     data.maxDimension = 0;
     data.delay1 = 0;
 
-    data.ext = {'fig','png'};
-    data.outDir = 'figures';
+    data.ext = extensions;
+    data.outDir = outDir;
     data.date = datestr(now,'dd.mm.yyyy_HHMM');
     data.idPtidC = idPtidC;
     data.netType = netType;

@@ -1,6 +1,25 @@
 function [ outData ] = simSISO_NARX_Time( net, data )
-%SIMSISO Summary of this function goes here
-%   Detailed explanation goes here
+%SIMSISO_NARX Simulates the data prepared for SISO_NARX-Delay training method
+%   Each training method preprocesses the training data differently.
+%   Therefore exists different simulation functions which handle the data
+%   specific to their preparation.
+%
+%   net:           the neural network trained with input and target signals
+%
+%   data is of type struct and should contain at least following
+%   information:
+%
+%   numTests:       number of test singals
+%   shift:          number of shifted values, e.g. delay 1:10 => shift = 10
+%   size:           data size of the input signals
+%   inputRows:      rows of input signal dimension
+%   delayNet:       if true network has been trained with Delay-Net,
+%                   otherwise with NARX-Net
+%   pr:             net input signals
+%   Pi:             net input signals initial values for delayed inputs
+%   testP:          net test input signals
+%   extraP:         net extrapolation input signals
+%   t:              target data the neural network should "learn"
 
     numTests = data.numTests;
     shift = data.shift;

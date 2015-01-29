@@ -1,7 +1,32 @@
 function plotCommon( data )
 %PLOTCOMMON   Plots the original data of test bench 1 and 2
 %   This is a helper function to plot the test bench's original data. It
-%   combines the given figure with the additional data.
+%   combines the plots of the given figure with the additional data.
+%
+%   data is of type struct and should contain at least following
+%   information:
+%
+%   xDataTB1:           all data for test bench one x-axis
+%   xDataTB2:           all data for test bench two x-axis
+%   yDataTB1:           all data for test bench one y-axis
+%   yDataTB2:           all data for test bench two y-axis
+%   yDataMeanTB1:       mean data for test bench one y-axis
+%   yDataMeanTB2:       mean data for test bench two y-axis
+%   lgTB1:              legend for test bench one
+%   lgTB2:              legend for test bench tow
+%   lgInput:            legend for input signals
+%   lgTestInput:        legend for test input signals
+%   lgExtraInput:       legend for extrapolation signals
+%   colorTB1:           line color for test bench one
+%   colorTB2:           line color for test bench two
+%   colorMeanTB1:       line color for test bench one mean data
+%   colorMeanTB2:       line color for test bench two mean data
+%   lineStyleMeanTB1:   line style for test bench one mean data
+%   lineStyleMeanTB2:   line style for test bench two mean data
+%   meanOnly:           if true only tb1's and tb2's mean data gets plotted
+%   referenceOnly:      if true only the reference values gets plotted, reference value is always tb2
+%   figureNr:           figure handle number
+%
 
         xDataTB1 = data.xAxisTB1;
         xDataTB2 = data.xAxisTB2;

@@ -1,6 +1,8 @@
 function [ p, t, teData, exData ] = prepareDataBlock( input, target, testData, extraData )
-%PREPAREDATASISO Summary of this function goes here
-%   Detailed explanation goes here
+%PREPAREDATASISO Prepares the data for Block training method
+%   Each training method needs specific preprocessing of the training data.
+%   Therefore exists different prepare functions which handle the data
+%   specific to their usage in the neural network.
 
     numInputs = size(input,1);
     numTargets = size(target,1);
