@@ -1,4 +1,15 @@
 function costFcn = makeCostFcn2(net, fcn, input, target)
+%MAKECOSTFCN2 Creates a wrapper function used in the optimization function lsqnonlin
+%   The internal function simulates the input values with the current
+%   weight settings. Afterwards it evaluates the cost function and builds
+%   the jacobian matrix. The error vector and jacobian matrix get returned.
+%   The optimization function searches the minimum error value supported
+%   with the returned information.
+%
+%   net:        the neural network to be trained
+%   fcn:        function handle of cost function, e.g. MSE
+%   input:      net input values
+%   target:     target data the neural network should "learn"
 
     costFcn = @CostFcn2;
 
@@ -18,12 +29,12 @@ function costFcn = makeCostFcn2(net, fcn, input, target)
             J = zeros(Q*s_MSize, net.getNumWeights());
         end
         % cost function
-        F = bsxfun(fcn,y,target); % for performance improvement
+        F = bsxfun(fcn,y,target);
         % load often used variables only once for performance improvements
-        netSize = net.numLayers; % for performance improvement
-        outputBpFcn = net.outputs{netSize}.f.backprop; % for performance improvement
+        netSize = net.numLayers;
+        outputBpFcn = net.outputs{netSize}.f.backprop;
         % calculate all marquardt sensitivities of last layer at once
-        s_M = -outputBpFcn(y); % for performance improvement
+        s_M = -outputBpFcn(y);
         if nargout > 1   % Two output arguments
             % calculate remaining marquardt sensitivities
             % backward M-1, ..., 2, 1
@@ -43,8 +54,8 @@ function costFcn = makeCostFcn2(net, fcn, input, target)
                         % sensitivities
                         % TODO check if computation is correct here, maybe each
                         % outputNr need separate computation see Script Prof.Endisch
-                        % chapter 5 jacobian computation conclusion senction 2
-                        % for linear output function it is correct - all
+                        % chapter 5 jacobian computation conclusion senction 2.
+                        % For linear output function it is correct - all
                         % s_M values are equal to -1
                         s_m{q, layer} = F_m * LWtransp * s_M(q);
                     end

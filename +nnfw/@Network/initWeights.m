@@ -1,6 +1,16 @@
 function initWeights( net )
-%INITWEIGHTS Summary of this function goes here
-%   Detailed explanation goes here
+%INITWEIGHTS Initializes all network weight values.
+%   The network weights are random initialized considering the layer's
+%   activation function. Each activation function has a "working range",
+%   which means values above/below this "working range" saturate to a fixed
+%   value. Therefore it is useful to limit the random values to the
+%   "working range".
+%
+%   net:        the neural network of which the weights should be
+%               initialized
+%
+%   See also NNFW.UTIL.GETRANGEDRANDOMWEIGHTS
+
     offset = 0;
     weights = zeros(net.getNumWeights(), 1);
     for layer = 1:net.numLayers

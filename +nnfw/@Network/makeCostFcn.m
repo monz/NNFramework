@@ -1,4 +1,15 @@
 function costFcn = makeCostFcn(net, fcn, input, target)
+%MAKECOSTFCN Creates a wrapper function used in the optimization function fminunc
+%   The internal function simulates the input values with the current
+%   weight settings. Afterwards it evaluates the cost function and
+%   calculates the gradient vector. The error and gradient vector get returned.
+%   The optimization function searches the minimum error value supported
+%   with the returned information.
+%
+%   net:        the neural network to be trained
+%   fcn:        function handle of cost function, e.g. MSE
+%   input:      net input values
+%   target:     target data the neural network should "learn"
 
     costFcn = @CostFcn;
 
