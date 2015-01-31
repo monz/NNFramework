@@ -4,7 +4,7 @@ function [ outData ] = simBlock( nets, data, useToolbox )
 %   Therefore exists different simulation functions which handle the data
 %   specific to their preparation.
 %
-%   nets:           cellarray of all trained neural networks - each junk of
+%   nets:           cellarray of all trained neural networks - each chunk of
 %                   the signal gets its own network trained
 %
 %   data is of type struct and should contain at least following

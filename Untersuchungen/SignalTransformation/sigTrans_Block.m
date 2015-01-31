@@ -33,7 +33,7 @@
 %
 %   maxDimension:       limits the maximum input dimenstion. If the signal's
 %                       dimension is bigger than maxDimension the signal gets
-%                       splitted. Each junk of the signal gets its own neural
+%                       splitted. Each chunk of the signal gets its own neural
 %                       network trained. After simulation the data gets
 %                       combinded together agein. Positive number e.g. 400. This
 %                       number depends on the available RAM of the system.
