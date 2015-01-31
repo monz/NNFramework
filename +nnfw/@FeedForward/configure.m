@@ -5,6 +5,8 @@ function configure(net, input, target)
 %   are used while network training and simulation to provide better
 %   performance.
 %
+%   CONFIGURE(net, input, target)
+%
 %   net:        the neural network to be configured
 %   input:      input values, whose dimension gets extracted
 %   target:     target values, whose dimension gets extracted

@@ -6,6 +6,8 @@ function initWeights( net )
 %   value. Therefore it is useful to limit the random values to the
 %   "working range".
 %
+%   INITWEIGHTS( net )
+%
 %   net:        the neural network of which the weights should be
 %               initialized
 %

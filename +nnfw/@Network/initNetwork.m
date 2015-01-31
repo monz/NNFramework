@@ -5,6 +5,8 @@ function initNetwork(net, hiddenLayerSizes)
 %   layers and the linear function in the outputlayer. Also the type of the
 %   layers is set. This is for clearness only.
 %
+%   INITNETWORK(net, hiddenLayerSizes)
+%
 %   net:                the neural network which get initialized
 %
 %   hiddenLayerSizes:   vector of layer sizes, e.g. [10 2 10] describes

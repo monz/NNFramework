@@ -5,6 +5,8 @@ function [E, g, output, jacobian] = train(net, input, target)
 %   searches a minimum while adapting the network's weight values
 %   continuously.
 %
+%   [E, g, output, jacobian] = TRAIN(net, input, target)
+%
 %   net:        the neural network to be trained
 %   input:      net input values
 %   target:     target data the neural network should "learn"

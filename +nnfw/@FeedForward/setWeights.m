@@ -3,6 +3,8 @@ function setWeights(net, weights)
 %   The weight vector must contain exactly the same number of weights the
 %   network already has.
 %
+%   SETWEIGHTS(net, weights)
+%
 %   net:                the neural network whose weights get set
 %   weights:            weight vector containing the network's new weight values
 

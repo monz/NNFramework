@@ -1,6 +1,8 @@
 function gradient = getGradientByWeight(net, gradVector, weight)
 %GETGRADIENTBYWEIGHT Returns the gradient of the cost function at the point of the given weight.
 %
+%   gradient = GETGRADIENTBYWEIGHT(net, gradVector, weight)
+%
 %   net:            a initialized and configured neural network
 %   gradVector:     gradient vector containing all gradients
 %   weight:         a vector describing the point w, whose gradient

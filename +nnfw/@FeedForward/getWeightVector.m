@@ -2,6 +2,8 @@ function weightVector = getWeightVector(net)
 %GETWEIGHTVECTOR Returns all currently set weight values of the given neural network.
 %   Collects all weight values and puts them into a single vector.
 %
+%   weightVector = GETWEIGHTVECTOR(net)
+%
 %   net:            the neural network whose weights get extracted
 %
 %   Returns

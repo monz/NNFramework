@@ -6,6 +6,8 @@ function costFcn = makeCostFcn2(net, fcn, input, target)
 %   The optimization function searches the minimum error value supported
 %   with the returned information.
 %
+%   costFcn = MAKECOSTFCN2(net, fcn, input, target)
+%
 %   net:        the neural network to be trained
 %   fcn:        function handle of cost function, e.g. MSE
 %   input:      net input values

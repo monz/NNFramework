@@ -3,6 +3,8 @@ function numWeights = getNumWeights(net)
 %   Calculates the total number of weight values related to the network
 %   layer sizes, including the input and output layer dimensions.
 %
+%   numWeights = GETNUMWEIGHTS(net)
+%
 %   net:          a initialized and configured neural network 
 %
 %   Returns
