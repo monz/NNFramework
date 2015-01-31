@@ -1,6 +1,8 @@
 classdef mseTest < matlab.unittest.TestCase
-    %MSETEST Summary of this class goes here
-    %   Detailed explanation goes here
+    %MSETEST validates the MSE-Fast implementation.
+    %   The former error computation of the neural network is compared to
+    %   the new fast MSE implementation. The results have to be the same,
+    %   obviously.
     
     methods (Test)
         function mseTest_01(tc)

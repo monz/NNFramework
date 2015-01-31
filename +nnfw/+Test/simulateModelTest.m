@@ -1,6 +1,5 @@
 classdef simulateModelTest < matlab.unittest.TestCase
-    %SIMULATEMODEL Summary of this class goes here
-    %   Detailed explanation goes here
+    %SIMULATEMODELTEST validates the feed forward process.
     
     methods(Test)
         function simulate(tc)

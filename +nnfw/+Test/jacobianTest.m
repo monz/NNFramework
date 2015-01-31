@@ -1,6 +1,7 @@
 classdef jacobianTest < matlab.unittest.TestCase
-    %NETWORKUTILTEST Summary of this class goes here
-    %   Detailed explanation goes here
+    %JACOBIANTEST validates the computation of the jacobian matrix.
+    %   The examples results have been evaluated by hand and are compared
+    %   to the implemented jacobian algorithm.
     
     methods(Test)
         function jacobianSimpleTest_01(tc)

@@ -1,6 +1,7 @@
 classdef separateTrainValuesTest < matlab.unittest.TestCase
-    %SEPARATETRAINVALUESTEST Summary of this class goes here
-    %   Detailed explanation goes here
+    %SEPARATETRAINVALUESTEST validates the separation of data into the tree data subsets.
+    %   Input data should get separated properly into
+    %   training/validation/test data sets.
     
     methods(Test)
         function separateTrainValuesTest_01(tc)

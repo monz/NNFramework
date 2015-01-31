@@ -1,6 +1,5 @@
 classdef networkUtilTest < matlab.unittest.TestCase
-    %NETWORKUTILTEST Summary of this class goes here
-    %   Detailed explanation goes here
+    %NETWORKUTILTEST validates a collection of useful network utilization functions.
     
     methods(Test)
         function getNumWeightsTest_01(tc)

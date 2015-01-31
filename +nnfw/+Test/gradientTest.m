@@ -1,6 +1,6 @@
 classdef gradientTest < matlab.unittest.TestCase
-    %GRADIENTTEST Summary of this class goes here
-    %   Detailed explanation goes here
+    %GRADIENTTEST validates the calculation of the cost function's gradient.
+    %   The derivation formulas have been evaluated by the Symbolic Math Toolbox
         
     methods(Test)       
         function trainSingleValue(tc)
