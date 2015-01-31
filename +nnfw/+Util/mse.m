@@ -22,7 +22,7 @@ function fitValue = mse( Actual, Expected )
 %   must match so that fitValue(:,i1,i2,...) corresponds to Actual{i1,i2,...} and
 %   Expected{i1, i2,...}.
 
-%   'MSE': fitValue = norm(Actual-Expected)^2/(Ns-1);
+%   'MSE': fitValue = norm(Actual-Expected)^2/(Ns);
 
     % convert input to cell array 
     if ~iscell(Expected)

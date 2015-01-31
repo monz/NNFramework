@@ -1,9 +1,8 @@
 function [ output ] = minmaxMappingApply( input, settings )
-%MINMAXMAPPING Maps matrix values to given min/max value.
-%   Each row in a matrix get mapped to given min/max value, default [-1 1].
+%MINMAXMAPPINGAPPLY Maps matrix values to min/max value based on the given settings.
+%   Attention the mapping is row bases!
 %
-%   [output, settings] = minmaxMapping(input)
-%   [output, settings] = minmaxMapping(input, min, max)
+%   [output] = minmaxMapping(input, settings)
 %
 %   To revert this process use <a href="matlab:doc nnfw.Util.minmaxMappingRevert">minmaxMappingRevert</a> function.
 %   Provide the settings returned from minmaxMapping to the revert function

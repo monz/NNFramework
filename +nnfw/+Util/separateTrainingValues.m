@@ -1,9 +1,22 @@
 function [ values, indexes ] = separateTrainingValues( input, target, vlFactor, tsFactor )
-%SEPARATEINPUTVALUES Summary of this function goes here
-%   Detailed explanation goes here
-
-%     vlFactor = validation data factor
-%     tsFactor = test data factor
+%SEPARATETRAININGVALUES Separates the input and target values into three chunks of data.
+%   The data get separated into training, validating and test data.
+%
+%   [ values, indexes ] = SEPARATETRAININGVALUES( input, target, vlFactor, tsFactor )
+%
+%   vlFactor:   validation data factor, e.g. 0.2 corresponds to 20 percent
+%               of all data used for validation
+%   tsFactor:   test data factor, e.g. 0.05 corresponds to 5 percent of all
+%               data used for testing
+%
+%   All remaining data is used for training.
+%
+%   Returns
+%   values:     cellarray of size 3x2, the first column is for the input
+%               values in that order - training, validation, test. The
+%               second column is for the target values in the same order.
+%   indexes:    cellarray of size 3x1, contains the indexes in the original
+%               data vector used for training, validation and test data.
     
     if (vlFactor + tsFactor) >= 100
         error('Separation factors too big. No data for training left.')

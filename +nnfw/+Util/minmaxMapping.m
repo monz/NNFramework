@@ -9,7 +9,7 @@ function [ output, settings ] = minmaxMapping( input, varargin )
 %   Provide the settings returned from minmaxMapping to the revert function
 %   to properly revert the process.
 %
-%   See also MINMAXMAPPINGREVERT
+%   See also MINMAXMAPPINGREVERT, MINMAXMAPPINGAPPLY.
 
     % outMin/outMax default settings
     outMin = -1;

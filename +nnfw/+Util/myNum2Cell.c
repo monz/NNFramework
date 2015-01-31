@@ -1,6 +1,16 @@
 #include "mex.h"
 #include "matrix.h"
 
+/*
+ *  This is a fast and simple implementation of http://de.mathworks.com/help/matlab/ref/num2cell.html.
+ *  But it only supports column based conversion (see MATLAB help of num2cell with dimension = 1).
+ *
+ *  For Example a 9x5 matrix gets converted to a 5x1 cell array.
+ *  Each cell contains a column vector of size 9x1.
+ *
+ *  Usage: myNum2Cell(values)
+ */
+
 void
 mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {

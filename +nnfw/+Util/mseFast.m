@@ -1,7 +1,7 @@
 function fitValue = mseFast( Actual, Expected )
-%MSE Computes a fitValue measure for data.
+%MSEFAST Computes a fitValue measure for data. This is a fast implementation of the normal MSE function.
 %
-%   fitValue = mse(Actual, Expected)
+%   fitValue = mseFast(Actual, Expected)
 %   compares the data matrix 'Actual' with a reference value 'Expected' using
 %   MSE as a comparison yardstick to produce the number fitValue. fitValue is a
 %   quantitative representation of the closeness of 'Actual' to 'Expected'.
@@ -22,7 +22,7 @@ function fitValue = mseFast( Actual, Expected )
 %   must match so that fitValue(:,i1,i2,...) corresponds to Actual{i1,i2,...} and
 %   Expected{i1, i2,...}.
 
-%   'MSE': fitValue = norm(Actual-Expected)^2/(Ns-1);
+%   'MSE': fitValue = norm(Actual-Expected)^2/(Ns);
 
     % convert input to cell array 
     if ~iscell(Expected)
