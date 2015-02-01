@@ -22,7 +22,7 @@ classdef performanceTest < matlab.unittest.TestCase
             % train network
             % --------------------------------------
             profile on
-            [E, ~, output, lambda, jacobian] = net.train(p,t);
+            [E, ~, output, jacobian] = net.train(p,t);
             profile off
             profInfo = profile('info');
             % TODO: save profile to disk

@@ -52,7 +52,7 @@ else
     net = nnfw.FeedForward(numNeurons);
     net.configure(p,t);
     net.optim.maxIter = maxIter;
-    [E, ~, output, lambda, jacobian] = net.train(p,t);
+    [E, ~, output, jacobian] = net.train(p,t);
     y_d = net.simulate(p); 
 end
 

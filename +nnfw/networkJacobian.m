@@ -50,7 +50,7 @@ else
     net.simulate(p, false);
     costFcn = net.makeCostFcn2(@nnfw.Util.componentError, p, t);
     [F, J] = costFcn(net.getWeightVector());
-    [E, ~, output, lambda, jacobian] = net.train(p,t);
+    [E, ~, output, jacobian] = net.train(p,t);
     y_d = net.simulate(p);
 end
 

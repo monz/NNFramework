@@ -48,7 +48,6 @@ function [E, g, output, jacobian] = train(net, input, target)
 %     options = optimoptions('fminunc','GradObj','on', 'PlotFcns', {@optimplotfval, @optimplotstepsize}, 'MaxFunEvals', 30);
 %     [x,y,exitFlag,output,g] = fminunc(costFcn,net.getWeightVector(),options);
 %     g = g';
-%     lambda = 0;
 %     jacobian = 0;
 
     % ------------------
