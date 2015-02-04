@@ -1,8 +1,8 @@
-function [ values, indexes ] = separateTrainingValues( input, target, vlFactor, tsFactor )
+function [ data, indexes ] = separateTrainingValues( input, target, vlFactor, tsFactor )
 %SEPARATETRAININGVALUES Separates the input and target values into three chunks of data.
 %   The data get separated into training, validating and test data.
 %
-%   [ values, indexes ] = SEPARATETRAININGVALUES( input, target, vlFactor, tsFactor )
+%   [ data, indexes ] = SEPARATETRAININGVALUES( input, target, vlFactor, tsFactor )
 %
 %   vlFactor:   validation data factor, e.g. 0.2 corresponds to 20 percent
 %               of all data used for validation
@@ -12,7 +12,7 @@ function [ values, indexes ] = separateTrainingValues( input, target, vlFactor, 
 %   All remaining data is used for training.
 %
 %   Returns
-%   values:     cellarray of size 3x2, the first column is for the input
+%   data:       cellarray of size 3x2, the first column is for the input
 %               values in that order - training, validation, test. The
 %               second column is for the target values in the same order.
 %   indexes:    cellarray of size 3x1, contains the indexes in the original
@@ -25,9 +25,9 @@ function [ values, indexes ] = separateTrainingValues( input, target, vlFactor, 
     % determine the number of elements contained by each data set
     numInputElements = size(input, 2);
     if numInputElements <= 1
-        values = cell(3,2);
-        values{1,1} = input;
-        values{1,2} = target;
+        data = cell(3,2);
+        data{1,1} = input;
+        data{1,2} = target;
 
         % return indexes
         indexes = cell(3,1);
@@ -51,12 +51,12 @@ function [ values, indexes ] = separateTrainingValues( input, target, vlFactor, 
    
     % fill validation and test data sets with randomly choosen data.
     numRandElements = numVlElements + numTsElements;
-    usedIndizes = zeros(1, numRandElements);
+    usedIndexes = containers.Map('KeyType','double','ValueType','double');
     j = 1; tsIndexNum = 1; vlIndexNum = 1;
     while j <= numRandElements
         ind = ceil(mod(rand(1,1)*numInputElements, numInputElements));
         
-        indMember = ismember(ind, usedIndizes);
+        indMember = isKey(usedIndexes,ind);
         if ~indMember && vlIndexNum <= numVlElements
             vlInput(:, vlIndexNum) = input(:, ind);
             vlTarget(:, vlIndexNum) = target(:, ind);
@@ -76,24 +76,24 @@ function [ values, indexes ] = separateTrainingValues( input, target, vlFactor, 
         else
            continue 
         end
-        usedIndizes(j) = ind;
+        usedIndexes(ind) = ind;
         j = j + 1;
     end
     
     % fill training data set with remaining data - therefore use the unused
     % indizes
-    trIndexes = ~ismember(1:size(input,2),usedIndizes); % all UNused indizes
+    trIndexes = ~ismember(1:size(input,2),cell2mat(values(usedIndexes))); % all UNused indizes
     trInput = input(:, trIndexes);
     trTarget = target(:, trIndexes);
     
     % return the separated training values
-    values = cell(3,2);
-    values{1,1} = trInput;
-    values{1,2} = trTarget;
-    values{2,1} = vlInput;
-    values{2,2} = vlTarget;
-    values{3,1} = tsInput;
-    values{3,2} = tsTarget;
+    data = cell(3,2);
+    data{1,1} = trInput;
+    data{1,2} = trTarget;
+    data{2,1} = vlInput;
+    data{2,2} = vlTarget;
+    data{3,1} = tsInput;
+    data{3,2} = tsTarget;
     
     % return indexes
     indexes = cell(3,1);
