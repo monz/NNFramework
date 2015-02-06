@@ -93,7 +93,7 @@ plotReferenceOnly = true;
 figureNr = 2;
 
 % save figures options
-saveFigures = false;
+saveFigures = true;
 extensions = {'fig','png'};
 outDir = 'figures';
 netType = 'Block';
@@ -307,5 +307,8 @@ if saveFigures
     savePlot(data, plotData, plotOrigData, 'mean');
 
     %% save data to .mat file
-    save(sprintf('%s/%d_%s_%s.mat', data.outDir, idPtidC, netType, data.date));
+    save(sprintf('%s/%d_%s_%s_%s_%s_%d_%d%s_%s.mat', ...
+        data.outDir, data.idPtidC, data.netType, ...
+        data.tb1, data.tb2, getNetSizeString(numNeurons), data.meanInput, data.meanTarget, ...
+        getOptionsString(data), data.date));
 end
