@@ -21,12 +21,12 @@
 %   useToolbox:         if true uses MATLAB-NNToolbox for training, if false it
 %                       uses the NN-Framework
 %
-%   trainMeanInput:     if true the mean of all input signals is calculated and
+%   trainInputMean:     if true the mean of all input signals is calculated and
 %                       only this mean value is used as input value for
 %                       network training, if fasle all input signals are used
 %                       for network training
 %
-%   trainMeanTarget:    if true the mean of all target signals is calculated and
+%   trainTargetMean:    if true the mean of all target signals is calculated and
 %                       only this mean value is used as target value for
 %                       network training, if false all target signals are used
 %                       for network training

@@ -29,12 +29,12 @@
 %   narxVariant:        switches the training method of the NARX-Net
 %                       can be 'open' or 'closed'
 %
-%   trainMeanInput:     if true the mean of all input signals is calculated and
+%   trainInputMean:     if true the mean of all input signals is calculated and
 %                       only this mean value is used as input value for
 %                       network training, if fasle all input signals are used
 %                       for network training
 %
-%   trainMeanTarget:    if true the mean of all target signals is calculated and
+%   trainTargetMean:    if true the mean of all target signals is calculated and
 %                       only this mean value is used as target value for
 %                       network training, if false all target signals are used
 %                       for network training 
@@ -77,6 +77,20 @@
 %   tb1:                test bench one - can be one of {'kt2','kt3','kt4'}
 %
 %   tb2:                test bench two - possible values see tb1
+%
+%   =======================================================================
+%   the file name is composed as follows:
+%   -----------------------------------------------------------------------
+%   idPtidC_netType_<settings>_plotType_currDate.ext
+%
+%   settings:
+%   numNeurons_tb1_tb2_trainInputMean_trainTargetMean_<options>
+%
+%   options:
+%   flipTime_maxDimension_delay1
+%   -----------------------------------------------------------------------
+%   boolean values are mapped to 0,1 in the file name
+%   =======================================================================
 %%% -----------------------------------------------------------------------
 
 clear;
