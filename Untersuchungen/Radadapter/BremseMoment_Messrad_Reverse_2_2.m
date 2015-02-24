@@ -52,17 +52,24 @@ flipTime = false;
 
 % plot settings
 figureNr = 2;
+plotValidateData = true;
 
 % load data settings
 
 trainFile = '01_APRBS_APK1_sim1_DRV_100Pct_RSP.tim';
+validateFile = '03_APRBS_APK1_sim3_DRV_100Pct_RSP.tim';
 
 trdata = loadDataF(trainFile);
+valdata = loadDataF(validateFile);
 
 %% define input and target data
 
-p = [trdata.MYMR'];
+p = [trdata.MYMR'; trdata.FXMR'; trdata.FZMR'];
+pVal = [valdata.MYMR'; valdata.FXMR'; valdata.FZMR'];
+
 t = [trdata.Longitudinal_DeltaP'; trdata.Bremse_DeltaP'; trdata.Bremse_LVDT'];
+tVal = [valdata.Longitudinal_DeltaP'; valdata.Bremse_DeltaP'; valdata.Bremse_LVDT'];
+
 
 %% define and train neural network
 
@@ -108,35 +115,114 @@ end
 
 if useToolbox && ~delayNet
     y = net(p);
+    
+    if plotValidateData
+        yVal = net(pVal);
+    end
 elseif ~delayNet
     y = net.simulate(p);
+    
+    if plotValidateData
+        yVal = net.simulate(pVal);
+    end
 end
 
 %% rate results
 fit = nnfw.goodnessOfFit(y',t','NRMSE')
+if plotValidateData
+    fitVal = nnfw.goodnessOfFit(yVal',tVal','NRMSE')
+end
 
 %% plot results
 figure(figureNr)
 hold on
-    title('Ansteuerung Bremse Moment Messrad Reverse');
-    sp(1) = subplot(411);
-    plot(p,'r')
-    legend('BremseMoment');
-    sp(2) = subplot(412);
+%     sp(1) = subplot(511);
+%     plot(p(1,:),'r')
+%     legend('Brake Torque');
+%     
+%     sp(2) = subplot(512);
+%     plot(p(2,:),'r')
+%     legend('Vertical Force');
+    
+    sp(3) = subplot(311);
     plot(t(1,:),'r')
     hold on
     plot(y(1,:),'g')
-    legend('Longitudinal DeltaP','ANN')
-    sp(3) = subplot(413);
+    if plotValidateData
+        hold on
+        plot(tVal(1,:),'c');
+        hold on
+        plot(yVal(1,:),'k');
+        legend('Longitudinal DeltaP','ANN','Target Validation', 'ANN Validation')
+    else
+        legend('Longitudinal DeltaP','ANN')
+    end
+    xlabel('Frames [1/25 s]');
+    ylabel('[Bar]');
+    
+    sp(4) = subplot(312);
     plot(t(2,:),'r')
     hold on
     plot(y(2,:),'g')
-    legend('Bremse DeltaP','ANN')
-    sp(4) = subplot(414);
+    if plotValidateData
+        hold on
+        plot(tVal(2,:),'c');
+        hold on
+        plot(yVal(2,:),'k');
+        legend('Brake DeltaP','ANN','Target Validation', 'ANN Validation')
+    else
+        legend('Brake DeltaP','ANN');
+    end
+    xlabel('Frames [1/25 s]');
+    ylabel('[Bar]');
+    
+    sp(5) = subplot(313);
     plot(t(3,:),'r')
     hold on
-    plot(y(3,:),'g')
-    legend('Bremse LVDT','ANN');
+    plot(y(3,:),'g')    
+    if plotValidateData
+        hold on
+        plot(tVal(3,:),'c');
+        hold on
+        plot(yVal(3,:),'k');
+        legend('Brake LVDT','ANN','Target Validation', 'ANN Validation');
+    else
+        legend('Brake LVDT','ANN');
+    end
+    xlabel('Frames [1/25 s]');
+    ylabel('[mm]');
 
-    linkaxes(sp,'x');
+    linkaxes(sp,'xy');
 hold off
+
+% plot validation data in own figure
+if plotValidateData
+    figure()
+    hold on
+        sp(1) = subplot(311);
+        plot(tVal(1,:),'c');
+        hold on
+        plot(yVal(1,:),'k');
+        legend('Longitudinal DeltaP Validation', 'ANN Validation')
+        xlabel('Frames [1/25 s]');
+        ylabel('[Bar]');
+
+        sp(2) = subplot(312);
+        plot(tVal(2,:),'c');
+        hold on
+        plot(yVal(2,:),'k');
+        legend('Brake DeltaP Validation', 'ANN Validation')
+        xlabel('Frames [1/25 s]');
+        ylabel('[Bar]');
+
+        sp(3) = subplot(313);
+        plot(tVal(3,:),'c');
+        hold on
+        plot(yVal(3,:),'k');
+        legend('Brake Validation', 'ANN Validation');
+        xlabel('Frames [1/25 s]');
+        ylabel('[mm]');
+
+        linkaxes(sp,'xy');
+    hold off
+end

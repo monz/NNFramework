@@ -48,12 +48,12 @@ close all;
 %% set options
 
 % neural net settings
-numNeurons = [10];
+numNeurons = [3];
 maxIter = 50;
-useToolbox = true;
+useToolbox = false;
 delayNet = false;
 flipTime = false;
-delay1 = 1:10;
+delay1 = 1:2;
 
 % plot settings
 figureNr = 2;
@@ -71,8 +71,11 @@ validatedata = loadDataF(validateFile);
 
 p = [traindata.Vertikal_DeltaP'];
 % p = p - p(1);
+% p = p(1:end-1);
 t = [traindata.Vertikal_Kraft'];
-t = (t + 1.4)/(0.1*0.001*3978);
+% t = [traindata.FZMR'];
+% t = t(2:end);
+% t = (t + 1.4)/(0.1*0.001*3978);
 % t = t - t(1);
 pVal = [validatedata.Longitudinal_DeltaP'];
 tVal = [validatedata.Longitudinal_Kraft'];
@@ -152,15 +155,21 @@ end
 %% plot results
 figure(figureNr)
 hold on
-    title('Longidutinal DeltaP auf Longitudinal Kraft');
+    title('Vertical DeltaP to Vertical Force');
+    xlabel('Vertical DeltaP [bar]');
+    ylabel('Simulated Model Output; Vertical Force [kN]');
+%     set(gca, 'XTick', 49700:0.1:49900);
+    grid on;
     plot(t,'r');
     plot(y,'g');
+%     plot(49700:49900,t(49700:49900),'r');
+%     plot(49700:49900,y(49700:49900),'g');
     if plotValidateData
         plot(tVal,'c');
         plot(yVal,'k');
-        legend('Vertikal Kraft','ANN','Target Validation', 'ANN Validation');
+        legend('Vertical Force','ANN','Target Validation', 'ANN Validation');
     else
-        legend('Vertikal Kraft','ANN');
+        legend('Vertical Force','ANN Simulated Force');
     end
 hold off
 

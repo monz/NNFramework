@@ -47,7 +47,7 @@ numNeurons = [10];
 maxIter = 50;
 delay1 = 1:50;
 useToolbox = true;
-delayNet = true;
+delayNet = false;
 flipTime = false;
 
 % plot settings
@@ -120,7 +120,7 @@ figure(figureNr)
 hold on
     title('Ansteuerung Bremse Moment Aktuator Reverse');
     sp(1) = subplot(411);
-    plot(p,'r')
+    plot(p(1,:),'r')
     legend('BremseMoment');
     sp(2) = subplot(412);
     plot(t(1,:),'r')

@@ -42,7 +42,7 @@ close all;
 % neural net settings
 numNeurons = 5;
 maxIter = 50;
-useToolbox = true;
+useToolbox = false;
 
 % plot settings
 figureNr = 2;
@@ -62,6 +62,9 @@ x = [traindata.Longitudinal_DeltaP'];
 t = [traindata.Longitudinal_Kraft'];
 xV = [validatedata.Longitudinal_DeltaP'];
 tV = [validatedata.Longitudinal_Kraft'];
+
+% t = [traindata.FXMR'];
+% tV = [validatedata.FXMR'];
 
 %% define and train neural network
 
@@ -91,10 +94,27 @@ if plotValidateData
     end
 end
 
+%% extract value 'k'
+% the 'k' value is a factor, because long_deltaP and long_force have a
+% linear coherence
+k = (y(end)-y(1))/(x(end)-x(1)) % the slope
+% plot factor 'k'
+figure;
+hold on;
+    title('Linear Correlation Between Longitudinal DeltaP and Longitudianl Force');
+    xlabel('Longitudinal DeltaP [bar]');
+    ylabel('Simulated Model Output; Longitudinal Force [kN]');
+    grid on;
+    plot(x,y);
+    legend('Linear Factor "k"', 'location', 'northwest');
+hold off
+
 %% plot results
 figure(figureNr)
 hold on
-    title('Longidutinal DeltaP auf Longitudinal Kraft');
+    title('Longitudinal DeltaP to Longitudinal Force');
+    xlabel('Frames [1/25 s]');
+    ylabel('Longitudinal Force [kN]');
     plot(t,'r');
     plot(y,'g');
     if plotValidateData
