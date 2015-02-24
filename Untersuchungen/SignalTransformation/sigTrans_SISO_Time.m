@@ -66,6 +66,20 @@
 %   tb1:                test bench one - can be one of {'kt2','kt3','kt4'}
 %
 %   tb2:                test bench two - possible values see tb1
+%
+%   =======================================================================
+%   the file name is composed as follows:
+%   -----------------------------------------------------------------------
+%   idPtidC_netType_<settings>_plotType_currDate.ext
+%
+%   settings:
+%   numNeurons_tb1_tb2_trainInputMean_trainTargetMean_<options>
+%
+%   options:
+%   flipTime_maxDimension_delay1
+%   -----------------------------------------------------------------------
+%   boolean values are mapped to 0,1 in the file name
+%   =======================================================================
 %%% -----------------------------------------------------------------------
 
 clear;
@@ -136,14 +150,15 @@ else
     target = tb2Data;
 end
 
-% prepare extrapolated data
-extraData = testData(:,1)*1.2; % 20-percent above normal input value
-
 % extract number of test values
 numTests = length(indexes{2,1});
 
 % extract data size
 dataSize = size(input,1);
+
+% prepare extrapolated data
+% extraData = testData(:,1)*1.2; % 20-percent above normal input value
+extraData = rand(dataSize,1)*5; % 20-percent above normal input value
 
 [p, t, testP, extraP] = prepareDataSISO_Time(input', target', testData', extraData', times');
 
