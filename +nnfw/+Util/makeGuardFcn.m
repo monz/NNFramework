@@ -1,22 +1,22 @@
-function [ abortFcn ] = makeAbortFcn( net, values )
-%MAKEABORTFCN Creates a wrapper function used in the optimization function lsqnonlin
+function [ guardFcn ] = makeGuardFcn( net, values )
+%MAKEGUARDFCN Creates a wrapper function used in the optimization function lsqnonlin
 %   The internal function evaluates and plots the training/validation/test
 %   errors. This function checks the error values against the configured
 %   abort thresholds and decides whether to abort the training or not. Also
 %   it provides a stop button in the plot window. The user can stop the
 %   training by clicking on that button.
 %
-%   [ abortFcn ] = MAKEABORTFCN( net, values )
+%   [ guardFcn ] = MAKEGUARDFCN( net, values )
 %
 %   net:        the neural network to be trained
 %   values:     cellarray containing the training/validation/test data
 %
 %   Returns
-%   abortFcn:    wrapper function used in a optimization function
+%   guardFcn:    wrapper function used in a optimization function
 
-    abortFcn = @abort;
+    guardFcn = @guard;
 
-    function stop = abort(x,optimValues,state)
+    function stop = guard(x,optimValues,state)
         persistent lastE;
         persistent bestWeights;
         persistent increaseCounter;

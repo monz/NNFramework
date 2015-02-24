@@ -54,10 +54,10 @@ function [E, g, output, jacobian] = train(net, input, target)
     % lsqnonlin
     % ------------------
     costFcn = net.makeCostFcn2(@nnfw.Util.componentError, in, tn);
-    % register abort function
-    abort = nnfw.Util.makeAbortFcn(net, values);
+    % register guard function
+    guard = nnfw.Util.makeGuardFcn(net, values);
     % start cost function optimazation
-    options = optimoptions('lsqnonlin', 'OutputFcn', abort, 'Algorithm', 'levenberg-marquardt', 'Jacobian','on','PlotFcns', net.optim.plotFcns, 'MaxIter', net.optim.maxIter);
+    options = optimoptions('lsqnonlin', 'OutputFcn', guard, 'Algorithm', 'levenberg-marquardt', 'Jacobian','on','PlotFcns', net.optim.plotFcns, 'MaxIter', net.optim.maxIter);
     [x, ~, ~, ~, output, ~, jacobian] = lsqnonlin(costFcn,net.getWeightVector(), [], [], options);
     
     % set network weights found by optimization function
