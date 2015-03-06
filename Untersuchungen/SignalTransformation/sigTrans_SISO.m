@@ -85,17 +85,17 @@ close all;
 %% set options
 
 % network options
-numNeurons = [10];
+numNeurons = [10 20];
 maxIter = 100;
-useToolbox = true;
+useToolbox = false;
 
 % data options
-trainInputMean = false;
+trainInputMean = true;
 trainTargetMean = true;
 
 % plot options
-plotMeanOnly = true;
-plotReferenceOnly = true;
+plotMeanOnly = false;
+plotReferenceOnly = false;
 figureNr = 2;
 
 % save figures options
@@ -119,7 +119,7 @@ tb1Data = sigTrans_loadData(idPtidC, tb1, 'y');
 tb2Data = sigTrans_loadData(idPtidC, tb2, 'y');
 
 % separate test data from train data
-[values, indexes] = nnfw.Util.separateTrainingValues(tb1Data, tb1Data, 0.2, 0);
+[values, indexes] = nnfw.Util.separateTrainingValues(tb1Data, tb1Data, 0.2, 0.0);
 input = values{1,1};
 testData = values{2,1};
 
@@ -141,14 +141,15 @@ else
     target = tb2Data;
 end
 
-% prepare extrapolated data
-extraData = testData(:,1)*1.2; % 20-percent above normal input value
-
 % extract number of test values
 numTests = length(indexes{2,1});
 
 % extract data size
 dataSize = size(input,1);
+
+% prepare extrapolated data
+extraData = testData(:,1)*1.2; % 20-percent above normal input value
+% extraData = sin(rand(1,dataSize)); % 20-percent above normal input value
 
 [p, t, testP, extraP] = prepareDataSISO(input', target', testData', extraData');
 
@@ -192,7 +193,13 @@ dbTestMean = mean(dbTest);
 %% plot simulated data
 
 plotData.figureNr = figureNr;
-[plotData.title, plotData.xLabel, plotData.yLabel] = loadPlotData(idPtidC);
+% [plotData.title, plotData.xLabel, plotData.yLabel] = loadPlotData(idPtidC);
+% plotData.title = 'Oil Pump';
+% plotData.xLabel = 'Crank Angle [degree]';
+% plotData.yLabel = 'Torque [Nm]';
+plotData.title = 'AVS Mechanical';
+plotData.xLabel = 'Crank Angle [degree]';
+plotData.yLabel = 'AVSA Reflection [V]';
 plotData.lgInput = 'ANN';
 plotData.lgTestInput = 'Test Data';
 plotData.lgExtraInput = 'Extra Data';
@@ -204,11 +211,27 @@ plotData.colorInput = [0.0 1.0 0.0];
 plotData.colorTestInput = [1.0 0.0 0.0];
 plotData.colorExtraInput = [0.5 0.5 0.5];
 
-plotData.y = y;
-plotData.yTest = yTest;
+% plotData.y = y;
+% plotData.yTest = yTest;
+
+
+pSize = 500;
+
+plotData.y = y(1:pSize);
+yTData = zeros(1, pSize*numTests);
+offset = 1;
+startD = 1;
+for k = 1:numTests
+    yTData(offset:offset+pSize-1) = yTest(startD:startD+pSize-1);
+    offset = offset+pSize;
+    startD = startD+dataSize;
+end
+plotData.yTest = yTData;
+
 plotData.yExtra = yExtra;
-plotData.xAxis = sigTrans_loadData(idPtidC, tb2, 'x');
-plotData.size = dataSize;
+xData = sigTrans_loadData(idPtidC, tb2, 'x');
+plotData.xAxis = xData(1:pSize,:);
+plotData.size = pSize;
 plotData.numInputs = numInputs;
 plotData.numTest = numTests;
 
@@ -219,13 +242,41 @@ plotOrigData.figureNr = plotData.figureNr;
 plotOrigData.meanOnly = plotMeanOnly;
 plotOrigData.referenceOnly = plotReferenceOnly;
 
-plotOrigData.xAxisTB1 = sigTrans_loadData(idPtidC, tb1, 'x');
-plotOrigData.xAxisTB2 = sigTrans_loadData(idPtidC, tb2, 'x');
-plotOrigData.yAxisTB1 = sigTrans_loadData(idPtidC, tb1, 'y');
-plotOrigData.yAxisTB2 = sigTrans_loadData(idPtidC, tb2, 'y');
-plotOrigData.yAxisMeanTB1 = mean(plotOrigData.yAxisTB1,2);
-plotOrigData.yAxisMeanTB2 = mean(plotOrigData.yAxisTB2,2);
-        
+% plotOrigData.xAxisTB1 = sigTrans_loadData(idPtidC, tb1, 'x');
+% plotOrigData.xAxisTB2 = sigTrans_loadData(idPtidC, tb2, 'x');
+% plotOrigData.yAxisTB1 = sigTrans_loadData(idPtidC, tb1, 'y');
+% plotOrigData.yAxisTB2 = sigTrans_loadData(idPtidC, tb2, 'y');
+% plotOrigData.yAxisMeanTB1 = mean(plotOrigData.yAxisTB1,2);
+% plotOrigData.yAxisMeanTB2 = mean(plotOrigData.yAxisTB2,2);
+
+tb1x = sigTrans_loadData(idPtidC, tb1, 'x');
+plotOrigData.xAxisTB1 = tb1x(1:pSize);
+
+tb2x = sigTrans_loadData(idPtidC, tb2, 'x');
+plotOrigData.xAxisTB2 = tb2x(1:pSize);
+
+tb1Data = sigTrans_loadData(idPtidC, tb1, 'y');
+yTB1 = zeros(pSize, size(tb1Data,2));
+for k = 1:size(tb1Data,2)
+    yTB1(1:pSize, k) = tb1Data(1:pSize, k);
+end
+plotOrigData.yAxisTB1 = yTB1;
+
+
+tb2Data = sigTrans_loadData(idPtidC, tb2, 'y');
+yTB2 = zeros(pSize, size(tb2Data,2));
+for k = 1:size(tb2Data,2)
+    yTB2(1:pSize, k) = tb2Data(1:pSize, k);
+end
+plotOrigData.yAxisTB2 = yTB2;
+
+tb1MeanV = mean(plotOrigData.yAxisTB1,2);
+plotOrigData.yAxisMeanTB1 = tb1MeanV(1:pSize);
+
+tb2MeanV = mean(plotOrigData.yAxisTB2,2);
+plotOrigData.yAxisMeanTB2 = tb2MeanV(1:pSize);
+
+
 plotOrigData.lgTB1 = tb1;
 plotOrigData.lgTB2 = tb2;
 plotOrigData.lgInput = 'ANN';

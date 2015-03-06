@@ -154,23 +154,24 @@ end
 
 %% plot results
 figure(figureNr)
+xData = [49700:49900] * 0.002441406;
 hold on
     title('Vertical DeltaP to Vertical Force');
-    xlabel('Vertical DeltaP [bar]');
+    xlabel('Time [s]');
     ylabel('Simulated Model Output; Vertical Force [kN]');
-%     set(gca, 'XTick', 49700:0.1:49900);
     grid on;
-    plot(t,'r');
-    plot(y,'g');
-%     plot(49700:49900,t(49700:49900),'r');
-%     plot(49700:49900,y(49700:49900),'g');
+%     plot(t,'r');
+%     plot(y,'g');
+    plot(xData,t(49700:49900),'r');
+    plot(xData,y(49700:49900),'g');
     if plotValidateData
         plot(tVal,'c');
         plot(yVal,'k');
         legend('Vertical Force','ANN','Target Validation', 'ANN Validation');
     else
-        legend('Vertical Force','ANN Simulated Force');
+        legend('Vertical Force','ANN');
     end
+    axis([121.35,121.55,-0.68, -0.48]);
 hold off
 
 %% rate results

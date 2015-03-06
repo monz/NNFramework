@@ -64,7 +64,7 @@ figureNr = 2;
 plotValidateData = true;
 
 % data settings
-useVerticalDeltaP = true;
+useVerticalDeltaP = false;
 
 % load data settings
 
@@ -247,15 +247,36 @@ hold on
     linkaxes(sp,'x');
 hold off
 
+% plot identification only
+xData = [1:51200] * 0.002441406;
+figure()
+grid on;
+hold on
+    title('Brake Torque Wheel Adapter');
+    plot(xData(1:5120), t(1:5120),'r');
+    plot(xData(1:5120), y(1:5120),'g');
+%     plot(xData, t,'r');
+%     plot(xData, y,'g');
+    legend('Brake Torque Wheel Adapter', 'ANN');
+    xlabel('Time [s]');
+    ylabel('Brake Torque [Nm]');
+    axis([0, 100, -2100, 800]);
+    xlim([0,7])
+hold off
+
 % plot validation data in own figure
 if plotValidateData
     figure()
+    grid on;
     hold on
-        plot(tVal,'c');
-        plot(yVal,'k');
+        title('Brake Torque Wheel Adapter Validation');
+        plot(xData(1:5120), tVal(1:5120),'c');
+        plot(xData(1:5120), yVal(1:5120),'k');
         legend('Brake Torque Validation', 'ANN Validation');
-        xlabel('Frames [1/25 s]');
+        xlabel('Time [s]');
         ylabel('Brake Torque [Nm]');
-        ylim([-3000,2000])
+        axis([0, 100, -2400, 1100]);
+        xlim([0,7])
+%         ylim([-3000,2000])
     hold off
 end

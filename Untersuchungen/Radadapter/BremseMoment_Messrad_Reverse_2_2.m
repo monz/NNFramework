@@ -157,8 +157,8 @@ hold on
     else
         legend('Longitudinal DeltaP','ANN')
     end
-    xlabel('Frames [1/25 s]');
-    ylabel('[Bar]');
+    xlabel('Time [s]');
+    ylabel('[bar]');
     
     sp(4) = subplot(312);
     plot(t(2,:),'r')
@@ -173,8 +173,8 @@ hold on
     else
         legend('Brake DeltaP','ANN');
     end
-    xlabel('Frames [1/25 s]');
-    ylabel('[Bar]');
+    xlabel('Time [s]');
+    ylabel('[bar]');
     
     sp(5) = subplot(313);
     plot(t(3,:),'r')
@@ -189,13 +189,90 @@ hold on
     else
         legend('Brake LVDT','ANN');
     end
-    xlabel('Frames [1/25 s]');
+    xlabel('Time [s]');
     ylabel('[mm]');
 
     linkaxes(sp,'xy');
 hold off
 
+% plot results in own figure
+xData = [1:5120] * 0.002441406;
+
+figure()
+hold on
+    grid on
+    title('Wheel Adapter Values to Longitudinal DeltaP');
+    plot(xData, t(1,1:5120),'r')
+    plot(xData, y(1,1:5120),'g')
+    legend('Longitudinal DeltaP','ANN')
+    xlabel('Time [s]');
+    ylabel('[bar]');
+    axis([0,12,-45,35]);
+hold off
+
+figure()
+hold on
+    grid on
+    title('Wheel Adapter Values to Brake DeltaP')
+    plot(xData, t(2,1:5120),'r')
+    plot(xData, y(2,1:5120),'g')
+    legend('Brake DeltaP','ANN');
+    xlabel('Time [s]');
+    ylabel('[bar]');
+    axis([0,12,-45,35]);
+hold off
+
+figure()
+hold on
+    grid on
+    title('Wheel Adapter Values to Brake LVDT')
+    plot(xData, t(3,1:5120),'r')
+    plot(xData, y(3,1:5120),'g')    
+    legend('Brake LVDT','ANN');
+    xlabel('Time [s]');
+    ylabel('[mm]');
+    axis([0,12,-20,12]);
+hold off
+
 % plot validation data in own figure
+
+ 
+figure()
+hold on
+    grid on
+    title('Wheel Adapter Values to Longitudinal DeltaP Validation')
+    plot(xData, tVal(1,1:5120),'c');
+    plot(xData, yVal(1,1:5120),'k');
+    legend('Longitudinal DeltaP Validation', 'ANN Validation')
+    xlabel('Time [s]');
+    ylabel('[bar]');
+    axis([0,12,-45,35]);
+hold off
+
+figure()
+hold on
+    grid on
+    title('Wheel Adapter Values to Brake DeltaP Validation')
+    plot(xData, tVal(2,1:5120),'c');
+    plot(xData, yVal(2,1:5120),'k');
+    legend('Brake DeltaP Validation', 'ANN Validation')
+    xlabel('Time [s]');
+    ylabel('[bar]');
+    axis([0,12,-45,35]);
+hold off
+       
+figure()
+hold on
+    grid on
+    title('Wheel Adapter Values to Brake LVDT Validation')
+    plot(xData, tVal(3,1:5120),'c');
+    plot(xData, yVal(3,1:5120),'k');
+    legend('Brake LVDT Validation', 'ANN Validation');
+    xlabel('Time [s]');
+    ylabel('[mm]');
+    axis([0,12,-20,12]);
+hold off
+
 if plotValidateData
     figure()
     hold on
@@ -204,23 +281,23 @@ if plotValidateData
         hold on
         plot(yVal(1,:),'k');
         legend('Longitudinal DeltaP Validation', 'ANN Validation')
-        xlabel('Frames [1/25 s]');
-        ylabel('[Bar]');
+        xlabel('Time [s]');
+        ylabel('[bar]');
 
         sp(2) = subplot(312);
         plot(tVal(2,:),'c');
         hold on
         plot(yVal(2,:),'k');
         legend('Brake DeltaP Validation', 'ANN Validation')
-        xlabel('Frames [1/25 s]');
-        ylabel('[Bar]');
+        xlabel('Time [s]');
+        ylabel('[bar]');
 
         sp(3) = subplot(313);
         plot(tVal(3,:),'c');
         hold on
         plot(yVal(3,:),'k');
         legend('Brake Validation', 'ANN Validation');
-        xlabel('Frames [1/25 s]');
+        xlabel('Time [s]');
         ylabel('[mm]');
 
         linkaxes(sp,'xy');
