@@ -4,3 +4,4 @@
 *.mat
 profile_results_*
 PerformanceMessung
+!performanceTest/perfTest_*/*.mat
