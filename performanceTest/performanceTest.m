@@ -54,7 +54,7 @@ classdef performanceTest < matlab.unittest.TestCase
 
             net = nnfw.FeedForward(10);
             net.configure(x,t);
-            net.optim.maxIter = 5;
+            net.optim.maxIter = 3;
             profile on
             net.train(x,t);
             profile off
