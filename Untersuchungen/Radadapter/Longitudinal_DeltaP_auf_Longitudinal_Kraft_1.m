@@ -101,7 +101,7 @@ k = (y(end)-y(1))/(x(end)-x(1)) % the slope
 % plot factor 'k'
 figure;
 hold on;
-    title('Linear Correlation Between Longitudinal DeltaP and Longitudianl Force');
+    title('Linear Correlation Between Longitudinal DeltaP and Longitudinal Force');
     xlabel('Longitudinal DeltaP [bar]');
     ylabel('Simulated Model Output; Longitudinal Force [kN]');
     grid on;
